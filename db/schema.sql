@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS orders_items CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
 DROP TABLE IF EXISTS tags CASCADE;
 DROP TABLE IF EXISTS items_tags CASCADE;
+DROP TABLE IF EXISTS cart_items CASCADE;
 
 -- Enums
 
@@ -116,6 +117,16 @@ CREATE TABLE reviews (
   review text NOT NULL,
   created_at date,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE cart_items (
+  id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id int,
+  item_id int,
+  quantity int NOT NULL CHECK (quantity > 0),
+  created_at timestamp DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 );
 
 -- Tags Tables

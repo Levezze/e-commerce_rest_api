@@ -1,0 +1,223 @@
+openapi: 3.1.1
+info:
+  title: E-Commerce Jewelry Store API
+  version: 1.0.0
+  description: REST API for a jewelry e-commerce application
+
+paths:
+  /items:
+    get:
+      summary: Get all catalog items
+      tags: [Items]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              example:
+                error: "Something went wrong"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              example:
+                error: "An unknown error occurred"
+
+  /auth/login:
+    post:
+      summary: Log in with email and password
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSession'
+        '401':
+          description: Unauthorized
+
+  /orders:
+    get:
+      summary: Get current user's orders
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+
+    post:
+      summary: Place a new order
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewOrder'
+      responses:
+        '201':
+          description: Order placed
+
+  /cart:
+    get:
+      summary: View current user's cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Cart contents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItem'
+
+    post:
+      summary: Add item to cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartInsert'
+      responses:
+        '201':
+          description: Item added to cart
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+        gem_name:
+          type: string
+        jewelry_type:
+          type: string
+        price:
+          type: number
+        in_stock:
+          type: boolean
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    AuthSession:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+
+    NewOrder:
+      type: object
+      required: [shipping_address, items]
+      properties:
+        shipping_address:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+        total:
+          type: number
+        created_at:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+
+    OrderItem:
+      type: object
+      properties:
+        item_id:
+          type: integer
+        price_at_purchase:
+          type: number
+
+    CartItem:
+      type: object
+      properties:
+        item_id:
+          type: integer
+        quantity:
+          type: integer
+        added_at:
+          type: string
+          format: date-time
+
+    CartInsert:
+      type: object
+      required: [item_id, quantity]
+      properties:
+        item_id:
+          type: integer
+        quantity:
+          type: integer
