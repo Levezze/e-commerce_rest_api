@@ -1,5 +1,8 @@
+import app from './app';
+import { logger } from './utils/logger';
 
+const PORT = 3000;
 
 app.listen(PORT, () => {
-  console.log(`App running on port: ${PORT}`);
+  logger.info(`App running on port: ${PORT}`);
 });
