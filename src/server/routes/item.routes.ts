@@ -1,8 +1,8 @@
-import express, { NextFunction, Request, Response } from 'express';
-import { createItem } from '../controllers/item.controller';
+import { Router, NextFunction, Request, Response } from 'express';
+import * as itemController from '../controllers/item.controller';
 
-const router = express.Router();
+const router = Router();
 
-router.post('/items', itemController.createItem);
+router.post('/', itemController.createItem);
 
 export default router;
