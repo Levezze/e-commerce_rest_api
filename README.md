@@ -1,5 +1,6 @@
+# README
 
-```
+```bash
 e-commerce_rest_api
 ├─ db
 │  └─ schema.sql
@@ -8,6 +9,7 @@ e-commerce_rest_api
 │  └─ openapi.yaml
 ├─ package-lock.json
 ├─ package.json
+├─ README.md
 ├─ src
 │  ├─ server
 │  │  ├─ app.ts
@@ -19,9 +21,9 @@ e-commerce_rest_api
 │  │  ├─ routes
 │  │  ├─ services
 │  │  ├─ utils
+│  │  │  └─ logger.ts
 │  │  └─ validators
 │  └─ tests
 ├─ tsconfig.json
 └─ tsconfig.tsbuildinfo
-
 ```

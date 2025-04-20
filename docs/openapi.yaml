@@ -3,33 +3,243 @@ info:
   title: E-Commerce Jewelry Store API
   version: 1.0.0
   description: REST API for a jewelry e-commerce application
+  # Consider adding contact, license, termsOfService here
 
 paths:
   /items:
     get:
       summary: Get all catalog items
       tags: [Items]
+      # Parameters for Pagination, Filtering, Sorting
+      parameters:
+        # Pagination
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of items to return per page.
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+        - name: offset
+          in: query
+          required: false
+          description: Number of items to skip for pagination.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        # Filtering
+        - name: jewelry_type
+          in: query
+          required: false
+          description: Filter items by jewelry type.
+          schema:
+            $ref: '#/components/schemas/JewelryType'
+        - name: gem_size
+          in: query
+          required: false
+          description: Filter items by gem size.
+          schema:
+            $ref: '#/components/schemas/GemSize'
+        - name: in_stock
+          in: query
+          required: false
+          description: Filter items by stock availability.
+          schema:
+            type: boolean
+        # Sorting
+        - name: sort
+          in: query
+          required: false
+          description: Sort items by field and direction. Format 'field:(asc|desc)'.
+          schema:
+            type: string
+            example: "price:asc" # Example sort parameter
       responses:
         '200':
-          description: Successful response
+          description: A list of items matching the criteria.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Item'
+                type: object # Optional: Wrap array in object for metadata (total count, next/prev links)
+                properties:
+                  total_count:
+                    type: integer
+                    description: Total number of items matching the query.
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Item' # Item now uses oneOf/discriminator
+        # Use Standard Error Response
+        '400':
+          description: Bad Request (e.g., invalid filter/sort parameters)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
             application/json:
-              example:
-                error: "Something went wrong"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         default:
           description: Unexpected error
           content:
             application/json:
-              example:
-                error: "An unknown error occurred"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      summary: Add an item to the catalog
+      tags: [Items]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewItemInput' # Input schema remains specific
+      responses:
+        '201':
+          description: Item created successfully. Returns the created item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item' # Return the full Item object
+          headers:
+            Location:
+              description: URL of the newly created item.
+              schema:
+                type: string
+                format: uri
+        # Use Standard Error Response
+        '400':
+          description: Bad Request (e.g., invalid input data)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /items/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the item to operate on.
+        schema:
+          type: integer
+
+    get:
+      summary: Get a specific catalog item by ID
+      tags: [Items]
+      responses:
+        '200':
+          description: Successful response containing the item details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item' # Item now uses oneOf/discriminator
+        # Use Standard Error Response
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      summary: Partially update a catalog item by ID
+      tags: [Items]
+      requestBody:
+        required: true
+        description: Fields to update for the item.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartialItemUpdate' # Schema for partial updates
+      responses:
+        '200':
+          description: Item updated successfully. Returns the updated item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item' # Return the full updated Item object
+        # Use Standard Error Response
+        '400':
+          description: Bad Request (e.g., invalid input data)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a catalog item by ID
+      tags: [Items]
+      responses:
+        '204': # Correct response for successful DELETE
+          description: Item successfully deleted. No content returned.
+        # Use Standard Error Response
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /auth/login:
     post:
@@ -43,13 +253,177 @@ paths:
               $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: Successful login
+          description: Successful login, returns user and token.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthSession'
+        # Use Standard Error Response for Auth errors where applicable
+        '401':
+          description: Unauthorized (Invalid credentials)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+           description: Bad Request (e.g., missing fields)
+           content:
+             application/json:
+               schema:
+                 $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    post:
+      summary: Log out from account
+      tags: [Auth]
+      security: # Logout should require authentication
+       - bearerAuth: []
+      responses:
+        '204':
+          description: Successfully logged out. No content.
+        '401': # Add standard errors
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+  /auth/me:
+    get:
+      summary: Get current authenticated user's details
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current User details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '401':
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      summary: Update current authenticated user's account details
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartialUserUpdate'
+      responses:
+        '200':
+          description: User updated successfully. Returns the updated user.
+          # Add response body returning the updated User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request (e.g., invalid data)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/change-password:
+    put: # PUT is okay here as it replaces the password resource conceptually
+      summary: Change current user's password
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [old_password, new_password]
+              properties:
+                old_password:
+                  type: string
+                  format: password # Keep format for documentation
+                new_password:
+                  type: string
+                  format: password # Keep format for documentation
+      responses:
+        '200': # Or 204 No Content if nothing is returned
+          description: Password changed successfully.
+        '400':
+          description: Bad Request (e.g., incorrect old password, weak new password)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /orders:
     get:
@@ -57,61 +431,417 @@ paths:
       tags: [Orders]
       security:
         - bearerAuth: []
+      # Add Pagination, Filtering (by status?), Sorting (by date?)
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of orders to return.
+          schema:
+            type: integer
+            minimum: 1
+            default: 20
+        - name: offset
+          in: query
+          required: false
+          description: Number of orders to skip.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: status
+          in: query
+          required: false
+          description: Filter orders by status.
+          schema:
+            $ref: '#/components/schemas/OrderStatus'
+        - name: sort
+          in: query
+          required: false
+          description: Sort orders. e.g., 'created_at:desc'.
+          schema:
+            type: string
+            example: "created_at:desc"
       responses:
         '200':
-          description: List of orders
+          description: A list of the user's orders.
           content:
             application/json:
               schema:
-                type: array
+                type: array # Or wrap in object like /items for metadata
                 items:
                   $ref: '#/components/schemas/Order'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
     post:
-      summary: Place a new order
+      summary: Place a new order from the user's cart contents
       tags: [Orders]
       security:
         - bearerAuth: []
       requestBody:
         required: true
+        description: Details for the new order. Shipping address is required. Items might be derived from the cart server-side or passed explicitly. Assuming passed explicitly here based on previous schema.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewOrder'
+              $ref: '#/components/schemas/NewOrder' # Uses UserAddress and OrderItem with quantity now
       responses:
         '201':
-          description: Order placed
+          description: Order placed successfully. Returns the created order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order' # Return the created order
+          headers:
+            Location:
+              description: URL of the newly created order.
+              schema:
+                type: string
+                format: uri
+        '400':
+          description: Bad Request (e.g., invalid address, empty item list, item out of stock)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /orders/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID of the order to retrieve.
+        schema:
+          type: integer
+
+    get:
+      summary: Get details of a specific order
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Order details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          description: Unauthorized (User doesn't own this order)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Consider if only admins should update status, or if users can cancel?
+  # This assumes an admin/privileged user updates status.
+  /orders/{id}/status:
+    patch: # PATCH is suitable for updating just the status
+      summary: Update the status of an order (Admin action likely)
+      tags: [Orders]
+      security:
+        - bearerAuth: [] # Add specific scopes if using role-based access
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the order to update.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  $ref: '#/components/schemas/OrderStatus'
+      responses:
+        '200':
+          description: Order status updated successfully. Returns the updated order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order' # Return updated order
+        '400':
+          description: Bad Request (Invalid status transition?)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden (User doesn't have permission)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /cart:
     get:
-      summary: View current user's cart
+      summary: View current user's shopping cart
       tags: [Cart]
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: Cart contents
+          description: Cart contents. Returns an array of cart items.
           content:
             application/json:
               schema:
-                type: array
+                type: array # Consider a Cart object wrapper if you need total price, etc.
                 items:
                   $ref: '#/components/schemas/CartItem'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
     post:
-      summary: Add item to cart
+      summary: Add an item to the shopping cart
       tags: [Cart]
       security:
         - bearerAuth: []
       requestBody:
         required: true
+        description: Item and quantity to add to the cart.
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CartInsert'
       responses:
         '201':
-          description: Item added to cart
+          description: Item added to cart successfully. Returns the added/updated cart item.
+          # Add response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+        '400':
+          description: Bad Request (e.g., item not found, invalid quantity)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    # Added endpoint to clear the cart
+    delete:
+      summary: Clear all items from the shopping cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Cart cleared successfully. No content.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Added endpoints for managing individual cart items
+  /cart/items/{itemId}:
+    parameters:
+      - name: itemId
+        in: path
+        required: true
+        description: ID of the item in the cart.
+        schema:
+          type: integer
+
+    patch: # Use PATCH to update quantity
+      summary: Update quantity of an item in the cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        description: New quantity for the cart item.
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1 # Usually can't have 0 quantity, use DELETE instead
+      responses:
+        '200':
+          description: Quantity updated. Returns the updated cart item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+        '400':
+          description: Bad Request (e.g., invalid quantity)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Item not found in cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Remove an item from the cart
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Item removed successfully. No content.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Item not found in cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /cart/checkout:
+    post:
+      summary: Start checkout process (e.g., create Stripe session)
+      tags: [Cart]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Checkout session created successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_url: # Example for Stripe checkout
+                    type: string
+                    format: uri
+                    description: URL for the user to complete payment.
+        '400':
+          description: Bad Request (e.g., empty cart, items out of stock)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error (e.g., failed to connect to payment provider)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   securitySchemes:
@@ -121,20 +851,250 @@ components:
       bearerFormat: JWT
 
   schemas:
-    Item:
+    # --- Enums ---
+    GemSize:
+      type: string
+      enum: [mini, tini, midi, chonki]
+
+    GemShape:
+      type: string
+      enum: [choo, chaa, floopy, flippy]
+
+    JewelryType:
+      type: string
+      enum: [ring, necklace, earring]
+
+    Colors:
+      type: string
+      enum: [gold, silver]
+
+    OrderStatus:
+      type: string
+      enum: [pending, shipped, delivered, refunded, cancelled]
+
+    # --- Item Schemas (Polymorphism) ---
+
+    # 1. Base Item Schema (Common Properties)
+    ItemBase:
       type: object
       properties:
         id:
           type: integer
+          readOnly: true
+        gem_size:
+          $ref: '#/components/schemas/GemSize'
+        gem_shape:
+          $ref: '#/components/schemas/GemShape'
+        gem_name:
+          type: string
+        jewelry_type: # This is the discriminator property
+          $ref: '#/components/schemas/JewelryType'
+        item_name:
+          type: string
+          readOnly: true
+          description: Auto-generated as `gem_name + " " + jewelry_type` by the server.
+        price:
+          type: number
+          format: float # Be explicit about format
+        in_stock:
+          type: boolean
+        img_url:
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the item was created.
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Timestamp when the item was updated.
+        is_featured:
+          type: boolean
+        is_hidden:
+          type: boolean
+      required: # Define required fields for the base item
+        - gem_size
+        - gem_shape
+        - gem_name
+        - jewelry_type
+        - price
+        - in_stock
+        - img_url
+        - is_featured
+        - is_hidden
+
+    # 2. Specific Jewelry Type Schemas (Unique Properties)
+    RingDetails:
+      type: object
+      properties:
+        # Removed ring_id, assuming item 'id' is the unique identifier
+        ring_size:
+          type: number
+          format: float
+          description: Standard ring size.
+        ring_color:
+          $ref: '#/components/schemas/Colors'
+        ring_style:
+          type: string
+          description: Specific style of the ring (e.g., Solitaire, Halo).
+      required:
+        - ring_size
+        - ring_color
+        - ring_style
+
+    NecklaceDetails:
+      type: object
+      properties:
+        necklace_length:
+          type: number
+          format: float
+          description: Length of the necklace chain in cm or inches.
+        necklace_color:
+          $ref: '#/components/schemas/Colors'
+        necklace_style:
+          type: string
+          description: Specific style of the necklace (e.g., Pendant, Choker).
+      required:
+        - necklace_length
+        - necklace_color
+        - necklace_style
+
+    EarringDetails:
+      type: object
+      properties:
+        earring_size: # Renamed from 'earring_size' for clarity if needed, or keep as is
+          type: number
+          format: float
+          description: Size dimension (e.g., diameter, length).
+        earring_color:
+          $ref: '#/components/schemas/Colors'
+        earring_style:
+          type: string
+          description: Specific style of the earring (e.g., Stud, Hoop, Dangle).
+      required:
+        - earring_size
+        - earring_color
+        - earring_style
+
+    # 3. Combined Item Schemas using allOf
+    ItemRing:
+      allOf: # Combines ItemBase and RingDetails
+        - $ref: '#/components/schemas/ItemBase'
+        - $ref: '#/components/schemas/RingDetails'
+
+    ItemNecklace:
+      allOf: # Combines ItemBase and NecklaceDetails
+        - $ref: '#/components/schemas/ItemBase'
+        - $ref: '#/components/schemas/NecklaceDetails'
+
+    ItemEarring:
+      allOf: # Combines ItemBase and EarringDetails
+        - $ref: '#/components/schemas/ItemBase'
+        - $ref: '#/components/schemas/EarringDetails'
+
+    # 4. Top-Level Item Schema using oneOf and discriminator
+    Item:
+      oneOf: # An item must be exactly one of these types
+        - $ref: '#/components/schemas/ItemRing'
+        - $ref: '#/components/schemas/ItemNecklace'
+        - $ref: '#/components/schemas/ItemEarring'
+      discriminator: # Tells tools how to determine the type
+        propertyName: jewelry_type # The property containing the type name
+        mapping: # Maps the property value to the schema
+          ring: '#/components/schemas/ItemRing'
+          necklace: '#/components/schemas/ItemNecklace'
+          earring: '#/components/schemas/ItemEarring'
+
+    # --- Item Input/Update Schemas ---
+    # Note: Handling polymorphism in input/update can be complex.
+    # Option 1: Keep input simple (as below), server derives details.
+    # Option 2: Use oneOf/discriminator in input schemas too. Requires client to know the type.
+    # Keeping Option 1 for simplicity for now.
+
+    NewItemInput: # Input for creating any item type (server handles details based on jewelry_type)
+      type: object
+      # Add properties from ItemBase that are settable on creation
+      properties:
+        gem_size:
+          $ref: '#/components/schemas/GemSize'
+        gem_shape:
+          $ref: '#/components/schemas/GemShape'
         gem_name:
           type: string
         jewelry_type:
-          type: string
+          $ref: '#/components/schemas/JewelryType'
         price:
           type: number
+          format: float
         in_stock:
           type: boolean
+        img_url:
+          type: string
+          format: uri
+        is_featured:
+          type: boolean
+        is_hidden:
+          type: boolean
+        # Add properties for RingDetails, NecklaceDetails, EarringDetails here
+        # These would be *optional* and only relevant based on jewelry_type
+        # Example:
+        ring_size:
+          type: number
+          format: float
+          description: Required if jewelry_type is 'ring'.
+        ring_color:
+          $ref: '#/components/schemas/Colors'
+          description: Required if jewelry_type is 'ring'.
+        # ... add other specific properties similarly ...
+      required: # Base required fields
+        - gem_size
+        - gem_shape
+        - gem_name
+        - jewelry_type
+        - price
+        - in_stock
+        - img_url
+        - is_featured
+        - is_hidden
+      # Add note: Server-side validation needed to ensure specific properties (ring_size etc.) are provided based on jewelry_type
 
+    PartialItemUpdate: # Input for partially updating any item type
+      type: object
+      properties:
+        # Include all properties from NewItemInput, but make them optional
+        gem_size:
+          $ref: '#/components/schemas/GemSize'
+        gem_shape:
+          $ref: '#/components/schemas/GemShape'
+        gem_name:
+          type: string
+        jewelry_type: # Usually type is not updatable, but depends on design
+          $ref: '#/components/schemas/JewelryType'
+        price:
+          type: number
+          format: float
+        in_stock:
+          type: boolean
+        img_url:
+          type: string
+          format: uri
+        is_featured:
+          type: boolean
+        is_hidden:
+          type: boolean
+        # Include optional specific properties
+        ring_size:
+          type: number
+          format: float
+        ring_color:
+          $ref: '#/components/schemas/Colors'
+        # ... etc ...
+      # No 'required' fields for PATCH, as any subset can be sent.
+
+    # --- Auth Schemas ---
     LoginRequest:
       type: object
       required: [email, password]
@@ -153,67 +1113,169 @@ components:
           $ref: '#/components/schemas/User'
         token:
           type: string
+          description: JWT token for subsequent authenticated requests.
+
+    # --- User Schemas ---
+    UserAddress:
+      type: object
+      properties:
+        street:
+          type: string # Explicit type definition
+        city:
+          type: string
+        zip:
+          type: string
+        country:
+          type: string
+      required: # Define required address fields
+        - street
+        - city
+        - zip
+        - country
 
     User:
       type: object
       properties:
         id:
           type: integer
+          readOnly: true
         username:
           type: string
         email:
           type: string
+          format: email # Add format
         role:
           type: string
+          description: User role (e.g., 'customer', 'admin')
+          readOnly: true # Role likely not settable by user directly
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        address:
+          $ref: '#/components/schemas/UserAddress'
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
 
-    NewOrder:
+    PartialUserUpdate: # Fields a user can update about themselves
       type: object
-      required: [shipping_address, items]
+      properties:
+        username:
+          type: string
+        email: # Allow email update? Might need verification flow.
+          type: string
+          format: email
+        address:
+          $ref: '#/components/schemas/UserAddress'
+      # No required fields for PATCH
+
+    # --- Order Schemas ---
+    NewOrder: # Input for creating an order
+      type: object
+      required: [shipping_address, items] # Ensure items are required
       properties:
         shipping_address:
-          type: string
+          $ref: '#/components/schemas/UserAddress' # Use structured address
         items:
           type: array
+          minItems: 1 # Order must have at least one item
           items:
-            $ref: '#/components/schemas/OrderItem'
+            $ref: '#/components/schemas/OrderItemInput' # Use specific input schema if needed, or OrderItem if structure is same
 
-    Order:
+    Order: # Represents a placed order
       type: object
       properties:
         id:
           type: integer
+          readOnly: true
+        user_id: # Good to include which user placed the order
+          type: integer
+          readOnly: true
         status:
-          type: string
+          $ref: '#/components/schemas/OrderStatus'
         total:
           type: number
+          format: float
+          readOnly: true # Usually calculated server-side
+        shipping_address: # Include the address the order was shipped to
+          $ref: '#/components/schemas/UserAddress'
+          readOnly: true
         created_at:
           type: string
           format: date-time
+          readOnly: true
+        updated_at: # Track status updates etc.
+           type: string
+           format: date-time
+           readOnly: true
         items:
           type: array
           items:
-            $ref: '#/components/schemas/OrderItem'
+            $ref: '#/components/schemas/OrderItem' # Represents items within a placed order
 
-    OrderItem:
+    OrderItem: # Item details within a placed order
       type: object
       properties:
         item_id:
           type: integer
-        price_at_purchase:
+        quantity:
+          type: integer # Changed from number to integer
+          minimum: 1
+        price_at_purchase: # Price when the order was placed
           type: number
+          format: float
+        item_name:
+          type: string
+        item_snapshot:
+          type: object
+          properties:
+             item_name: { type: string }
+             gem_name: { type: string }
+             # ... other relevant fields ...
+          readOnly: true
+      required:
+        - item_id
+        - quantity
+        - price_at_purchase
 
-    CartItem:
+    OrderItemInput: # If input structure differs from OrderItem (e.g., no price_at_purchase)
+       type: object
+       required: [item_id, quantity]
+       properties:
+         item_id:
+           type: integer
+         quantity:
+           type: integer
+           minimum: 1
+
+    # --- Cart Schemas ---
+    CartItem: # Represents an item in the user's cart
       type: object
       properties:
         item_id:
           type: integer
         quantity:
           type: integer
+          minimum: 1
         added_at:
           type: string
           format: date-time
+          readOnly: true
+        # Optionally include item details for display in cart
+        item_details:
+           $ref: '#/components/schemas/Item' # Or a subset for cart display
+           readOnly: true
+      required:
+        - item_id
+        - quantity
 
-    CartInsert:
+    CartInsert: # Input for adding/updating cart item (used by POST /cart)
       type: object
       required: [item_id, quantity]
       properties:
@@ -221,3 +1283,24 @@ components:
           type: integer
         quantity:
           type: integer
+          minimum: 1 # Can't add 0 items
+
+    # --- Standard Error Response Schema ---
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Application-specific error code (optional).
+          example: "INVALID_INPUT"
+        message:
+          type: string
+          description: Human-readable description of the error.
+          example: "Validation failed: Email format is invalid."
+        details: # Optional field for more specific error info (e.g., validation errors)
+          type: object
+          additionalProperties: true # Allows arbitrary key-value pairs
+          example: { "field": "email", "issue": "Format must be user@example.com" }
+      required:
+        - message
+
