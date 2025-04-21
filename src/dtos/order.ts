@@ -23,54 +23,6 @@ export class Order {
     'created_at'?: Date;
     'updated_at'?: Date;
     'items'?: Array<OrderItem>;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "id",
-            "baseName": "id",
-            "type": "number"
-        },
-        {
-            "name": "user_id",
-            "baseName": "user_id",
-            "type": "number"
-        },
-        {
-            "name": "status",
-            "baseName": "status",
-            "type": "OrderStatus"
-        },
-        {
-            "name": "total",
-            "baseName": "total",
-            "type": "number"
-        },
-        {
-            "name": "shipping_address",
-            "baseName": "shipping_address",
-            "type": "UserAddress"
-        },
-        {
-            "name": "created_at",
-            "baseName": "created_at",
-            "type": "Date"
-        },
-        {
-            "name": "updated_at",
-            "baseName": "updated_at",
-            "type": "Date"
-        },
-        {
-            "name": "items",
-            "baseName": "items",
-            "type": "Array<OrderItem>"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return Order.attributeTypeMap;
-    }
 }
 
 export namespace Order {

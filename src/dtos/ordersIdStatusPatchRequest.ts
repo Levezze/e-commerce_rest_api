@@ -14,19 +14,6 @@ import { OrderStatus } from './orderStatus';
 
 export class OrdersIdStatusPatchRequest {
     'status': OrderStatus;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "status",
-            "baseName": "status",
-            "type": "OrderStatus"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return OrdersIdStatusPatchRequest.attributeTypeMap;
-    }
 }
 
 export namespace OrdersIdStatusPatchRequest {

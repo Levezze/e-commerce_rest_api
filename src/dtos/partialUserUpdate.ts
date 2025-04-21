@@ -16,28 +16,5 @@ export class PartialUserUpdate {
     'username'?: string;
     'email'?: string;
     'address'?: UserAddress;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "username",
-            "baseName": "username",
-            "type": "string"
-        },
-        {
-            "name": "email",
-            "baseName": "email",
-            "type": "string"
-        },
-        {
-            "name": "address",
-            "baseName": "address",
-            "type": "UserAddress"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return PartialUserUpdate.attributeTypeMap;
-    }
 }
 

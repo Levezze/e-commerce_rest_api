@@ -14,23 +14,5 @@
 export class OrderItemItemSnapshot {
     'item_name'?: string;
     'gem_name'?: string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "item_name",
-            "baseName": "item_name",
-            "type": "string"
-        },
-        {
-            "name": "gem_name",
-            "baseName": "gem_name",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return OrderItemItemSnapshot.attributeTypeMap;
-    }
 }
 

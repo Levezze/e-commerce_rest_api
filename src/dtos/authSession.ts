@@ -18,23 +18,5 @@ export class AuthSession {
     * JWT token for subsequent authenticated requests.
     */
     'token'?: string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "user",
-            "baseName": "user",
-            "type": "User"
-        },
-        {
-            "name": "token",
-            "baseName": "token",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return AuthSession.attributeTypeMap;
-    }
 }
 

@@ -22,29 +22,6 @@ export class EarringDetails {
     * Specific style of the earring (e.g., Stud, Hoop, Dangle).
     */
     'earring_style': string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "earring_size",
-            "baseName": "earring_size",
-            "type": "number"
-        },
-        {
-            "name": "earring_color",
-            "baseName": "earring_color",
-            "type": "Colors"
-        },
-        {
-            "name": "earring_style",
-            "baseName": "earring_style",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return EarringDetails.attributeTypeMap;
-    }
 }
 
 export namespace EarringDetails {

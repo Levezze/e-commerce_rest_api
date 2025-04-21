@@ -16,33 +16,5 @@ export class UserAddress {
     'city': string;
     'zip': string;
     'country': string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "street",
-            "baseName": "street",
-            "type": "string"
-        },
-        {
-            "name": "city",
-            "baseName": "city",
-            "type": "string"
-        },
-        {
-            "name": "zip",
-            "baseName": "zip",
-            "type": "string"
-        },
-        {
-            "name": "country",
-            "baseName": "country",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return UserAddress.attributeTypeMap;
-    }
 }
 

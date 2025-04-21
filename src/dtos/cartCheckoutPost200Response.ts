@@ -16,18 +16,5 @@ export class CartCheckoutPost200Response {
     * URL for the user to complete payment.
     */
     'session_url'?: string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "session_url",
-            "baseName": "session_url",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return CartCheckoutPost200Response.attributeTypeMap;
-    }
 }
 

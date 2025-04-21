@@ -22,29 +22,6 @@ export class RingDetails {
     * Specific style of the ring (e.g., Solitaire, Halo).
     */
     'ring_style': string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "ring_size",
-            "baseName": "ring_size",
-            "type": "number"
-        },
-        {
-            "name": "ring_color",
-            "baseName": "ring_color",
-            "type": "Colors"
-        },
-        {
-            "name": "ring_style",
-            "baseName": "ring_style",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return RingDetails.attributeTypeMap;
-    }
 }
 
 export namespace RingDetails {

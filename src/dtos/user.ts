@@ -20,57 +20,8 @@ export class User {
     * User role (e.g., \'customer\', \'admin\')
     */
     'role'?: string;
-    'created_at'?: Date;
-    'updated_at'?: Date;
+    'created_at'?: string;
+    'updated_at'?: string;
     'address'?: UserAddress;
-    'last_login'?: Date;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "id",
-            "baseName": "id",
-            "type": "number"
-        },
-        {
-            "name": "username",
-            "baseName": "username",
-            "type": "string"
-        },
-        {
-            "name": "email",
-            "baseName": "email",
-            "type": "string"
-        },
-        {
-            "name": "role",
-            "baseName": "role",
-            "type": "string"
-        },
-        {
-            "name": "created_at",
-            "baseName": "created_at",
-            "type": "Date"
-        },
-        {
-            "name": "updated_at",
-            "baseName": "updated_at",
-            "type": "Date"
-        },
-        {
-            "name": "address",
-            "baseName": "address",
-            "type": "UserAddress"
-        },
-        {
-            "name": "last_login",
-            "baseName": "last_login",
-            "type": "Date"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return User.attributeTypeMap;
-    }
+    'last_login'?: string;
 }
-

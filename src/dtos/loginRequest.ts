@@ -14,23 +14,5 @@
 export class LoginRequest {
     'email': string;
     'password': string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "email",
-            "baseName": "email",
-            "type": "string"
-        },
-        {
-            "name": "password",
-            "baseName": "password",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return LoginRequest.attributeTypeMap;
-    }
 }
 

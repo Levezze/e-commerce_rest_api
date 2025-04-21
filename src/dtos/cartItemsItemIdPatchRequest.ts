@@ -13,18 +13,5 @@
 
 export class CartItemsItemIdPatchRequest {
     'quantity': number;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "quantity",
-            "baseName": "quantity",
-            "type": "number"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return CartItemsItemIdPatchRequest.attributeTypeMap;
-    }
 }
 

@@ -27,69 +27,6 @@ export class PartialItemUpdate {
     'is_hidden'?: boolean;
     'ring_size'?: number;
     'ring_color'?: Colors;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "gem_size",
-            "baseName": "gem_size",
-            "type": "GemSize"
-        },
-        {
-            "name": "gem_shape",
-            "baseName": "gem_shape",
-            "type": "GemShape"
-        },
-        {
-            "name": "gem_name",
-            "baseName": "gem_name",
-            "type": "string"
-        },
-        {
-            "name": "jewelry_type",
-            "baseName": "jewelry_type",
-            "type": "JewelryType"
-        },
-        {
-            "name": "price",
-            "baseName": "price",
-            "type": "number"
-        },
-        {
-            "name": "in_stock",
-            "baseName": "in_stock",
-            "type": "boolean"
-        },
-        {
-            "name": "img_url",
-            "baseName": "img_url",
-            "type": "string"
-        },
-        {
-            "name": "is_featured",
-            "baseName": "is_featured",
-            "type": "boolean"
-        },
-        {
-            "name": "is_hidden",
-            "baseName": "is_hidden",
-            "type": "boolean"
-        },
-        {
-            "name": "ring_size",
-            "baseName": "ring_size",
-            "type": "number"
-        },
-        {
-            "name": "ring_color",
-            "baseName": "ring_color",
-            "type": "Colors"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return PartialItemUpdate.attributeTypeMap;
-    }
 }
 
 export namespace PartialItemUpdate {

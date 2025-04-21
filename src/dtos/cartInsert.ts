@@ -14,23 +14,5 @@
 export class CartInsert {
     'item_id': number;
     'quantity': number;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "item_id",
-            "baseName": "item_id",
-            "type": "number"
-        },
-        {
-            "name": "quantity",
-            "baseName": "quantity",
-            "type": "number"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return CartInsert.attributeTypeMap;
-    }
 }
 

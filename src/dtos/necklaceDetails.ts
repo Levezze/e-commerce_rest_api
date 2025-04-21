@@ -22,29 +22,6 @@ export class NecklaceDetails {
     * Specific style of the necklace (e.g., Pendant, Choker).
     */
     'necklace_style': string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "necklace_length",
-            "baseName": "necklace_length",
-            "type": "number"
-        },
-        {
-            "name": "necklace_color",
-            "baseName": "necklace_color",
-            "type": "Colors"
-        },
-        {
-            "name": "necklace_style",
-            "baseName": "necklace_style",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return NecklaceDetails.attributeTypeMap;
-    }
 }
 
 export namespace NecklaceDetails {

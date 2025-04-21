@@ -17,33 +17,5 @@ export class CartItem {
     'quantity': number;
     'added_at'?: Date;
     'item_details'?: Item;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "item_id",
-            "baseName": "item_id",
-            "type": "number"
-        },
-        {
-            "name": "quantity",
-            "baseName": "quantity",
-            "type": "number"
-        },
-        {
-            "name": "added_at",
-            "baseName": "added_at",
-            "type": "Date"
-        },
-        {
-            "name": "item_details",
-            "baseName": "item_details",
-            "type": "Item"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return CartItem.attributeTypeMap;
-    }
 }
 

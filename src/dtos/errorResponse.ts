@@ -21,28 +21,5 @@ export class ErrorResponse {
     */
     'message': string;
     'details'?: { [key: string]: any; };
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "code",
-            "baseName": "code",
-            "type": "string"
-        },
-        {
-            "name": "message",
-            "baseName": "message",
-            "type": "string"
-        },
-        {
-            "name": "details",
-            "baseName": "details",
-            "type": "{ [key: string]: any; }"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return ErrorResponse.attributeTypeMap;
-    }
 }
 

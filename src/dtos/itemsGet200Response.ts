@@ -18,23 +18,5 @@ export class ItemsGet200Response {
     */
     'total_count'?: number;
     'items'?: Array<Item>;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "total_count",
-            "baseName": "total_count",
-            "type": "number"
-        },
-        {
-            "name": "items",
-            "baseName": "items",
-            "type": "Array<Item>"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return ItemsGet200Response.attributeTypeMap;
-    }
 }
 

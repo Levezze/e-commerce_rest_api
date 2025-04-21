@@ -14,23 +14,5 @@
 export class AuthChangePasswordPutRequest {
     'old_password': string;
     'new_password': string;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "old_password",
-            "baseName": "old_password",
-            "type": "string"
-        },
-        {
-            "name": "new_password",
-            "baseName": "new_password",
-            "type": "string"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return AuthChangePasswordPutRequest.attributeTypeMap;
-    }
 }
 

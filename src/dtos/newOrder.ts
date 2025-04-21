@@ -16,23 +16,5 @@ import { UserAddress } from './userAddress';
 export class NewOrder {
     'shipping_address': UserAddress;
     'items': Array<OrderItemInput>;
-
-    static discriminator: string | undefined = undefined;
-
-    static attributeTypeMap: Array<{name: string, baseName: string, type: string}> = [
-        {
-            "name": "shipping_address",
-            "baseName": "shipping_address",
-            "type": "UserAddress"
-        },
-        {
-            "name": "items",
-            "baseName": "items",
-            "type": "Array<OrderItemInput>"
-        }    ];
-
-    static getAttributeTypeMap() {
-        return NewOrder.attributeTypeMap;
-    }
 }
 
