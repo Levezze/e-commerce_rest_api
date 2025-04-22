@@ -241,6 +241,49 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /auth/register:
+    post:
+      summary: Register new user with username, email, and password
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserInput'
+      responses:
+        '201':
+          description: User created successfully. Return new user data (without password).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        # Use Standard Error Response for Auth errors where applicable
+        '401':
+          description: Unauthorized (Invalid credentials)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+           description: Bad Request (e.g., missing fields, invalid input)
+           content:
+             application/json:
+               schema:
+                 $ref: '#/components/schemas/ErrorResponse'
+        '409':
+           description: Conflict (e.g., email or username already exists)
+           content:
+             application/json:
+               schema:
+                 $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /auth/login:
     post:
       summary: Log in with email and password
@@ -1162,6 +1205,11 @@ components:
           type: string
           format: date-time
           readOnly: true
+      required: # Define required address fields
+        - id
+        - username
+        - email
+        - role
 
     PartialUserUpdate: # Fields a user can update about themselves
       type: object
@@ -1174,6 +1222,23 @@ components:
         address:
           $ref: '#/components/schemas/UserAddress'
       # No required fields for PATCH
+
+    RegisterUser:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email # Add format
+        password:
+          type: string
+          format: password
+          minLength: 8
+      required: # Define required address fields
+        - username
+        - email
+        - password
 
     # --- Order Schemas ---
     NewOrder: # Input for creating an order

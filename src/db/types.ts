@@ -97,6 +97,7 @@ export interface Tags {
 
 export interface Users {
   created_at: Generated<Timestamp>;
+  updated_at: Generated<Timestamp>;
   email: string;
   id: Generated<number>;
   is_active: Generated<boolean | null>;

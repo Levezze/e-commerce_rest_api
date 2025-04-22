@@ -1,14 +1,21 @@
-import { db } from '../../db/index';
+import { Insertable, Selectable } from 'kysely';
 import bcrypt from 'bcrypt';
+import * as jose from 'jose';
+import { db } from '../../db/index';
+import { Users } from '../../db/types';
 import { logger } from '../utils/logger';
 import { User } from '../../dtos/user';
+import { RegisterUser } from '../../dtos/registerUser';
 
+type NewUserForDb = Insertable<Users>; // What Kysely expects for .values()
+type DbUser = Selectable<Users>; // What Kysely returns from .returningAll()
 
 export const verifyCredentials = async (
   email: string,
   password: string
 ): Promise<User | null> => {
-  const userFromDb = await db.selectFrom('users')
+  let query = db.selectFrom('users');
+  const userFromDb = await query
     .where('email', '=', email)
     .selectAll ()
     .executeTakeFirst();
@@ -48,4 +55,86 @@ export const verifyCredentials = async (
     logger.info(`Login failed: Invalid password`);
     return null;
   };
+};
+
+export const generateJwtToken = async (user: User): Promise<string> => {
+  logger.info(`Generating token for user ID: ${user.id}`);
+  try {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      logger.error('JWT_SECRET env variable is not set!');
+      throw new Error('JWT secret is not configured');
+    };
+    const secretKey = new TextEncoder().encode(secret);
+    const algorithm = 'HS256';
+
+    const payload = {
+      sub: user.id.toString(),
+      role: user.role,
+      email: user.email,
+    };
+
+    const token = await new jose.SignJWT(payload)
+      .setProtectedHeader({ alg: algorithm })
+      .setIssuedAt()
+      .setSubject(user.id.toString())
+      .setExpirationTime('24h')
+      .setIssuer('ErinWongJewelry')
+      .sign(secretKey)
+    
+    logger.info(`Token generated successfully for user ID: ${user.id}`);
+    return token;
+  } catch (error) {
+    logger.error('Error generating JWT', error);
+    throw new Error('Failed to generate authentication token.');
+  };
+};
+
+export const registerUser = async (userData: RegisterUser) => {
+  try {
+    const userFromDb = await db.selectFrom('users')
+      .where('email', '=', userData.email)
+      .selectAll ()
+      .executeTakeFirst();
+  
+    if (userFromDb) {
+      logger.error(`User with email: ${userData.email} already exists.`)
+      throw new Error('EMAIL_EXISTS');
+    };
+
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(userData.password, saltRounds);
+
+    const newUserDbData: Omit<NewUserForDb,
+      'id' | 'created_at' | 'is_active' | 'last_login' | 'password_reset_expires' | 'password_reset_token'
+      > = {
+        username = userData.username,
+        email = userData.email,
+        password = hash,
+        user_role = 'customer'
+      };
+        
+    const registerResult: DbUser = await db.insertInto('users')
+      .values(newUserDbData)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    
+    logger.info(`User registered successfully: ${registerResult.email} (ID: ${registerResult.id})`);
+
+    const userDto: Omit<User, 'address'> = {
+      id: registerResult.id,
+      username: registerResult.username,
+      email: registerResult.email,
+      role: registerResult.user_role,
+      created_at: registerResult.created_at.toISOString(),
+      updated_at: registerResult.updated_at.toISOString(),
+      last_login: registerResult.last_login?.toISOString(),
+    }
+
+    return userDto;
+  } catch (error: any) {
+    logger.error('Error during user registration:', error);
+    if (error.message === 'EMAIL_EXISTS') throw error;
+    throw new Error('User registration failed due to an unexpected error.');
+  }
 };

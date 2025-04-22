@@ -13,13 +13,13 @@
 import { UserAddress } from './userAddress';
 
 export class User {
-    'id'?: number;
-    'username'?: string;
-    'email'?: string;
+    'id': number;
+    'username': string;
+    'email': string;
     /**
     * User role (e.g., \'customer\', \'admin\')
     */
-    'role'?: string;
+    'role': string;
     'created_at'?: string;
     'updated_at'?: string;
     'address'?: UserAddress;

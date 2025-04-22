@@ -85,6 +85,7 @@ CREATE TABLE users (
   last_login timestamp,
   user_role user_roles NOT NULL,
   created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updated_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
   password_reset_token text,
   password_reset_expires timestamp
 );
