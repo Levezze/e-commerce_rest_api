@@ -1199,8 +1199,8 @@ components:
           type: string
           format: date-time
           readOnly: true
-        address:
-          $ref: '#/components/schemas/UserAddress'
+        # address:
+        #   $ref: '#/components/schemas/UserAddress'
         last_login:
           type: string
           format: date-time

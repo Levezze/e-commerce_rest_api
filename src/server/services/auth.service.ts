@@ -108,10 +108,10 @@ export const registerUser = async (userData: RegisterUser) => {
     const newUserDbData: Omit<NewUserForDb,
       'id' | 'created_at' | 'is_active' | 'last_login' | 'password_reset_expires' | 'password_reset_token'
       > = {
-        username = userData.username,
-        email = userData.email,
-        password = hash,
-        user_role = 'customer'
+        username: userData.username,
+        email: userData.email,
+        password: hash,
+        user_role: 'customer'
       };
         
     const registerResult: DbUser = await db.insertInto('users')
@@ -121,7 +121,7 @@ export const registerUser = async (userData: RegisterUser) => {
     
     logger.info(`User registered successfully: ${registerResult.email} (ID: ${registerResult.id})`);
 
-    const userDto: Omit<User, 'address'> = {
+    const userDto: User = {
       id: registerResult.id,
       username: registerResult.username,
       email: registerResult.email,

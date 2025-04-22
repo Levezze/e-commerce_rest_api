@@ -10,8 +10,6 @@
  * Do not edit the class manually.
  */
 
-import { UserAddress } from './userAddress';
-
 export class User {
     'id': number;
     'username': string;
@@ -22,6 +20,5 @@ export class User {
     'role': string;
     'created_at'?: string;
     'updated_at'?: string;
-    'address'?: UserAddress;
     'last_login'?: string;
 }
