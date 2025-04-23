@@ -17,4 +17,3 @@ export const validateRequestBody = (schema: AnyZodObject) =>
       next(error);
     };
   };
-

@@ -91,7 +91,7 @@ export const generateJwtToken = async (user: User): Promise<string> => {
 };
 
 export const registerUser = async (userData: RegisterUser): Promise<User> => {
-  logger.info(`Registration attempt for email: ${userData.email}`);
+  logger.info(`Service: Registration attempt for email: ${userData.email}`);
   try {
     const userFromDb = await db.selectFrom('users')
       .where('email', '=', userData.email)
@@ -147,5 +147,6 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
     logger.error('Error during user registration:', error);
     if (error.message === 'EMAIL_EXISTS') throw error;
     throw new Error('User registration failed due to an unexpected error.');
-  }
+  };
 };
+
