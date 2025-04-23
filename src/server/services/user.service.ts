@@ -65,3 +65,30 @@ export const getAllDbUsers = async () => {
     throw new Error(`Database error while fetching all users.`);
   };
 };
+
+export const deleteUserById = async (id: number) => {
+  logger.debug(`Service: Attempting to delete user with ID: ${id}`);
+  try {
+    const dbUser = await db.selectFrom('users')
+      .where('id', '=', id)
+      .select(['id', 'username', 'email', 'user_role'])
+      .executeTakeFirst();
+
+    if (!dbUser) {
+      logger.warn(`Service: User with ID: ${id} not found.`);
+      return null;
+    };
+
+    if (dbUser.username = 'admin') {
+      logger.warn(`Service: Can't delete admin user.`);
+      return null;
+    };
+    
+    logger.debug(`User ${dbUser?.email} was found.`);
+    await db.deleteFrom('users')
+      .where('id', '=', id)
+      .execute(); 
+
+    
+  }
+}

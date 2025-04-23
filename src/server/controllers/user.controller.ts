@@ -13,3 +13,11 @@ export const handleGetUsers = async (
     next(error);
   };
 };
+
+export const handleDeleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+
+};
