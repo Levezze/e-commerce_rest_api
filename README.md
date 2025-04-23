@@ -37,6 +37,7 @@ You can view the interactive documentation by pasting the contents of `openapi.y
 
 ## Project Structure
 
+```bash
 e-commerce_rest_api/
 ├─ db/
 │  └─ schema.sql         # SQL schema definition (reference/manual setup)
@@ -63,6 +64,7 @@ e-commerce_rest_api/
 ├─ package-lock.json      # Dependency lock file
 ├─ README.md              # This file
 └─ tsconfig.json          # TypeScript compiler configuration
+```
 
 ## Setup and Installation
 
