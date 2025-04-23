@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import { Colors } from './colors';
+import { Colors } from './colors.js';
 
 export class NecklaceDetails {
     /**

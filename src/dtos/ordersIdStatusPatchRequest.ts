@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import { OrderStatus } from './orderStatus';
+import { OrderStatus } from './orderStatus.js';
 
 export class OrdersIdStatusPatchRequest {
     'status': OrderStatus;

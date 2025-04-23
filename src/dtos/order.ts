@@ -10,9 +10,9 @@
  * Do not edit the class manually.
  */
 
-import { OrderItem } from './orderItem';
-import { OrderStatus } from './orderStatus';
-import { UserAddress } from './userAddress';
+import { OrderItem } from './orderItem.js';
+import { OrderStatus } from './orderStatus.js';
+import { UserAddress } from './userAddress.js';
 
 export class Order {
     'id'?: number;

@@ -10,9 +10,9 @@
  * Do not edit the class manually.
  */
 
-import { GemShape } from './gemShape';
-import { GemSize } from './gemSize';
-import { JewelryType } from './jewelryType';
+import { GemShape } from './gemShape.js';
+import { GemSize } from './gemSize.js';
+import { JewelryType } from './jewelryType.js';
 
 export class ItemBase {
     'id'?: number;

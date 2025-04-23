@@ -1,12 +1,12 @@
 import { Kysely, PostgresDialect } from 'kysely';
-import { DB } from './types';
-import { Pool } from 'pg';
+import { DB } from './types.js';
+import pg from 'pg';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
 const dialect = new PostgresDialect({
-  pool: new Pool({
+  pool: new pg.Pool({
     connectionString: process.env.DATABASE_URL,
     max: 10,
   }),

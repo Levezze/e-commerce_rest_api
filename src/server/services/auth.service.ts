@@ -1,11 +1,11 @@
 import { Insertable, Selectable } from 'kysely';
 import bcrypt from 'bcrypt';
 import * as jose from 'jose';
-import { db } from '../../db/index';
-import { Users } from '../../db/types';
-import { logger } from '../utils/logger';
-import { User } from '../../dtos/user';
-import { RegisterUser } from '../../dtos/registerUser';
+import { db } from '../../db/index.js';
+import { Users } from '../../db/types.js';
+import { logger } from '../utils/logger.js';
+import { User } from '../../dtos/user.js';
+import { RegisterUser } from '../../dtos/registerUser.js';
 
 type NewUserForDb = Insertable<Users>; // What Kysely expects for .values()
 type DbUser = Selectable<Users>; // What Kysely returns from .returningAll()
@@ -90,7 +90,8 @@ export const generateJwtToken = async (user: User): Promise<string> => {
   };
 };
 
-export const registerUser = async (userData: RegisterUser) => {
+export const registerUser = async (userData: RegisterUser): Promise<User> => {
+  logger.info(`Registration attempt for email: ${userData.email}`);
   try {
     const userFromDb = await db.selectFrom('users')
       .where('email', '=', userData.email)
@@ -114,9 +115,19 @@ export const registerUser = async (userData: RegisterUser) => {
         user_role: 'customer'
       };
         
-    const registerResult: DbUser = await db.insertInto('users')
+    const columnsToReturn = [
+      'id', 
+      'username', 
+      'email', 
+      'user_role',
+      'created_at', 
+      'updated_at', 
+      'last_login'
+    ] as const;
+
+    const registerResult = await db.insertInto('users')
       .values(newUserDbData)
-      .returningAll()
+      .returning(columnsToReturn)
       .executeTakeFirstOrThrow()
     
     logger.info(`User registered successfully: ${registerResult.email} (ID: ${registerResult.id})`);

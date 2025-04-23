@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import { OrderItemItemSnapshot } from './orderItemItemSnapshot';
+import { OrderItemItemSnapshot } from './orderItemItemSnapshot.js';
 
 export class OrderItem {
     'item_id': number;

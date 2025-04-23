@@ -5,6 +5,10 @@ info:
   description: REST API for a jewelry e-commerce application
   # Consider adding contact, license, termsOfService here
 
+servers:
+  - url: /api/v1
+    description: API Version 1
+
 paths:
   /items:
     get:

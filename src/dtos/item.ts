@@ -10,13 +10,13 @@
  * Do not edit the class manually.
  */
 
-import { Colors } from './colors';
-import { GemShape } from './gemShape';
-import { GemSize } from './gemSize';
-import { ItemEarring } from './itemEarring';
-import { ItemNecklace } from './itemNecklace';
-import { ItemRing } from './itemRing';
-import { JewelryType } from './jewelryType';
+import { Colors } from './colors.js';
+import { GemShape } from './gemShape.js';
+import { GemSize } from './gemSize.js';
+import { ItemEarring } from './itemEarring.js';
+import { ItemNecklace } from './itemNecklace.js';
+import { ItemRing } from './itemRing.js';
+import { JewelryType } from './jewelryType.js';
 
 export class Item {
     'id'?: number;

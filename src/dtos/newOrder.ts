@@ -10,8 +10,8 @@
  * Do not edit the class manually.
  */
 
-import { OrderItemInput } from './orderItemInput';
-import { UserAddress } from './userAddress';
+import { OrderItemInput } from './orderItemInput.js';
+import { UserAddress } from './userAddress.js';
 
 export class NewOrder {
     'shipping_address': UserAddress;

@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import { Item } from './item';
+import { Item } from './item.js';
 
 export class ItemsGet200Response {
     /**

@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import { UserAddress } from './userAddress';
+import { UserAddress } from './userAddress.js';
 
 export class PartialUserUpdate {
     'username'?: string;
