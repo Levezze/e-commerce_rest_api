@@ -51,12 +51,12 @@ export const handleGetMe = async (req: Request, res: Response, next: NextFunctio
   try {
     const userIdString = userPayload?.sub;
     if (!userIdString) {
-      res.status(500).json({ message: 'Error retrieving user ID' });
+      res.status(401).json({ message: 'Unauthorized: Invalid token payload (missing sub).' });
       return;
     };
     const userId = parseInt(userIdString, 10);
     if (isNaN(userId)) {
-      res.status(500).json({ message: 'Error retrieving user ID' });
+      res.status(401).json({ message: 'Unauthorized: Invalid token payload (missing sub).' });
       return;
     };
 

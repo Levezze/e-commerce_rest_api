@@ -4,12 +4,12 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "dev:serve": "nodemon --quiet --exec \"tsx src/server/index.ts | pino-pretty\"",
+    "dev:serve": "nodemon --quiet --exec \"tsx -r dotenv/config src/server/index.ts | pino-pretty\"",
     "dev:typecheck": "tsc --noEmit --watch --preserveWatchOutput",
     "dev": "npm-run-all --parallel dev:serve dev:typecheck",
     "generate-db-types": "kysely-codegen --dialect postgres --out-file ./src/db/types.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node -r dotenv/config dist/server/index.js",
     "clean": "rm -rf dist"
   },
   "dependencies": {
