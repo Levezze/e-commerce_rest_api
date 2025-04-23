@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import * as jose from 'jose';
 import { db } from '../../db/index.js';
 import { Users } from '../../db/types.js';
-import { logger } from '../utils/logger.js';
+import { logger } from '../../utils/logger.js';
 import { User } from '../../dtos/user.js';
 import { RegisterUser } from '../../dtos/registerUser.js';
 
@@ -103,6 +103,8 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
       throw new Error('EMAIL_EXISTS');
     };
 
+    logger.debug('Hashing password with bcrypt');
+    
     const saltRounds = 10;
     const hash = await bcrypt.hash(userData.password, saltRounds);
 

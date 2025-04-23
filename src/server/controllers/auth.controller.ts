@@ -6,7 +6,8 @@ import { LoginRequest } from '../../dtos/loginRequest.js';
 import { User } from '../../dtos/user.js';
 import { AuthSession } from '../../dtos/authSession.js';
 import { UserJWTPayload } from '../middlewares/auth.middleware.js'
-import { logger } from '../utils/logger.js';
+import { logger } from '../../utils/logger.js';
+import { unknown } from 'zod';
 
 export const handleRegister = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -75,4 +76,11 @@ export const handleGetMe = async (req: Request, res: Response, next: NextFunctio
     logger.error(`Error in handleGetMe for sub ${userPayload?.sub}:`, error);
     next(error);
   };
+};
+
+export const handleLogout = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.user?.sub;
+  logger.debug(`Handling logout of user ID: ${userId || unknown}, token removal is client-side`);
+  res.sendStatus(204);
+  logger.info('User successfully logged out');
 };

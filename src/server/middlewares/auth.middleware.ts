@@ -1,6 +1,6 @@
 import * as jose from 'jose';
 import { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger.js';
+import { logger } from '../../utils/logger.js';
 
 export interface UserJWTPayload extends jose.JWTPayload {
   sub: string;
@@ -53,5 +53,32 @@ export const requireAuth = async (
       message = 'Unauthorized: Token expired';
     };
     res.status(401).json({ message: message });
+  };
+};
+
+export const requireAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  logger.debug('Admin auth middleware triggered');
+  try {
+    const userRole = req.user?.role;
+
+    if (!userRole) {
+      logger.warn("User role not defined or can't be fetched");
+      res.status(403).json({ message: 'User role is missing' });
+    }
+
+    if (userRole !== 'admin') {
+      logger.warn(`User ID ${req.user?.sub} has no admin privilages.`);
+      res.status(403).json({ message: 'User has no admin privilages. '});
+    }
+
+    logger.debug('User has admin privilages');
+    next();
+  } catch (error: any) {
+    logger.warn(`Admin auth failed: ${error.name} - ${error.message}`);
+    res.sendStatus(403);
   };
 };
