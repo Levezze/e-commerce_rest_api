@@ -19,7 +19,7 @@ app.use('/healthcheck', (_req: Request, res: Response) => {
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/items', itemRoutes);
-app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.use(errorHandler);
 

@@ -7,6 +7,6 @@ import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 router.get('/', requireAuth, requireAdmin, userController.handleGetUsers);
-router.delete('/users/:id', requireAuth, requireAdmin, userController.handleDeleteUser);
+router.delete('/:id', requireAuth, requireAdmin, userController.handleDeleteUser);
 
 export default router;

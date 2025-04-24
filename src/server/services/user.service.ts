@@ -1,6 +1,7 @@
 import { db } from '../../db/index.js';
 import { logger } from '../../utils/logger.js';
 import { User } from '../../dtos/user.js';
+import { NotFoundError, ForbiddenError } from '../../utils/errors.js';
 
 export const findUserById = async (id: number) => {
   logger.debug(`Service: Fetching to get user by ID: ${id}`);
@@ -74,21 +75,27 @@ export const deleteUserById = async (id: number) => {
       .select(['id', 'username', 'email', 'user_role'])
       .executeTakeFirst();
 
-    if (!dbUser) {
-      logger.warn(`Service: User with ID: ${id} not found.`);
-      return null;
+    if (!dbUser) {``
+      throw new NotFoundError(`User with ID ${id} not found.`);
     };
 
-    if (dbUser.username = 'admin') {
-      logger.warn(`Service: Can't delete admin user.`);
-      return null;
+    if (dbUser.username === 'admin') {
+      throw new ForbiddenError(`Cannot delete the primary admin user.`);
     };
     
-    logger.debug(`User ${dbUser?.email} was found.`);
+    logger.debug(`User ${dbUser?.email} was found, proceeding to delete.`);
+
     await db.deleteFrom('users')
       .where('id', '=', id)
       .execute(); 
 
-    
-  }
-}
+    return true;
+  } catch (error: any) {
+    if (error instanceof NotFoundError || error instanceof ForbiddenError) {
+      throw error;
+    } else {
+      logger.error(`Service: Unexpected error deleting user by ID ${id}`, error);
+      throw new Error('Database error while deleting user.');
+    }
+  };
+};
