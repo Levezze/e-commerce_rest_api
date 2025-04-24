@@ -12,8 +12,7 @@ export const findUserById = async (id: number) => {
       .executeTakeFirst();
 
     if (!dbUser) {
-      logger.warn(`Service: User with ID: ${id} not found.`);
-      return null;
+      throw new NotFoundError(`Service: User with ID: ${id} not found.`);
     };
 
     const userDto: User = {
@@ -30,8 +29,12 @@ export const findUserById = async (id: number) => {
 
     return userDto;
   } catch (error: any) {
-    logger.error(`Service: Error fetching user by ID ${id}`, error);
-    throw new Error('Database error while fetching user details.');
+    if (error instanceof NotFoundError) {
+      throw error;
+    } else {
+      logger.error(`Service: Error fetching user by ID ${id}`, error);
+      throw new Error('Database error while fetching user details.');
+    }
   };
 };
 
@@ -41,11 +44,6 @@ export const getAllDbUsers = async () => {
     const AllDbUsers = await db.selectFrom('users')
       .selectAll()
       .execute();
-
-    if (!AllDbUsers) {
-      logger.warn(`Service: Failed to fetch users / no users in db`)
-      return null;
-    }
 
     const usersDto: User[] = AllDbUsers.map(dbUser => {
       return {
@@ -59,7 +57,11 @@ export const getAllDbUsers = async () => {
       }
     });
 
-    logger.debug({ userCount: usersDto.length }, "Mapped users DTO array in service");
+    if (AllDbUsers.length === 0) {
+      logger.info('No users were found in the database') ;
+    } else {
+      logger.debug({ userCount: usersDto.length }, "Mapped users DTO array in service");
+    }
     return usersDto;
   } catch (error: any) {
     logger.error(`Service: Error fetching all users`, error);

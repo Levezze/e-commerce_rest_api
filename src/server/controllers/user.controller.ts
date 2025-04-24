@@ -35,6 +35,6 @@ export const handleDeleteUser = async (
       res.status(error.statusCode).json({ message: error.message });
     } else {
       next(error);
-    }
+    };
   };
 };

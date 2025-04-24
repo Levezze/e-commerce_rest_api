@@ -6,6 +6,7 @@ import { Users } from '../../db/types.js';
 import { logger } from '../../utils/logger.js';
 import { User } from '../../dtos/user.js';
 import { RegisterUser } from '../../dtos/registerUser.js';
+import { ConflictError, UnauthorizedError } from '../../utils/errors.js';
 
 type NewUserForDb = Insertable<Users>; // What Kysely expects for .values()
 type DbUser = Selectable<Users>; // What Kysely returns from .returningAll()
@@ -13,48 +14,54 @@ type DbUser = Selectable<Users>; // What Kysely returns from .returningAll()
 export const verifyCredentials = async (
   email: string,
   password: string
-): Promise<User | null> => {
+): Promise<User> => {
   let query = db.selectFrom('users');
-  const userFromDb = await query
-    .where('email', '=', email)
-    .selectAll ()
-    .executeTakeFirst();
+  try {
+    const userFromDb = await query
+      .where('email', '=', email)
+      .selectAll ()
+      .executeTakeFirst();
 
-  if (!userFromDb) {
-    logger.info(`Login failed: User ${email} not found`)
-    return null;
-  };
-
-  if (!userFromDb.password) {
-    logger.error(`User ${email} found but is missing password hash`);
-    return null;
-  };
-
-  const isValid = await bcrypt.compare(password, userFromDb.password);
-
-  if (isValid) {
-    const {
-      password: _password,
-      password_reset_token: _token,
-      password_reset_expires: _expires,
-      ...userWithoutPassword
-    } = userFromDb;
-
-    const userDto: User = {
-      id: userWithoutPassword.id,
-      username: userWithoutPassword.username,
-      email: userWithoutPassword.email,
-      role: userWithoutPassword.user_role,
-      created_at: userWithoutPassword.created_at.toISOString(),
-      last_login: userWithoutPassword.last_login
-        ? userWithoutPassword.last_login.toISOString()
-        : undefined,
+    if (!userFromDb) {
+      throw new UnauthorizedError(`Login failed: User ${email} not found`)
     };
-    return userDto;
-  } else {
-    logger.info(`Login failed: Invalid password`);
-    return null;
-  };
+
+    if (!userFromDb.password) {
+      throw new UnauthorizedError(`User ${email} found but is missing password hash`);
+    };
+
+    const isValid = await bcrypt.compare(password, userFromDb.password);
+
+    if (isValid) {
+      const {
+        password: _password,
+        password_reset_token: _token,
+        password_reset_expires: _expires,
+        ...userWithoutPassword
+      } = userFromDb;
+
+      const userDto: User = {
+        id: userWithoutPassword.id,
+        username: userWithoutPassword.username,
+        email: userWithoutPassword.email,
+        role: userWithoutPassword.user_role,
+        created_at: userWithoutPassword.created_at.toISOString(),
+        last_login: userWithoutPassword.last_login
+          ? userWithoutPassword.last_login.toISOString()
+          : undefined,
+      };
+      return userDto;
+    } else {
+      throw new UnauthorizedError('Login failed: Invalid password');
+    };
+  } catch (error: any) {
+    if (error instanceof UnauthorizedError) {
+      throw error;
+    } else {
+      logger.error(`Service: Failed to log in user ${email}`, error);
+      throw new Error('User log in failed.');
+    };
+  }
 };
 
 export const generateJwtToken = async (user: User): Promise<string> => {
@@ -84,7 +91,7 @@ export const generateJwtToken = async (user: User): Promise<string> => {
     
     logger.info(`Token generated successfully for user ID: ${user.id}`);
     return token;
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Error generating JWT', error);
     throw new Error('Failed to generate authentication token.');
   };
@@ -99,8 +106,7 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
       .executeTakeFirst();
   
     if (userFromDb) {
-      logger.error(`User with email: ${userData.email} already exists.`)
-      throw new Error('EMAIL_EXISTS');
+      throw new ConflictError(`User with email: ${userData.email} already exists.`);
     };
 
     logger.debug('Hashing password with bcrypt');
@@ -146,9 +152,12 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
 
     return userDto;
   } catch (error: any) {
-    logger.error('Error during user registration:', error);
-    if (error.message === 'EMAIL_EXISTS') throw error;
-    throw new Error('User registration failed due to an unexpected error.');
+    if (error instanceof ConflictError) {
+      throw error;
+    } else {
+      logger.error('Error during user registration:', error);
+      throw new Error('User registration failed due to an unexpected error.');
+    };
   };
 };
 

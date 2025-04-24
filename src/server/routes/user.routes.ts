@@ -9,4 +9,5 @@ const router = Router();
 router.get('/', requireAuth, requireAdmin, userController.handleGetUsers);
 router.delete('/:id', requireAuth, requireAdmin, userController.handleDeleteUser);
 
+
 export default router;

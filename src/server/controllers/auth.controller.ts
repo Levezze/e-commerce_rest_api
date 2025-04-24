@@ -8,6 +8,7 @@ import { AuthSession } from '../../dtos/authSession.js';
 import { UserJWTPayload } from '../middlewares/auth.middleware.js'
 import { logger } from '../../utils/logger.js';
 import { unknown } from 'zod';
+import { ConflictError, UnauthorizedError } from '../../utils/errors.js';
 
 export const handleRegister = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,24 +16,20 @@ export const handleRegister = async (req: Request, res: Response, next: NextFunc
     const createdUser: User = await authService.registerUser(newUserInput)
     res.status(201).json(createdUser);
   } catch (error: any) {
-    if (error.message == 'EMAIL_EXISTS') {
-      res.status(409).json({ message: 'Email address is already in use.' });
-      return;
-    }
-    next(error);
+    if (error instanceof ConflictError) {
+      res.status(error.statusCode).json({ message: error.message });
+    } else {
+      next(error);
+    };
   };
 };
 
 export const handleLogin = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body as LoginRequest;
   try {
-    const user = await authService.verifyCredentials(email, password);
-    if (!user) {
-      res.status(401).json({ message: 'Invalid credentials' }); 
-      return;
-    };
-
+    const user = await authService.verifyCredentials(email, password) as User;
     const generatedToken = await authService.generateJwtToken(user);
+
     const responseBody: AuthSession = {
       token: generatedToken, 
       user: user
@@ -40,7 +37,11 @@ export const handleLogin = async (req: Request, res: Response, next: NextFunctio
 
     res.status(200).json(responseBody);
   } catch (error: any) {
-    next(error);
+    if (error instanceof UnauthorizedError) {
+      res.status(error.statusCode).json({ message: error.message });
+    } else {
+      next(error);
+    };
   };
 };
 
