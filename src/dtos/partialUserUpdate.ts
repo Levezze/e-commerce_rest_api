@@ -15,6 +15,5 @@ import { UserAddress } from './userAddress.js';
 export class PartialUserUpdate {
     'username'?: string;
     'email'?: string;
-    'address'?: UserAddress;
 }
 

@@ -6,7 +6,9 @@ import { Users } from '../../db/types.js';
 import { logger } from '../../utils/logger.js';
 import { User } from '../../dtos/user.js';
 import { RegisterUser } from '../../dtos/registerUser.js';
-import { ConflictError, UnauthorizedError } from '../../utils/errors.js';
+import { UpdatedUserResponse } from '../../dtos/UpdatedUserResponse.js';
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../../utils/errors.js';
+import { PartialUserUpdate } from '../../dtos/partialUserUpdate.js';
 
 type NewUserForDb = Insertable<Users>; // What Kysely expects for .values()
 type DbUser = Selectable<Users>; // What Kysely returns from .returningAll()
@@ -50,7 +52,9 @@ export const verifyCredentials = async (
           ? userWithoutPassword.last_login.toISOString()
           : undefined,
       };
+
       return userDto;
+
     } else {
       throw new UnauthorizedError('Login failed: Invalid password');
     };
@@ -91,6 +95,7 @@ export const generateJwtToken = async (user: User): Promise<string> => {
     
     logger.info(`Token generated successfully for user ID: ${user.id}`);
     return token;
+
   } catch (error: any) {
     logger.error('Error generating JWT', error);
     throw new Error('Failed to generate authentication token.');
@@ -151,6 +156,7 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
     }
 
     return userDto;
+
   } catch (error: any) {
     if (error instanceof ConflictError) {
       throw error;
@@ -161,4 +167,44 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
   };
 };
 
- 
+export const updateUser = async (id: number, updatedValues: PartialUserUpdate) => {
+  logger.info(`Service: User update attempt on ID: ${id}`);
+  try {
+    const columnsToReturn = [
+      'id', 
+      'username', 
+      'email', 
+    ] as const;
+
+    const updatedUser = await db
+      .updateTable('users')
+      .set(updatedValues)
+      .where('id', '=', id)
+      .returning(columnsToReturn)
+      .executeTakeFirst();
+    
+    if (!updatedUser) {
+      throw new NotFoundError(`Failed to find user with ID: ${id}`);
+    };
+
+    const userDto: UpdatedUserResponse = {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+    };
+
+    return userDto;
+
+  } catch (error) {
+    if (
+      error instanceof NotFoundError ||
+      error instanceof BadRequestError ||
+      error instanceof ConflictError
+    ) {
+      throw error;
+    } else {
+      logger.error('Error during user update:', error);
+      throw new Error('User update failed due to an unexpected error');
+    };
+  };
+};

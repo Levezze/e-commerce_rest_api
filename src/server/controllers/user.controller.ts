@@ -38,3 +38,11 @@ export const handleDeleteUser = async (
     };
   };
 };
+
+export const handleUpdateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  
+}
