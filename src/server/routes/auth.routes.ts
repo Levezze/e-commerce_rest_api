@@ -11,7 +11,6 @@ router.post('/login', validateRequestBody(loginSchema), authController.handleLog
 router.post('/logout', requireAuth, authController.handleLogout);
 
 router.get('/me', requireAuth, authController.handleGetMe);
-router.patch('/me', validateRequestBody(updateMeSchema), requireAuth, 
-  authController.handleUpdateMe);
+router.patch('/me', validateRequestBody(updateMeSchema), requireAuth, authController.handleUpdateMe);
 
 export default router;
