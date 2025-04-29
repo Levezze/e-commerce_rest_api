@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { errorHandler } from './middlewares/error.middleware.js';
-import { httpLogger } from '../utils/logger.js';
+import { httpLogger } from './utils/logger.js';
 import authRoutes from './routes/auth.routes.js';
-import itemRoutes from './routes/item.routes.js';
-import userRoutes from './routes/user.routes.js';
+import itemRoutes from './api/items/item.routes.js';
+import userRoutes from './api/users/user.routes.js';
 
 const app = express();
 
@@ -17,9 +17,15 @@ app.use('/healthcheck', (_req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
+// Public Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/items', itemRoutes);
 app.use('/api/v1/users', userRoutes);
+
+// Admin Only Routes
+// app.use('/api/v1/admin/auth', authAdminRoutes);
+// app.use('/api/v1/admin/items', itemAdminRoutes);
+// app.use('/api/v1/admin/users', userAdminRoutes);
 
 app.use(errorHandler);
 

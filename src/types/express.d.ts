@@ -1,6 +1,6 @@
     // src/types/express.d.ts
 
-    import { UserJWTPayload } from '../server/middlewares/auth.middleware.js'; // Or wherever it lives
+    import { UserJWTPayload } from '../middlewares/auth.middleware.ts'; // Or wherever it lives
 
     declare global {
       namespace Express {

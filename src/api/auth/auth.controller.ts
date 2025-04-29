@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import * as authService from '../services/auth.service.js';
-import * as userService from '../services/user.service.js';
+import * as userService from '../users/user.service.js';
 import { RegisterUser } from '../../dtos/registerUser.js';
 import { LoginRequest } from '../../dtos/loginRequest.js';
 import { User } from '../../dtos/user.js';
 import { AuthSession } from '../../dtos/authSession.js';
-import { UserJWTPayload } from '../middlewares/auth.middleware.js'
+import { UserJWTPayload } from '../../middlewares/auth.middleware.js'
 import { logger } from '../../utils/logger.js';
 import { unknown } from 'zod';
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../../utils/errors.js';
@@ -57,7 +57,7 @@ export const handleLogin = async (
 export const handleLogout = async (
   req: Request, 
   res: Response, 
-  next: NextFunction
+  _next: NextFunction
 ) => {
   const userId = req.user?.sub;
   logger.debug(`Handling logout of user ID: ${userId || unknown}, token removal is client-side`);

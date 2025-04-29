@@ -2,7 +2,7 @@ import { Kysely, PostgresDialect } from 'kysely';
 import { DB } from './types.js';
 import pg from 'pg';
 import * as dotenv from 'dotenv';
-import { createResultParserInterceptor } from '../server/middlewares/validation.middleware.js';
+import { createResultParserInterceptor } from '../middlewares/validation.middleware.js';
 
 dotenv.config();
 

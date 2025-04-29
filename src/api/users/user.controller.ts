@@ -1,7 +1,26 @@
 import { Request, Response, NextFunction } from "express";
 import { logger } from "../../utils/logger.js";
-import * as userService from '../services/user.service.js'
+import * as userService from './user.service.js'
 import { ForbiddenError, NotFoundError } from "../../utils/errors.js";
+
+export const handleGetUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = parseInt(req.params.id);
+    logger.info(`Fetching user by ID: ${userId}`);
+    const userInfo = await userService.findUserById(userId);
+    res.status(200).json(userInfo);
+  } catch (error) {
+    if (error instanceof NotFoundError) {
+      res.status(error.statusCode).json({ message: error.message });
+    } else {
+      next(error);
+    }
+  };
+};
 
 export const handleGetUsers = async (
   _req: Request,

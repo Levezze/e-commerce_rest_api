@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { db } from '../db/index.js';
+import { db } from './index.js';
 import { logger } from '../utils/logger.js';
 import { Users } from './types.js';
 import { User } from '../dtos/user.js';

@@ -103,14 +103,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewItemInput' # Input schema remains specific
+              $ref: '#/components/schemas/NewItemInput'
       responses:
         '201':
           description: Item created successfully. Returns the created item.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item' # Return the full Item object
+                $ref: '#/components/schemas/Item'  # Return the full Item object
           headers:
             Location:
               description: URL of the newly created item.
@@ -928,26 +928,34 @@ components:
         id:
           type: integer
           readOnly: true
+          description: Unique identifier for the item.
         gem_size:
           $ref: '#/components/schemas/GemSize'
         gem_shape:
           $ref: '#/components/schemas/GemShape'
         gem_name:
           type: string
-        jewelry_type: # This is the discriminator property
+          description: Name of the gemstone.
+          example: Diamond
+        jewelry_type: # Discriminator property
           $ref: '#/components/schemas/JewelryType'
         item_name:
           type: string
           readOnly: true
-          description: Auto-generated as `gem_name + " " + jewelry_type` by the server.
+          description: Auto-generated display name (e.g., 'Diamond Ring').
         price:
           type: number
-          format: float # Be explicit about format
+          format: float
+          description: Price of the item.
+          example: 199.99
         in_stock:
           type: boolean
+          description: Indicates if the item is currently in stock.
         img_url:
           type: string
           format: uri
+          description: URL of the item's image.
+          example: https://example.com/image.jpg
         created_at:
           type: string
           format: date-time
@@ -957,36 +965,86 @@ components:
           type: string
           format: date-time
           readOnly: true
-          description: Timestamp when the item was updated.
+          description: Timestamp when the item was last updated.
         is_featured:
           type: boolean
+          description: Indicates if the item is featured.
         is_hidden:
           type: boolean
-      required: # Define required fields for the base item
+          description: Indicates if the item is hidden from public view.
+      required: # Response
+        - id
+        - gem_size
+        - gem_shape
+        - gem_name
+        - jewelry_type
+        - item_name
+        - price
+        - in_stock
+        - img_url
+        - created_at
+        - updated_at
+        - is_featured
+        - is_hidden
+    
+    ItemBaseInput:
+      type: object
+      properties:
+        gem_size:
+          $ref: '#/components/schemas/GemSize'
+        gem_shape:
+          $ref: '#/components/schemas/GemShape'
+        gem_name:
+          type: string
+          description: Name of the gemstone.
+          example: Diamond
+        jewelry_type: # Discriminator property
+          $ref: '#/components/schemas/JewelryType'
+        price:
+          type: number
+          format: float
+          description: Price of the item.
+          example: 199.99
+        in_stock:
+          type: boolean
+          description: Indicates if the item is currently in stock.
+          default: true
+        img_url:
+          type: string
+          format: uri
+          description: URL of the item's image.
+          example: https://example.com/image.jpg
+        is_featured:
+          type: boolean
+          description: Indicates if the item is featured.
+          default: false
+        is_hidden:
+          type: boolean
+          description: Indicates if the item is hidden from public view.
+          default: false
+      required: # Response
         - gem_size
         - gem_shape
         - gem_name
         - jewelry_type
         - price
-        - in_stock
         - img_url
-        - is_featured
-        - is_hidden
 
-    # 2. Specific Jewelry Type Schemas (Unique Properties)
+# 2. Specific Jewelry Type Details Schemas (Unique Properties - Used for both Input & Response)
     RingDetails:
       type: object
       properties:
-        # Removed ring_id, assuming item 'id' is the unique identifier
         ring_size:
           type: number
           format: float
-          description: Standard ring size.
+          description: Standard US ring size.
+          example: 7.5
         ring_color:
           $ref: '#/components/schemas/Colors'
         ring_style:
           type: string
           description: Specific style of the ring (e.g., Solitaire, Halo).
+          example: Solitaire
       required:
         - ring_size
         - ring_color
@@ -999,11 +1057,13 @@ components:
           type: number
           format: float
           description: Length of the necklace chain in cm or inches.
+          example: 45
         necklace_color:
           $ref: '#/components/schemas/Colors'
         necklace_style:
           type: string
           description: Specific style of the necklace (e.g., Pendant, Choker).
+          example: Pendant
       required:
         - necklace_length
         - necklace_color
@@ -1012,37 +1072,61 @@ components:
     EarringDetails:
       type: object
       properties:
-        earring_size: # Renamed from 'earring_size' for clarity if needed, or keep as is
+        earring_size:
           type: number
           format: float
-          description: Size dimension (e.g., diameter, length).
+          description: Size dimension (e.g., diameter, length in mm).
+          example: 10
         earring_color:
           $ref: '#/components/schemas/Colors'
         earring_style:
           type: string
           description: Specific style of the earring (e.g., Stud, Hoop, Dangle).
+          example: Stud
       required:
         - earring_size
         - earring_color
         - earring_style
 
-    # 3. Combined Item Schemas using allOf
+    # 3a. Combined Item Schemas for <Response>
     ItemRing:
+      description: Represents a Ring item in the catalog (Response).
       allOf: # Combines ItemBase and RingDetails
         - $ref: '#/components/schemas/ItemBase'
         - $ref: '#/components/schemas/RingDetails'
 
     ItemNecklace:
+      description: Represents a Necklace item in the catalog (Response).
       allOf: # Combines ItemBase and NecklaceDetails
         - $ref: '#/components/schemas/ItemBase'
         - $ref: '#/components/schemas/NecklaceDetails'
 
     ItemEarring:
+      description: Represents an Earring item in the catalog (Response).
       allOf: # Combines ItemBase and EarringDetails
         - $ref: '#/components/schemas/ItemBase'
         - $ref: '#/components/schemas/EarringDetails'
 
-    # 4. Top-Level Item Schema using oneOf and discriminator
+    # 3b. Combined Item Schemas for <Request>
+    ItemRingInput:
+      description: Input specific for creating a new Ring.
+      allOf: # Combines ItemBase and RingDetails
+        - $ref: '#/components/schemas/ItemBaseInput'
+        - $ref: '#/components/schemas/RingDetails'
+
+    ItemNecklaceInput:
+      description: Input specific for creating a new Necklace.
+      allOf: # Combines ItemBase and NecklaceDetails
+        - $ref: '#/components/schemas/ItemBaseInput'
+        - $ref: '#/components/schemas/NecklaceDetails'
+
+    ItemEarringInput:
+      description: Input specific for creating a new Earring.
+      allOf: # Combines ItemBase and EarringDetails
+        - $ref: '#/components/schemas/ItemBaseInput'
+        - $ref: '#/components/schemas/EarringDetails'
+
+    # 4a. Top-Level Item Schema using oneOf and discriminator <Response>
     Item:
       oneOf: # An item must be exactly one of these types
         - $ref: '#/components/schemas/ItemRing'
@@ -1055,70 +1139,32 @@ components:
           necklace: '#/components/schemas/ItemNecklace'
           earring: '#/components/schemas/ItemEarring'
 
-    # --- Item Input/Update Schemas ---
-    # Note: Handling polymorphism in input/update can be complex.
-    # Option 1: Keep input simple (as below), server derives details.
-    # Option 2: Use oneOf/discriminator in input schemas too. Requires client to know the type.
-    # Keeping Option 1 for simplicity for now.
+    # 4b. Top-Level Item Schema using oneOf and discriminator <Request>
+    Item:
+      oneOf: # An item must be exactly one of these types
+        - $ref: '#/components/schemas/ItemRingInput'
+        - $ref: '#/components/schemas/ItemNecklaceInput'
+        - $ref: '#/components/schemas/ItemEarringInput'
+      discriminator: # Tells tools how to determine the type
+        propertyName: jewelry_type # The property containing the type name
+        mapping: # Maps the property value to the schema
+          ring: '#/components/schemas/ItemRingInput'
+          necklace: '#/components/schemas/ItemNecklaceInput'
+          earring: '#/components/schemas/ItemEarringInput'
 
-    NewItemInput: # Input for creating any item type (server handles details based on jewelry_type)
-      type: object
-      # Add properties from ItemBase that are settable on creation
-      properties:
-        gem_size:
-          $ref: '#/components/schemas/GemSize'
-        gem_shape:
-          $ref: '#/components/schemas/GemShape'
-        gem_name:
-          type: string
-        jewelry_type:
-          $ref: '#/components/schemas/JewelryType'
-        price:
-          type: number
-          format: float
-        in_stock:
-          type: boolean
-        img_url:
-          type: string
-          format: uri
-        is_featured:
-          type: boolean
-        is_hidden:
-          type: boolean
-        # Add properties for RingDetails, NecklaceDetails, EarringDetails here
-        # These would be *optional* and only relevant based on jewelry_type
-        # Example:
-        ring_size:
-          type: number
-          format: float
-          description: Required if jewelry_type is 'ring'.
-        ring_color:
-          $ref: '#/components/schemas/Colors'
-          description: Required if jewelry_type is 'ring'.
-        # ... add other specific properties similarly ...
-      required: # Base required fields
-        - gem_size
-        - gem_shape
-        - gem_name
-        - jewelry_type
-        - price
-        - in_stock
-        - img_url
-        - is_featured
-        - is_hidden
-      # Add note: Server-side validation needed to ensure specific properties (ring_size etc.) are provided based on jewelry_type
-
+    # --- Item Update Schema ---
     PartialItemUpdate: # Input for partially updating any item type
       type: object
       properties:
-        # Include all properties from NewItemInput, but make them optional
+        # Include all SETTABLE properties from ItemInputBase and Details schemas,
+        # but make them all optional (no 'required' list here).
         gem_size:
           $ref: '#/components/schemas/GemSize'
         gem_shape:
           $ref: '#/components/schemas/GemShape'
         gem_name:
           type: string
-        jewelry_type: # Usually type is not updatable, but depends on design
+        jewelry_type: # In case of a mistake
           $ref: '#/components/schemas/JewelryType'
         price:
           type: number
@@ -1132,14 +1178,29 @@ components:
           type: boolean
         is_hidden:
           type: boolean
-        # Include optional specific properties
+        # Optional specific properties
         ring_size:
           type: number
           format: float
         ring_color:
           $ref: '#/components/schemas/Colors'
-        # ... etc ...
-      # No 'required' fields for PATCH, as any subset can be sent.
+        ring_style:
+          type: string
+        necklace_length:
+          type: number
+          format: float
+        necklace_color:
+          $ref: '#/components/schemas/Colors'
+        necklace_style:
+          type: string
+        earring_size:
+          type: number
+          format: float
+        earring_color:
+          $ref: '#/components/schemas/Colors'
+        earring_style:
+          type: string
+      # No 'required' fields for PATCH, API Zod validation.
 
     # --- Auth Schemas ---
     LoginRequest:
@@ -1149,9 +1210,11 @@ components:
         email:
           type: string
           format: email
+          example: user@example.com
         password:
           type: string
           format: password
+          example: StrongP@ssw0rd!
 
     AuthSession:
       type: object
@@ -1180,6 +1243,32 @@ components:
         - zip
         - country
 
+    # --- User Schemas ---
+    UserAddress:
+      type: object
+      properties:
+        street:
+          type: string
+          example: 123 Main St
+        city:
+          type: string
+          example: Anytown
+        state: # Added state
+          type: string
+          example: CA
+        zip:
+          type: string
+          example: "90210"
+        country:
+          type: string
+          example: USA
+      required:
+        - street
+        - city
+        - state
+        - zip
+        - country
+
     User:
       type: object
       properties:
@@ -1194,7 +1283,7 @@ components:
         role:
           type: string
           description: User role (e.g., 'customer', 'admin')
-          readOnly: true # Role likely not settable by user directly
+          readOnly: true
         created_at:
           type: string
           format: date-time
@@ -1203,35 +1292,36 @@ components:
           type: string
           format: date-time
           readOnly: true
-        # address:
-        #   $ref: '#/components/schemas/UserAddress'
+        address: # Optional default address
+          $ref: '#/components/schemas/UserAddress'
         last_login:
           type: string
           format: date-time
           readOnly: true
-      required: # Define required address fields
+      required:
         - id
         - username
         - email
         - role
+        - created_at
 
-    PartialUserUpdate: # Fields a user can update about themselves
+    PartialUserUpdate:
       type: object
       properties:
         username:
           type: string
-        email: # Allow email update? Might need verification flow.
+        email: # Might need verification flow.
           type: string
           format: email
         address:
           $ref: '#/components/schemas/UserAddress'
-      # No required fields for PATCH
 
     RegisterUser:
       type: object
       properties:
         username:
           type: string
+          minLength: 3
         email:
           type: string
           format: email # Add format

@@ -1,30 +1,36 @@
-import { Insertable, Selectable } from 'kysely';
+import { sql, Insertable, Selectable, Updateable } from 'kysely';
 import bcrypt from 'bcrypt';
 import * as jose from 'jose';
-import { db } from '../../db/index.js';
-import { Users } from '../../db/types.js';
+import { db } from '../../database/index.js';
+import { Users as UsersTableInterface } from '../../database/types.js';
 import { logger } from '../../utils/logger.js';
 import { User } from '../../dtos/user.js';
 import { RegisterUser } from '../../dtos/registerUser.js';
 import { UpdatedUserResponse } from '../../dtos/UpdatedUserResponse.js';
-import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../../utils/errors.js';
+import { BadRequestError, 
+  ConflictError, 
+  NotFoundError, 
+  UnauthorizedError } from '../../utils/errors.js';
 import { PartialUserUpdate } from '../../dtos/partialUserUpdate.js';
 
-type NewUserForDb = Insertable<Users>; // What Kysely expects for .values()
-type DbUser = Selectable<Users>; // What Kysely returns from .returningAll()
+
+type UserForDb = Insertable<UsersTableInterface>;
+type SelectableDbUser = Selectable<UsersTableInterface>;
 
 export const verifyCredentials = async (
   email: string,
   password: string
 ): Promise<User> => {
-  let query = db.selectFrom('users');
   try {
-    const userFromDb = await query
-      .where('email', '=', email)
-      .selectAll ()
-      .executeTakeFirst();
+    const queryResult = await sql<SelectableDbUser>`
+    SELECT *
+    FROM users
+    WHERE email = ${email};
+    `.execute(db);
 
-    if (!userFromDb) {
+    const userFromDb = queryResult.rows[0]
+
+    if (queryResult.rows.length === 0) {
       throw new UnauthorizedError(`Login failed: User ${email} not found`)
     };
 
@@ -105,12 +111,13 @@ export const generateJwtToken = async (user: User): Promise<string> => {
 export const registerUser = async (userData: RegisterUser): Promise<User> => {
   logger.info(`Service: Registration attempt for email: ${userData.email}`);
   try {
-    const userFromDb = await db.selectFrom('users')
-      .where('email', '=', userData.email)
-      .selectAll ()
-      .executeTakeFirst();
+    const getUserQueryResult = await sql<SelectableDbUser>`
+    SELECT *
+    FROM users
+    WHERE email = ${userData.email};
+    `.execute(db);
   
-    if (userFromDb) {
+    if (getUserQueryResult.rows.length > 0) {
       throw new ConflictError(`User with email: ${userData.email} already exists.`);
     };
 
@@ -119,7 +126,7 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
     const saltRounds = 10;
     const hash = await bcrypt.hash(userData.password, saltRounds);
 
-    const newUserDbData: Omit<NewUserForDb,
+    const newUserDbData: Omit<UserForDb,
       'id' | 'created_at' | 'is_active' | 'last_login' | 'password_reset_expires' | 'password_reset_token'
       > = {
         username: userData.username,
@@ -127,21 +134,14 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
         password: hash,
         user_role: 'customer'
       };
-        
-    const columnsToReturn = [
-      'id', 
-      'username', 
-      'email', 
-      'user_role',
-      'created_at', 
-      'updated_at', 
-      'last_login'
-    ] as const;
+    
+    const registerUserQueryResult = await sql<SelectableDbUser>`
+    INSERT INTO users (username, email, password, user_role)
+    VALUES (${newUserDbData.username}, ${newUserDbData.email}, ${newUserDbData.password}, ${newUserDbData.user_role})
+    RETURNING id, username, email, user_role, created_at, updated_at, last_login;
+    `.execute(db);
 
-    const registerResult = await db.insertInto('users')
-      .values(newUserDbData)
-      .returning(columnsToReturn)
-      .executeTakeFirstOrThrow()
+    const registerResult = registerUserQueryResult.rows[0];
     
     logger.info(`User registered successfully: ${registerResult.email} (ID: ${registerResult.id})`);
 
@@ -182,7 +182,7 @@ export const updateUser = async (id: number, updatedValues: PartialUserUpdate) =
       .where('id', '=', id)
       .returning(columnsToReturn)
       .executeTakeFirst();
-    
+
     if (!updatedUser) {
       throw new NotFoundError(`Failed to find user with ID: ${id}`);
     };

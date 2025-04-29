@@ -1,56 +1,26 @@
-import { db } from '../../db/index.js';
+import { db } from '../../database/index.js';
 import { logger } from '../../utils/logger.js';
 import { User } from '../../dtos/user.js';
 import { NotFoundError, ForbiddenError } from '../../utils/errors.js';
 import { sql, Selectable } from 'kysely';
-import { Users as UsersTableInterface } from '../../db/types.js';
+import { Users as UsersTableInterface } from '../../database/types.js';
 
-// export const findUserById = async (id: number) => {
-//   logger.debug(`Service: Fetching to get user by ID: ${id}`);
-//   try {
-//     const dbUser = await db.selectFrom('users')
-//       .where('id', '=', id)
-//       .select(['id', 'username', 'email', 'user_role', 'created_at', 'updated_at', 'last_login'])
-//       .executeTakeFirst();
-
-//     if (!dbUser) {
-//       throw new NotFoundError(`Service: User with ID: ${id} not found.`);
-//     };
-
-//     const userDto: User = {
-//       id: dbUser.id,
-//       username: dbUser.username,
-//       email: dbUser.email,
-//       role: dbUser.user_role,
-//       created_at: dbUser.created_at?.toISOString(),
-//       updated_at: dbUser.updated_at?.toISOString(),
-//       last_login: dbUser.last_login?.toISOString(),
-//     };
-
-//     logger.debug({ userDtoFromService: userDto }, "Mapped user DTO in service");
-
-//     return userDto;
-//   } catch (error: any) {
-//     if (error instanceof NotFoundError) {
-//       throw error;
-//     } else {
-//       logger.error(`Service: Error fetching user by ID ${id}`, error);
-//       throw new Error('Database error while fetching user details.');
-//     }
-//   };
-// };
-
-
+type SelectableDbUser = Selectable<UsersTableInterface>;
 
 export const findUserById = async (id: number) => {
   logger.debug(`Service: Fetching to get user by ID: ${id}`);
   try {
-    type SelectableDbUser = Selectable<UsersTableInterface>;
     const queryResult = await sql<SelectableDbUser>`
-      SELECT id, username, email, user_role, created_at, updated_at, last_login
+      SELECT id, 
+        username, 
+        email, 
+        user_role, 
+        created_at, 
+        updated_at, 
+        last_login
       FROM users
       WHERE id = ${id};
-      `.execute(db)
+      `.execute(db);
 
     if (queryResult.rows.length === 0) {
       throw new NotFoundError(`Service: User with ID: ${id} not found.`);
@@ -84,11 +54,18 @@ export const findUserById = async (id: number) => {
 export const getAllDbUsers = async () => {
   logger.debug(`Service: Fetching all users by admin`);
   try {
-    const AllDbUsers = await db.selectFrom('users')
-      .selectAll()
-      .execute();
+    const queryResult = await sql<SelectableDbUser>`
+      SELECT id, username, email, user_role, created_at, updated_at, last_login
+      FROM users
+      `.execute(db);
 
-    const usersDto: User[] = AllDbUsers.map(dbUser => {
+    if (queryResult.rows.length === 0) {
+      throw new NotFoundError(`Service: No users found.`);
+    };
+
+    const AllDbUsers = queryResult.rows;
+
+    const usersDto: User[] = queryResult.rows.map(dbUser => {
       return {
         id: dbUser.id,
         username: dbUser.username,
@@ -115,12 +92,16 @@ export const getAllDbUsers = async () => {
 export const deleteUserById = async (id: number) => {
   logger.debug(`Service: Attempting to delete user with ID: ${id}`);
   try {
-    const dbUser = await db.selectFrom('users')
-      .where('id', '=', id)
-      .select(['id', 'username', 'email', 'user_role'])
-      .executeTakeFirst();
 
-    if (!dbUser) {``
+    const userQueryResult = await sql<SelectableDbUser>`
+    SELECT (id, username, email)
+    FROM users
+    WHERE id = ${id};
+    `.execute(db);
+
+    const dbUser = userQueryResult.rows[0];
+
+    if (userQueryResult.rows.length === 0) {
       throw new NotFoundError(`User with ID ${id} not found.`);
     };
 
@@ -130,9 +111,10 @@ export const deleteUserById = async (id: number) => {
     
     logger.debug(`User ${dbUser?.email} was found, proceeding to delete.`);
 
-    await db.deleteFrom('users')
-      .where('id', '=', id)
-      .execute(); 
+    await sql`
+    DELETE FROM users
+    WHERE id = ${id};
+    `.execute(db);
 
     return true;
   } catch (error: any) {
