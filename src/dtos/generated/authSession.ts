@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-import { User } from './user.js';
+import { User } from '../user.js';
 
 export class AuthSession {
     'user'?: User;

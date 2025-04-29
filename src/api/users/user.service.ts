@@ -1,6 +1,6 @@
 import { db } from '../../database/index.js';
 import { logger } from '../../utils/logger.js';
-import { User } from '../../dtos/user.js';
+import { User } from '../../dtos/generated/user.js';
 import { NotFoundError, ForbiddenError } from '../../utils/errors.js';
 import { sql, Selectable } from 'kysely';
 import { Users as UsersTableInterface } from '../../database/types.js';

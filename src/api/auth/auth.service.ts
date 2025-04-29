@@ -4,14 +4,14 @@ import * as jose from 'jose';
 import { db } from '../../database/index.js';
 import { Users as UsersTableInterface } from '../../database/types.js';
 import { logger } from '../../utils/logger.js';
-import { User } from '../../dtos/user.js';
-import { RegisterUser } from '../../dtos/registerUser.js';
-import { UpdatedUserResponse } from '../../dtos/UpdatedUserResponse.js';
+import { User } from '../../dtos/generated/user.js';
+import { RegisterUser } from '../../dtos/generated/registerUser.js';
+import { UpdatedUserResponse } from '../../dtos/generated/UpdatedUserResponse.js';
 import { BadRequestError, 
   ConflictError, 
   NotFoundError, 
   UnauthorizedError } from '../../utils/errors.js';
-import { PartialUserUpdate } from '../../dtos/partialUserUpdate.js';
+import { PartialUserUpdate } from '../../dtos/generated/partialUserUpdate.js';
 
 
 type UserForDb = Insertable<UsersTableInterface>;

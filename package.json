@@ -27,7 +27,6 @@
     "pg": "^8.14.1",
     "pino": "^9.6.0",
     "pino-http": "^10.4.0",
-    "slonik": "^46.4.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {

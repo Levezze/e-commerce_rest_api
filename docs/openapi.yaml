@@ -103,7 +103,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewItemInput'
+              $ref: '#/components/schemas/ItemPost'
       responses:
         '201':
           description: Item created successfully. Returns the created item.
@@ -155,7 +155,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item' # Item now uses oneOf/discriminator
+                $ref: '#/components/schemas/ItemFetch' # Item now uses oneOf/discriminator
         # Use Standard Error Response
         '404':
           description: Not Found
@@ -1127,7 +1127,7 @@ components:
         - $ref: '#/components/schemas/EarringDetails'
 
     # 4a. Top-Level Item Schema using oneOf and discriminator <Response>
-    Item:
+    ItemFetch:
       oneOf: # An item must be exactly one of these types
         - $ref: '#/components/schemas/ItemRing'
         - $ref: '#/components/schemas/ItemNecklace'
@@ -1140,7 +1140,7 @@ components:
           earring: '#/components/schemas/ItemEarring'
 
     # 4b. Top-Level Item Schema using oneOf and discriminator <Request>
-    Item:
+    ItemPost:
       oneOf: # An item must be exactly one of these types
         - $ref: '#/components/schemas/ItemRingInput'
         - $ref: '#/components/schemas/ItemNecklaceInput'

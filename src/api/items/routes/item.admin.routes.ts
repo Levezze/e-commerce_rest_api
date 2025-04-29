@@ -1,5 +1,5 @@
 import { Router, NextFunction, Request, Response } from 'express';
-import * as itemController from './controllers/item.controller.js';
+import * as itemController from '../controllers/item.admin.controller.js';
 
 const router = Router();
 

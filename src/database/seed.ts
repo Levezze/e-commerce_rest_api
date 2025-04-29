@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { db } from './index.js';
 import { logger } from '../utils/logger.js';
 import { Users } from './types.js';
-import { User } from '../dtos/user.js';
+import { User } from '../dtos/generated/user.js';
 import { Insertable } from 'kysely';
 
 type NewUserForDb = Insertable<Users>;

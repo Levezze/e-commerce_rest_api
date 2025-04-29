@@ -1,9 +1,9 @@
 import { sql, Selectable, Insertable, Updateable } from "kysely";
-import { Item as ItemTableInterface } from "../../dtos/item.js";
-import { NewItemInput } from "../../dtos/newItemInput.js";
-import { logger } from "../../utils/logger.js";
-import { Items } from "../../database/types.js";
-import { db } from '../../database/index.js';
+import { Item as ItemTableInterface } from "../../../dtos/generated/item.js";
+import { NewItemInput } from "../../../dtos/generated/newItemInput.js";
+import { logger } from "../../../utils/logger.js";
+import { Items } from "../../../database/types.js";
+import { db } from '../../../database/index.js';
 
 type ItemFromDb = Selectable<ItemTableInterface>;
 type ItemForDb = Insertable<ItemTableInterface>;

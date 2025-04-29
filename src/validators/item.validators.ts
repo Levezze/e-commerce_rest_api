@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { GemSize } from "../dtos/gemSize.js";
-import { GemShape } from "../dtos/gemShape.js";
-import { JewelryType } from "../dtos/jewelryType.js";
-import { Colors } from "../dtos/colors.js";
+import { GemSize } from "../dtos/generated/gemSize.js";
+import { GemShape } from "../dtos/generated/gemShape.js";
+import { JewelryType } from "../dtos/generated/jewelryType.js";
+import { Colors } from "../dtos/generated/colors.js";
 
 export const newItemSchema = z.object({
   gem_size: z.nativeEnum(GemSize),
