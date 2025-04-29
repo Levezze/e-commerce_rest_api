@@ -10,14 +10,14 @@ This project also serves as a capstone project for the Codecademy Backend Develo
 
 ## **Features**
 
-* **Authentication:** Secure user registration, login via email/password, JWT-based session management (/auth).  
+* **Authentication:** Secure user registration, login via email/password, JWT-based session management `(/auth)`.  
 * **Catalog Management:**  
-  * Public browsing of items with filtering, pagination, and sorting (GET /items, GET /items/:id).  
-  * Admin CRUD operations for jewelry items (rings, necklaces, earrings) with support for type-specific properties (/admin/items).  
+  * Public browsing of items with filtering, pagination, and sorting (`GET /items`, `GET /items/:id`).  
+  * Admin CRUD operations for jewelry items (rings, necklaces, earrings) with support for type-specific properties (`/admin/items`).  
   * Role-based response filtering (admins see more details than public users on the same endpoints).  
-* **User Management:** Self-service profile viewing and updates (/auth/me). (Admin user management could be added under /admin/users).  
-* **Shopping Cart:** Add/remove items, update quantities, view cart contents (/cart).  
-* **Order Processing:** Place orders from cart, view user's order history and details (/orders). Admin capabilities for order status updates (/admin/orders/:id/status).  
+* **User Management:** Self-service profile viewing and updates (`/auth/me`). (Admin user management could be added under `/admin/users`).  
+* **Shopping Cart:** Add/remove items, update quantities, view cart contents (`/cart`).  
+* **Order Processing:** Place orders from cart, view user's order history and details (`/orders`). Admin capabilities for order status updates (`/admin/orders/:id/status`).  
 * **API Specification:** Comprehensive OpenAPI 3.1.1 definition for clear contract and client generation.
 
 ## **Tech Stack**
@@ -25,20 +25,20 @@ This project also serves as a capstone project for the Codecademy Backend Develo
 * **Backend Framework:** Node.js, Express.js  
 * **Language:** TypeScript  
 * **Database:** PostgreSQL  
-* **Query Builder/DB Interaction:** Kysely (with kysely-codegen for type generation)  
-* **Authentication:** JWT (JSON Web Tokens) via jose, password hashing via bcrypt.  
+* **Query Builder/DB Interaction:** Kysely (with `kysely-codegen` for type generation)  
+* **Authentication:** JWT (JSON Web Tokens) via `jose`, password hashing via `bcrypt`.  
 * **Validation:** Zod for robust runtime request validation.  
-* **Logging:** Pino (pino-http for HTTP requests, pino-pretty for development).  
-* **API Specification:** OpenAPI 3.1.1 (docs/openapi.yaml)  
-* **Development Runner:** tsx (TypeScript execution with ESM support and watching).
+* **Logging:** Pino (`pino-http` for HTTP requests, `pino-pretty` for development).  
+* **API Specification:** OpenAPI 3.1.1 (`docs/openapi.yaml`)  
+* **Development Runner:** `tsx` (TypeScript execution with ESM support and watching).
 
 ## **API Documentation**
 
-The API contract is defined using the OpenAPI 3.1.1 specification located at docs/openapi.yaml.
+The API contract is defined using the OpenAPI 3.1.1 specification located at `docs/openapi`.yaml.
 
 You can explore and interact with the API documentation by:
 
-1. Pasting the contents of openapi.yaml into the [Swagger Editor](https://editor.swagger.io/).  
+1. Pasting the contents of `openapi.yaml` into the [Swagger Editor](https://editor.swagger.io/).  
 2. Using tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) if you integrate it into your development server.
 
 ## **Project Structure**
@@ -121,37 +121,51 @@ You can explore and interact with the API documentation by:
 ### **Installation**
 
 1. **Clone the Repository:**  
-   git clone \<your-repository-url\> \# Replace with your actual repo URL  
-   cd \<repository-folder-name\>
+
+    ```bash
+    git clone \<your-repository-url\> \# Replace with your actual repo URL  
+    cd \<repository-folder-name\>
+    ```
 
 2. **Install Dependencies:**  
-   npm install
+
+    ```bash
+    npm install
+    ```
 
 ### **Database Setup**
 
 1. **Ensure PostgreSQL is running.**  
 2. **Create a database** for the application using a tool like psql or pgAdmin (e.g., jewelry\_store\_dev).  
-   \-- Example using psql  
-   CREATE DATABASE jewelry\_store\_dev;
+
+    ```sql
+    \-- Example using psql  
+    CREATE DATABASE jewelry\_store\_dev;
+    ```
 
 3. **Run the schema definition script** against your new database:  
-   \# Replace with your actual username and database name if different  
-   psql \-U your\_postgres\_user \-d jewelry\_store\_dev \-f db/schema.sql
+
+    ```sql
+    \# Replace with your actual username and database name if different  
+    psql \-U your\_postgres\_user \-d jewelry\_store\_dev \-f db/schema.sql
+    ```
 
 ### **Environment Variables**
 
 1. **Create a .env file** in the project root (copy from .env.example if it exists):  
-   cp .env.example .env \# Or create .env manually
+
+    ```bash
+    cp .env.example .env \# Or create .env manually
+    ```
 
 2. **Edit the .env file** with your specific configuration:  
-   \# .env Configuration  
-   NODE\_ENV=development
+
+    ```env
+    \# .env Configuration  
+    NODE\_ENV=development
 
    \# Database Connection (adjust user, password, host, port, dbname as needed)  
    DATABASE\_URL=postgres://YOUR\_DB\_USER:YOUR\_DB\_PASSWORD@localhost:5432/jewelry\_store\_dev
-
-   \# Server Port (optional, defaults might be set in code)  
-   PORT=3000
 
    \# JWT Secret (Generate a strong, random secret\!)  
    \# Use: node \-e "console.log(require('crypto').randomBytes(32).toString('hex'))"  
@@ -159,47 +173,58 @@ You can explore and interact with the API documentation by:
 
    \# Logging Level ('debug', 'info', 'warn', 'error')  
    LOG\_LEVEL=debug \# Recommended for development
+   ```
 
 3. **IMPORTANT:** Ensure .env is listed in your .gitignore file to prevent committing secrets.
 
 ### **Database Type Generation**
 
-Kysely uses kysely-codegen to generate TypeScript types based on your database schema, ensuring type safety in your database queries. Run this command after setting up the database and .env file:
+Kysely uses `kysely-codegen` to generate TypeScript types based on your database schema, ensuring type safety in your database queries. Run this command after setting up the database and `.env` file:
 
+```bash
 npm run generate-db-types
+```
 
-Run this again anytime you make changes to the database schema defined in db/schema.sql.
+Run this again anytime you make changes to the database schema defined in `db/schema.sql`.
 
 ## **Running the Application**
 
 ### **Development Mode**
 
-This mode uses tsx for fast, on-the-fly TypeScript execution with file watching and automatic server restarts. Logs are formatted for readability.
+This mode uses `tsx` for fast, on-the-fly TypeScript execution with file watching and automatic server restarts. Logs are formatted for readability.
 
+```bash
 npm run dev:all
+```
 
-The server will typically start on http://localhost:3000 (or the PORT specified in .env).
+The server will typically start on `http://localhost:3000` (or the `PORT` specified in `.env`).
 
 ### **Production Mode**
 
-1. **Build TypeScript:** Compile your TypeScript code into JavaScript in the dist directory.  
-   npm run build
+1. **Build TypeScript:** Compile your TypeScript code into JavaScript in the `dist` directory.  
 
-2. **Run Compiled Code:** Start the server using the compiled JavaScript. Ensure NODE\_ENV is set to production for optimal performance and JSON logging.  
-   NODE\_ENV=production npm start
+    ```bash
+    npm run build
+    ```
 
-   *(This assumes your start script in package.json correctly points to the compiled output, e.g., node dist/server.js)*
+2. **Run Compiled Code:** Start the server using the compiled JavaScript. Ensure `NODE\_ENV` is set to `production` for optimal performance and JSON logging.  
+
+    ```env
+    NODE\_ENV=production npm start
+    ```
+
+   *(This assumes your `start` script in `package.json` correctly points to the compiled output, e.g., `node dist/server.js`)*
 
 ## **Testing with an API Client (e.g., Postman)**
 
-1. Start the application (npm run dev:all).  
-2. Use an API client like Postman or Insomnia to send requests to the endpoints (base URL: http://localhost:3000/api/v1).  
-3. Refer to the docs/openapi.yaml specification for available endpoints, request bodies, and expected responses.  
+1. Start the application (`npm run dev:all`).  
+2. Use an API client like Postman or Insomnia to send requests to the endpoints (base URL: `http://localhost:3000/api/v1`).  
+3. Refer to the `docs/openapi.yaml` specification for available endpoints, request bodies, and expected responses.  
 4. **Authentication:**  
-   * Register a user via POST /api/v1/auth/register.  
-   * Log in via POST /api/v1/auth/login with the registered credentials.  
-   * Copy the token received in the login response.  
-   * For protected endpoints, set the Authorization header:  
-     * Key: Authorization  
-     * Value: Bearer \<your\_copied\_jwt\_token\>  
+   * Register a user via `POST /api/v1/auth/register`.  
+   * Log in via `POST /api/v1/auth/login` with the registered credentials.  
+   * Copy the `token` received in the login response.  
+   * For protected endpoints, set the `Authorization` header:  
+     * Key: `Authorization`  
+     * Value: `Bearer \<your\_copied\_jwt\_token\>`  
    * **(Postman Tip):** You can automate saving the token to a Postman environment variable using a script in the "Tests" tab of the login request (see the example script in your original README).
