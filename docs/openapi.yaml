@@ -74,7 +74,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Item' # Item now uses oneOf/discriminator
+                      $ref: '#/components/schemas/ItemFetch' # Item now uses oneOf/discriminator
         # Use Standard Error Response
         '400':
           description: Bad Request (e.g., invalid filter/sort parameters)
@@ -110,7 +110,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'  # Return the full Item object
+                $ref: '#/components/schemas/ItemFetch'  # Return the full Item object
           headers:
             Location:
               description: URL of the newly created item.
@@ -192,7 +192,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item' # Return the full updated Item object
+                $ref: '#/components/schemas/ItemFetch' # Return the full updated Item object
         # Use Standard Error Response
         '400':
           description: Bad Request (e.g., invalid input data)
@@ -254,7 +254,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterUserInput'
+              $ref: '#/components/schemas/RegisterUser'
       responses:
         '201':
           description: User created successfully. Return new user data (without password).
@@ -1230,24 +1230,6 @@ components:
       type: object
       properties:
         street:
-          type: string # Explicit type definition
-        city:
-          type: string
-        zip:
-          type: string
-        country:
-          type: string
-      required: # Define required address fields
-        - street
-        - city
-        - zip
-        - country
-
-    # --- User Schemas ---
-    UserAddress:
-      type: object
-      properties:
-        street:
           type: string
           example: 123 Main St
         city:
@@ -1329,6 +1311,7 @@ components:
           type: string
           format: password
           minLength: 8
+          description: hashed password (bcrypt).
       required: # Define required address fields
         - username
         - email
@@ -1428,7 +1411,7 @@ components:
           readOnly: true
         # Optionally include item details for display in cart
         item_details:
-           $ref: '#/components/schemas/Item' # Or a subset for cart display
+           $ref: '#/components/schemas/ItemFetch' # Or a subset for cart display
            readOnly: true
       required:
         - item_id
