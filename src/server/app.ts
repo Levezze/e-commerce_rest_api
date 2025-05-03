@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { errorHandler } from './middlewares/error.middleware.js';
-import { httpLogger } from './utils/logger.js';
-import authRoutes from './api/auth/auth.routes.js';
-import itemRoutesPublic from './api/items/routes/item.public.routes.js';
-import itemRoutesAdmin from './api/items/routes/item.admin.routes.js';
-import userRoutes from './api/users/user.routes.js';
+import { errorHandler } from '../middlewares/error.middleware.js';
+import { httpLogger } from '../utils/logger.js';
+import authRoutes from '../api/auth/auth.routes.js';
+import itemRoutesPublic from '../api/items/routes/item.public.routes.js';
+import itemRoutesAdmin from '../api/items/routes/item.admin.routes.js';
+import userRoutes from '../api/users/user.routes.js';
 
 const app = express();
 

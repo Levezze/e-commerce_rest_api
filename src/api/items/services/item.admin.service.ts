@@ -22,5 +22,7 @@ export const createNewItem = async (newItem: NewItemInput) => {
     if (itemQueryResult.rows.length > 0) {
       
     }
+  } catch (error) {
+    throw error;
   }
 }
