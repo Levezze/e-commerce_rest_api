@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
+  "engines": {
+    "node": "18.x",
+    "npm": ">=9"
+  },
   "scripts": {
     "dev:serve": "tsx watch --clear-screen=false -r dotenv/config src/server/index.ts | pino-pretty",
     "dev:typecheck": "npx tsc-watch --noClear --noEmit --preserveWatchOutput",
