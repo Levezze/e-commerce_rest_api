@@ -57,3 +57,45 @@ export const getAllItems = async (admin: boolean) => {
     throw new Error('Database error while fetching items.');
   }
 };
+
+export const getItemById = async (id: number, admin: boolean) => {
+  logger.debug(`Service: Getting item by ID ${id}`);
+  try {
+    const queryResult = await sql<ItemFromDb>`
+    SELECT * FROM items
+    WHERE id = ${id};
+    `.execute(db);
+
+    if (queryResult.rows.length === 0) {
+      throw new NotFoundError(`Item with ID ${id} not found in database.`);
+    };
+    const dbItem = queryResult.rows[0];
+
+    let itemDto;
+    if (admin) {
+      itemDto = {
+        id: dbItem.id,
+        itemName: dbItem.item_name,
+        price: dbItem.price,
+        inStock: dbItem.in_stock,
+        imgUrl: dbItem.img_url,
+        createdAt: dbItem.created_at,
+        updatedAt: dbItem.updated_at,
+        isFeatured: dbItem.is_featured,
+        isHidden: dbItem.is_hidden,
+      }
+    } else {
+      itemDto = {
+        id: dbItem.id,
+        itemName: dbItem.item_name,
+        price: dbItem.price,
+        inStock: dbItem.in_stock,
+        imgUrl: dbItem.img_url,
+      }
+    };
+    return itemDto;
+  } catch (error) {
+    logger.error(`Service: Error fetching item by ID ${id}`);
+    throw new Error('Database error while fetching item.');
+  }
+}

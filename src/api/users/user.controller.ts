@@ -48,9 +48,7 @@ export const handleDeleteUser = async (
     logger.info('User deleted successfully', deletedUser);
     res.sendStatus(204);
   } catch (error: any) {
-    if (error instanceof NotFoundError) {
-      res.status(error.statusCode).json({ message: error.message });
-    } else if (error instanceof ForbiddenError) {
+    if (error instanceof NotFoundError || error instanceof ForbiddenError) {
       res.status(error.statusCode).json({ message: error.message });
     } else {
       next(error);
