@@ -21,18 +21,7 @@ export class NewItemInput {
     'gem_name': string;
     'jewelry_type': JewelryType;
     'price': number;
-    'in_stock': boolean;
     'img_url': string;
-    'is_featured': boolean;
-    'is_hidden': boolean;
-    /**
-    * Required if jewelry_type is \'ring\'.
-    */
-    'ring_size'?: number;
-    /**
-    * Required if jewelry_type is \'ring\'.
-    */
-    'ring_color'?: Colors;
 }
 
 export namespace NewItemInput {

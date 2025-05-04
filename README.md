@@ -1,8 +1,8 @@
-# **E-Commerce Jewelry Store API**
+# **E-Commerce Store API**
 
 ## **Overview**
 
-This repository contains the source code for the REST API backend powering a modern e-commerce web application specializing in jewelry. It provides a comprehensive set of endpoints for managing catalog items, user authentication and profiles, shopping carts, order processing, and administrative functions.
+This repository contains the source code for the REST API backend powering a modern e-commerce web application special for a future {secret} project. It provides a comprehensive set of endpoints for managing catalog items, user authentication and profiles, shopping carts, order processing, and administrative functions.
 
 Built with Node.js, Express, and TypeScript, this API prioritizes type safety, a clear and maintainable structure following domain-driven principles, and modern development practices. It utilizes PostgreSQL for data persistence and JWT for secure authentication.
 
@@ -13,7 +13,7 @@ This project also serves as a capstone project for the Codecademy Backend Develo
 * **Authentication:** Secure user registration, login via email/password, JWT-based session management `(/auth)`.  
 * **Catalog Management:**  
   * Public browsing of items with filtering, pagination, and sorting (`GET /items`, `GET /items/:id`).  
-  * Admin CRUD operations for jewelry items (rings, necklaces, earrings) with support for type-specific properties (`/admin/items`).  
+  * Admin CRUD operations for items with support for type-specific properties (`/admin/items`).  
   * Role-based response filtering (admins see more details than public users on the same endpoints).  
 * **User Management:** Self-service profile viewing and updates (`/auth/me`). (Admin user management could be added under `/admin/users`).  
 * **Shopping Cart:** Add/remove items, update quantities, view cart contents (`/cart`).  

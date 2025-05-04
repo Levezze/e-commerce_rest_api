@@ -4,6 +4,7 @@ import { NewItemInput } from "../../../dtos/generated/newItemInput.js";
 import { logger } from "../../../utils/logger.js";
 import { Items } from "../../../database/types.js";
 import { db } from '../../../database/index.js';
+import { ConflictError } from "../../../utils/errors.js";
 
 type ItemFromDb = Selectable<ItemTableInterface>;
 type ItemForDb = Insertable<ItemTableInterface>;
@@ -20,8 +21,15 @@ export const createNewItem = async (newItem: NewItemInput) => {
     `.execute(db);
 
     if (itemQueryResult.rows.length > 0) {
-      
-    }
+      throw new ConflictError(`Item with name '${itemName}' already exists.`);
+    };
+
+    const newItemQueryResult = await sql<NewItemInput>`
+    INSERT INTO items (category, item_name, description, price, img_urls)
+    VALUES (${newItem.category}, ${newItem.item_name}, ${newItem.description}, ${newItem.price}, ${newItem.img_urls})
+    RETURNING id, category, item_name, description, price, img_urls;
+    `.execute(db);
+
   } catch (error) {
     throw error;
   }
