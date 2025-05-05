@@ -1,18 +1,16 @@
-import { sql, Selectable, Insertable, Updateable } from "kysely";
-import { Item as ItemTableInterface } from "../../../dtos/generated/item.js";
-import { NewItemInput } from "../../../dtos/generated/newItemInput.js";
-import { logger } from "../../../utils/logger.js";
-import { Items } from "../../../database/types.js";
+import { sql } from "kysely";
 import { db } from '../../../database/index.js';
+import { Items } from "../../../database/types.js";
+import { logger } from "../../../utils/logger.js";
 import { ConflictError } from "../../../utils/errors.js";
+import type { components } from "../../../dtos/generated/openapi.js";
 
-type ItemFromDb = Selectable<ItemTableInterface>;
-type ItemForDb = Insertable<ItemTableInterface>;
+type NewItemInput = components["schemas"]["ItemInput"];
 
 export const createNewItem = async (newItem: NewItemInput) => {
-  logger.debug(`Service: Attempting to create new item: ${newItem.gem_name} ${newItem.jewelry_type}`);
+  logger.debug(`Service: Attempting to create new item`);
   try {
-    const itemName = `${newItem.gem_name} ${newItem.jewelry_type}`;
+    const itemName = `${newItem.item_name}`;
 
     const itemQueryResult = await sql<Items>`
     SELECT item_name
