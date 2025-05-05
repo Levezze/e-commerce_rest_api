@@ -1934,8 +1934,7 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": {
-                        /** @enum {string} */
-                        status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+                        status: components["schemas"]["OrderStatus"];
                     };
                 };
             };
@@ -2002,6 +2001,21 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * @description Role of the user in the system.
+         * @enum {string}
+         */
+        UserRole: "user" | "manager" | "admin";
+        /**
+         * @description New role for the user (admin/manager/customer).
+         * @enum {string}
+         */
+        UserRoleUpdate: "admin" | "manager" | "customer";
+        /**
+         * @description Current status of the order.
+         * @enum {string}
+         */
+        OrderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
         /** @description Base fields for user creation and update. */
         UserInputBase: {
             /**
@@ -2032,11 +2046,8 @@ export interface components {
              * @description Date/time the user was last updated.
              */
             readonly updated_at?: string;
-            /**
-             * @description Role of the user in the system.
-             * @enum {string}
-             */
-            readonly user_role?: "user" | "manager" | "admin";
+            /** @description Role of the user in the system. */
+            readonly user_role?: components["schemas"]["UserRole"];
             /**
              * Format: date-time
              * @description Date/time of the user's last login.
@@ -2053,6 +2064,13 @@ export interface components {
         RegisterUser: components["schemas"]["UserInputBase"] & {
             /** @description Unique username for the user. */
             username: string;
+        };
+        /** @description Request body for user creation (by admin). */
+        CreateUser: components["schemas"]["UserInputBase"] & {
+            /** @description Unique username for the user. */
+            username: string;
+            /** @description Role of the user in the system. */
+            user_role?: components["schemas"]["UserRole"];
         };
         /** @description Request body for user login. */
         LoginRequest: {
@@ -2093,11 +2111,8 @@ export interface components {
              * @description New email address.
              */
             email?: string;
-            /**
-             * @description New role for the user.
-             * @enum {string}
-             */
-            role?: "admin" | "manager" | "customer";
+            /** @description New role for the user. */
+            role?: components["schemas"]["UserRoleUpdate"];
         };
         /**
          * @description Category of the item in the store.
@@ -2379,11 +2394,8 @@ export interface components {
             id?: number;
             /** @description ID of the user who placed the order. */
             user_id?: number;
-            /**
-             * @description Current status of the order.
-             * @enum {string}
-             */
-            status?: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+            /** @description Current status of the order. */
+            status?: components["schemas"]["OrderStatus"];
             /**
              * Format: float
              * @description Total price of the order.

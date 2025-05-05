@@ -12,10 +12,12 @@ import { BadRequestError,
   NotFoundError, 
   UnauthorizedError } from '../../utils/errors.js';
 import { PartialUserUpdate } from '../../dtos/generated/partialUserUpdate.js';
+import { components } from '../../dtos/generated/openapi.js';
 
 
-type UserForDb = Insertable<UsersTableInterface>;
+// type UserForDb = Insertable<UsersTableInterface>;
 type SelectableDbUser = Selectable<UsersTableInterface>;
+type UserForDb = components["schemas"]["RegisterUser"];
 
 export const verifyCredentials = async (
   email: string,

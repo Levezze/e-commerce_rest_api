@@ -1246,8 +1246,7 @@ paths:
               required: [status]
               properties:
                 status:
-                  type: string
-                  enum: [pending, processing, shipped, delivered, cancelled]
+                  $ref: '#/components/schemas/OrderStatus'
       responses:
         '200':
           description: Order status updated
@@ -1293,6 +1292,19 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    # --- ENUMS ---
+    UserRole:
+      type: string
+      enum: [user, manager, admin]
+      description: Role of the user in the system.
+    UserRoleUpdate:
+      type: string
+      enum: [admin, manager, customer]
+      description: New role for the user (admin/manager/customer).
+    OrderStatus:
+      type: string
+      enum: [pending, processing, shipped, delivered, cancelled]
+      description: Current status of the order.
     # --- USER ---
     UserInputBase:
       type: object
@@ -1340,8 +1352,7 @@ components:
               readOnly: true
               description: Date/time the user was last updated.
             user_role:
-              type: string
-              enum: [user, manager, admin]
+              $ref: '#/components/schemas/UserRole'
               readOnly: true
               description: Role of the user in the system.
             last_login:
@@ -1375,6 +1386,21 @@ components:
             username:
               type: string
               description: Unique username for the user.
+          required: [username]
+          additionalProperties: false
+    CreateUser:
+      type: object
+      description: Request body for user creation (by admin).
+      allOf:
+        - $ref: '#/components/schemas/UserInputBase'
+        - type: object
+          properties:
+            username:
+              type: string
+              description: Unique username for the user.
+            user_role:
+              $ref: '#/components/schemas/UserRole'
+              description: Role of the user in the system.
           required: [username]
           additionalProperties: false
     LoginRequest:
@@ -1422,8 +1448,7 @@ components:
           format: email
           description: New email address.
         role:
-          type: string
-          enum: [admin, manager, customer]
+          $ref: '#/components/schemas/UserRoleUpdate'
           description: New role for the user.
 
     # --- ITEMS ---
@@ -1782,8 +1807,7 @@ components:
           type: integer
           description: ID of the user who placed the order.
         status:
-          type: string
-          enum: [pending, processing, shipped, delivered, cancelled]
+          $ref: '#/components/schemas/OrderStatus'
           description: Current status of the order.
         total:
           type: number
