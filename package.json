@@ -15,6 +15,7 @@
     "seed": "tsx src/db/seed.ts | pino-pretty",
     "build": "tsc",
     "start": "node -r dotenv/config dist/server/index.js",
+    "generate:api": "npx openapi-typescript ./docs/openapi.yaml --output ./temp-generated/openapi.d.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {
