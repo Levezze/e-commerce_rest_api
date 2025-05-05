@@ -3,7 +3,7 @@ openapi: 3.1.1
 info:
   title: Generic Modular Store API
   version: 1.0.0
-  description: REST API for a modular, extensible e-commerce store. Supports generic items, modules, accessories, packages, role-based access, and modular product design.
+  description: REST API for a modular, extensible e-commerce store. Supports generic items, modules, accessories, bundles, role-based access, and modular product design.
 
 servers:
   - url: /api/v1
@@ -15,6 +15,7 @@ paths:
     post:
       summary: Register new user
       tags: [Auth]
+      # Public, no security/x-roles
       requestBody:
         required: true
         content:
@@ -24,11 +25,45 @@ paths:
       responses:
         '201':
           description: Registered successfully
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/login:
     post:
       summary: User login
       tags: [Auth]
+      # Public, no security/x-roles
       requestBody:
         required: true
         content:
@@ -38,31 +73,130 @@ paths:
       responses:
         '200':
           description: Authenticated user
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/logout:
     post:
       summary: Logout user
       tags: [Auth]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
       responses:
         '204':
           description: Logged out
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/me:
     get:
       summary: Get current user
       tags: [Auth]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
       responses:
         '200':
           description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       summary: Update current user
       tags: [Auth]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
       requestBody:
         required: true
         content:
@@ -72,7 +206,40 @@ paths:
       responses:
         '200':
           description: Updated current user
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   # --- USER ROUTES ---
   /users:
     get:
@@ -84,7 +251,42 @@ paths:
       responses:
         '200':
           description: List of users
-
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /users/{id}:
     get:
       summary: Get user by ID (admin only)
@@ -101,6 +303,22 @@ paths:
       responses:
         '200':
           description: User info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       summary: Update user by ID (admin only)
       tags: [Users]
@@ -116,6 +334,40 @@ paths:
       responses:
         '200':
           description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Delete user by ID (admin only)
       tags: [Users]
@@ -131,12 +383,42 @@ paths:
       responses:
         '204':
           description: User deleted
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   # --- ITEM ROUTES (ADMIN & PUBLIC) ---
   /items:
     get:
       summary: Get all catalog items
       tags: [Items]
+      # Public, no security/x-roles
       parameters:
         - name: limit
           in: query
@@ -147,24 +429,14 @@ paths:
             default: 20
         - name: offset
           in: query
-          description: Items to skip
+          description: Offset for pagination
           schema:
             type: integer
             minimum: 0
             default: 0
-        - name: category
+        - name: featured
           in: query
-          description: Filter by category
-          schema:
-            $ref: '#/components/schemas/ItemCategory'
-        - name: type
-          in: query
-          description: Filter by item type
-          schema:
-            $ref: '#/components/schemas/ItemType'
-        - name: in_stock
-          in: query
-          description: Only items in stock
+          description: Filter for featured items
           schema:
             type: boolean
         - name: sort
@@ -187,12 +459,43 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ItemFetch'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       summary: Add a new item
       tags: [Items]
       security:
         - bearerAuth: []
       x-roles: [admin, manager]
+      description: Only users with the 'admin' or 'manager' role can add items.
       requestBody:
         required: true
         content:
@@ -206,11 +509,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ItemFetch'
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /items/{id}:
     get:
       summary: Get item by ID
       tags: [Items]
+      # Public, no security/x-roles
       parameters:
         - name: id
           in: path
@@ -226,12 +559,23 @@ paths:
                 $ref: '#/components/schemas/ItemFetch'
         '404':
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     patch:
       summary: Update item by ID
       tags: [Items]
       security:
         - bearerAuth: []
       x-roles: [admin, manager]
+      description: Only users with the 'admin' or 'manager' role can update items.
       parameters:
         - name: id
           in: path
@@ -251,12 +595,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ItemFetch'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Delete item by ID
       tags: [Items]
       security:
         - bearerAuth: []
       x-roles: [admin]
+      description: Only users with the 'admin' role can delete items.
       parameters:
         - name: id
           in: path
@@ -266,91 +641,212 @@ paths:
       responses:
         '204':
           description: Deleted successfully
-
-  # --- PACKAGES ---
-  /packages:
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  # --- BUNDLES ---
+  /bundles:
     get:
-      summary: Get all packages
-      tags: [Packages]
+      summary: Get all bundles
+      tags: [Bundles]
+      # Public, no security/x-roles
       responses:
         '200':
-          description: List of packages
+          description: List of bundles
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Package'
-    post:
-      summary: Create a new package
-      tags: [Packages]
-      security:
-        - bearerAuth: []
-      x-roles: [admin, manager]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PackageInput'
-      responses:
-        '201':
-          description: Created package
+                  $ref: '#/components/schemas/Bundle'
+        '400':
+          description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Package'
-
-  /packages/{id}:
-    get:
-      summary: Get package by ID
-      tags: [Packages]
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Package found
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Package'
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Not found
-    patch:
-      summary: Update package by ID
-      tags: [Packages]
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create a new bundle
+      tags: [Bundles]
       security:
         - bearerAuth: []
       x-roles: [admin, manager]
+      description: Only users with the 'admin' or 'manager' role can create bundles.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BundleInput'
+      responses:
+        '201':
+          description: Bundle created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /bundles/{id}:
+    get:
+      summary: Get bundle by ID
+      tags: [Bundles]
+      # Public, no security/x-roles
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: integer
+      responses:
+        '200':
+          description: Bundle found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      summary: Update bundle by ID
+      tags: [Bundles]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      description: Only users with the 'admin' or 'manager' role can update bundles.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PackageInput'
+              $ref: '#/components/schemas/BundleInput'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
-          description: Updated package
+          description: Bundle updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Package'
+                $ref: '#/components/schemas/Bundle'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
-      summary: Delete package by ID
-      tags: [Packages]
+      summary: Delete bundle by ID
+      tags: [Bundles]
       security:
         - bearerAuth: []
       x-roles: [admin]
+      description: Only users with the 'admin' role can delete bundles.
       parameters:
         - name: id
           in: path
@@ -359,7 +855,19 @@ paths:
             type: integer
       responses:
         '204':
-          description: Deleted successfully
+          description: Bundle deleted
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   # --- CART ---
   /cart:
@@ -368,6 +876,8 @@ paths:
       tags: [Cart]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: Only authenticated users can view their own cart.
       responses:
         '200':
           description: User's cart
@@ -377,11 +887,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CartItem'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       summary: Add item to cart
       tags: [Cart]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: Only authenticated users can add items to their own cart.
       requestBody:
         required: true
         content:
@@ -391,21 +915,78 @@ paths:
       responses:
         '201':
           description: Added to cart
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Clear cart
       tags: [Cart]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: Only authenticated users can clear their own cart.
       responses:
         '204':
           description: Cart cleared
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /cart/items/{itemId}:
     patch:
       summary: Update quantity of item in cart
       tags: [Cart]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: Only authenticated users can update items in their own cart.
       parameters:
         - name: itemId
           in: path
@@ -430,11 +1011,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CartItem'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       summary: Remove item from cart
       tags: [Cart]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: Only authenticated users can remove items from their own cart.
       parameters:
         - name: itemId
           in: path
@@ -444,14 +1057,45 @@ paths:
       responses:
         '204':
           description: Item removed from cart
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   # --- ORDERS ---
   /orders:
     get:
-      summary: Get current user's orders
+      summary: Get all orders
       tags: [Orders]
       security:
         - bearerAuth: []
+      x-roles: [admin, manager]
+      description: Only users with the 'admin' or 'manager' role can view all orders.
       responses:
         '200':
           description: List of orders
@@ -461,11 +1105,47 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       summary: Place new order
       tags: [Orders]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      x-middlewares:
+        - payment
+      description: |
+        Place a new order. Requires authentication. Payment is processed via an external service (e.g., Stripe).
+        Customers can only place orders for themselves. Admins and managers may place orders on behalf of any user.
       requestBody:
         required: true
         content:
@@ -474,18 +1154,50 @@ paths:
               $ref: '#/components/schemas/NewOrder'
       responses:
         '201':
-          description: Order placed
+          description: Order created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
-
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /orders/{id}:
     get:
       summary: Get order by ID
       tags: [Orders]
       security:
         - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: |
+        Customers may only access their own orders. Admins and managers can access any order.
       parameters:
         - name: id
           in: path
@@ -494,14 +1206,23 @@ paths:
             type: integer
       responses:
         '200':
-          description: Order details
+          description: Order found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
         '404':
           description: Not found
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /orders/{id}/status:
     patch:
       summary: Update order status
@@ -509,6 +1230,7 @@ paths:
       security:
         - bearerAuth: []
       x-roles: [admin, manager]
+      description: Only users with the 'admin' or 'manager' role can update order status.
       parameters:
         - name: id
           in: path
@@ -528,7 +1250,41 @@ paths:
                   enum: [pending, processing, shipped, delivered, cancelled]
       responses:
         '200':
-          description: Status updated
+          description: Order status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   securitySchemes:
@@ -537,161 +1293,275 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    # --- AUTH ---
-    RegisterUser:
+    # --- USER ---
+    UserInputBase:
       type: object
-      required: [username, email, password]
-      properties:
-        username:
-          type: string
+      description: Base fields for user creation and update.
+      properties: 
         email:
           type: string
           format: email
+          maxLength: 100
+          description: User's email address.
+        username:
+          type: string
+          minLength: 3
+          maxLength: 20
+          description: Unique username for the user.
         password:
           type: string
           format: password
+          minLength: 8
+          description: User's password (write-only, min 8 characters)
+          writeOnly: true
+        address:
+          $ref: '#/components/schemas/UserAddress'
+          description: User's default shipping address.
+      required: [email, password]
+      additionalProperties: false
+    User:
+      allOf: 
+        - $ref: '#/components/schemas/UserInputBase'
+        - type: object
+          description: Complete user object as stored in the database.
+          properties:
+            id:
+              type: integer
+              readOnly: true
+              description: Unique identifier for the user.
+            created_at:
+              type: string
+              format: date-time
+              readOnly: true
+              description: Date/time the user was created.
+            updated_at:
+              type: string
+              format: date-time
+              readOnly: true
+              description: Date/time the user was last updated.
+            user_role:
+              type: string
+              enum: [user, manager, admin]
+              readOnly: true
+              description: Role of the user in the system.
+            last_login:
+              type: string
+              format: date-time
+              readOnly: true
+              description: Date/time of the user's last login.
+            is_active:
+              type: boolean
+              readOnly: true
+              description: Whether the user account is active.
+          additionalProperties: false
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            token:
+              type: string
+              format: jwt
+          required: [token]
+          additionalProperties: false
+    # --- AUTH ---
+    RegisterUser:
+      type: object
+      description: Request body for user registration.
+      allOf:
+        - $ref: '#/components/schemas/UserInputBase'
+        - type: object
+          properties:
+            username:
+              type: string
+              description: Unique username for the user.
+          required: [username]
+          additionalProperties: false
     LoginRequest:
       type: object
+      description: Request body for user login.
       required: [email, password]
       properties:
         email:
           type: string
           format: email
+          description: User's email address.
         password:
           type: string
           format: password
+          description: User's password (write-only)
+          writeOnly: true
     UpdateMe:
       type: object
+      description: Request body for updating current user's info.
       properties:
         username:
           type: string
+          description: New username.
         email:
           type: string
           format: email
+          description: New email address.
         password:
           type: string
           format: password
+          description: New password (write-only)
+          writeOnly: true
+        address:
+          $ref: '#/components/schemas/UserAddress'
+          description: New shipping address.
     UpdateUser:
       type: object
+      description: Request body for updating any user (admin/manager).
       properties:
         username:
           type: string
+          description: New username.
         email:
           type: string
           format: email
+          description: New email address.
         role:
           type: string
           enum: [admin, manager, customer]
+          description: New role for the user.
 
     # --- ITEMS ---
     ItemCategory:
       type: string
       enum: [generic_item, module, accessory]
+      description: Category of the item in the store.
     ItemType:
       type: string
       enum: [basic, auto, general]
+      description: Type of the item in the store.
     FrameColor:
       type: string
       enum: [white, black, silver]
+      description: Color of the item's frame.
     ModuleSize:
       type: string
       enum: [small, medium, large]
+      description: Size of the module item.
     ControllerType:
       type: string
       enum: [remote, app]
-    PackageBasic:
-      type: string
-      enum: [custom, basic, minimalistic, flat, non-slip]
-    PackageAuto:
-      type: string
-      enum: [reading_light, night_light, led_light, wireless_charger]
-    Package:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        modules:
-          type: array
-          items:
-            type: integer
-        color:
-          type: string
-        material:
-          type: string
-        is_custom:
-          type: boolean
-      required: [id, name, modules]
-    PackageInput:
-      type: object
-      required: [name, modules]
-      properties:
-        name:
-          type: string
-        modules:
-          type: array
-          items:
-            type: integer
-        color:
-          type: string
-        material:
-          type: string
-        is_custom:
-          type: boolean
+      description: Controller type for module items.
     ItemBase:
       type: object
+      description: Base fields for an item in the store.
       properties:
         id:
           type: integer
+          readOnly: true
+          description: Unique identifier for the item.
         item_name:
           type: string
+          description: Name of the item.
         description:
           type: string
+          description: Description of the item.
         img_urls:
           type: array
           items:
             type: string
             format: uri
+          description: List of image URLs for the item.
         price:
           type: number
           format: float
+          description: Price of the item.
         category:
           $ref: '#/components/schemas/ItemCategory'
+          description: Category of the item.
         type:
           $ref: '#/components/schemas/ItemType'
-        package:
-          oneOf:
-            - $ref: '#/components/schemas/PackageBasic'
-            - $ref: '#/components/schemas/PackageAuto'
+          description: Type of the item.
         in_stock:
           type: boolean
+          description: Whether the item is in stock.
         frame_color:
           $ref: '#/components/schemas/FrameColor'
+          description: Frame color of the item.
         surface_material:
           type: string
+          description: Surface material of the item.
         created_at:
           type: string
           format: date-time
+          description: Date/time the item was created.
         updated_at:
           type: string
           format: date-time
+          description: Date/time the item was last updated.
         is_featured:
           type: boolean
+          description: Whether the item is featured.
         is_hidden:
           type: boolean
+          description: Whether the item is hidden from public view.
       required:
         - id
         - item_name
         - price
         - category
         - type
-        - package
+        - in_stock
+        - img_urls
+    ItemInputBase:
+      type: object
+      description: Base fields for creating or updating an item.
+      properties:
+        item_name:
+          type: string
+          description: Name of the item.
+        description:
+          type: string
+          description: Description of the item.
+        img_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+          description: List of image URLs for the item.
+        price:
+          type: number
+          format: float
+          description: Price of the item.
+        category:
+          $ref: '#/components/schemas/ItemCategory'
+          description: Category of the item.
+        type:
+          $ref: '#/components/schemas/ItemType'
+          description: Type of the item.
+        in_stock:
+          type: boolean
+          description: Whether the item is in stock.
+        frame_color:
+          $ref: '#/components/schemas/FrameColor'
+          description: Frame color of the item.
+        surface_material:
+          type: string
+          description: Surface material of the item.
+        is_featured:
+          type: boolean
+          description: Whether the item is featured.
+        is_hidden:
+          type: boolean
+          description: Whether the item is hidden from public view.
+      required:
+        - item_name
+        - price
+        - category
+        - type
         - in_stock
         - img_urls
     GenericItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
+    GenericItemInput:
+      allOf:
+        - $ref: '#/components/schemas/ItemInputBase'
     ModuleItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
@@ -699,14 +1569,39 @@ components:
           properties:
             size:
               $ref: '#/components/schemas/ModuleSize'
+              description: Size of the module item.
             material:
               type: string
+              description: Material of the module item.
             color:
               type: string
+              description: Color of the module item.
             style:
               type: string
+              description: Style of the module item.
             controller:
               $ref: '#/components/schemas/ControllerType'
+              description: Controller type for the module item.
+    ModuleItemInput:
+      allOf:
+        - $ref: '#/components/schemas/ItemInputBase'
+        - type: object
+          properties:
+            size:
+              $ref: '#/components/schemas/ModuleSize'
+              description: Size of the module item.
+            material:
+              type: string
+              description: Material of the module item.
+            color:
+              type: string
+              description: Color of the module item.
+            style:
+              type: string
+              description: Style of the module item.
+            controller:
+              $ref: '#/components/schemas/ControllerType'
+              description: Controller type for the module item.
     AccessoryItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
@@ -714,12 +1609,33 @@ components:
           properties:
             size:
               $ref: '#/components/schemas/ModuleSize'
+              description: Size of the accessory item.
             material:
               type: string
+              description: Material of the accessory item.
             color:
               type: string
+              description: Color of the accessory item.
             style:
               type: string
+              description: Style of the accessory item.
+    AccessoryItemInput:
+      allOf:
+        - $ref: '#/components/schemas/ItemInputBase'
+        - type: object
+          properties:
+            size:
+              $ref: '#/components/schemas/ModuleSize'
+              description: Size of the accessory item.
+            material:
+              type: string
+              description: Material of the accessory item.
+            color:
+              type: string
+              description: Color of the accessory item.
+            style:
+              type: string
+              description: Style of the accessory item.
     ItemFetch:
       oneOf:
         - $ref: '#/components/schemas/GenericItem'
@@ -733,130 +1649,229 @@ components:
           accessory: '#/components/schemas/AccessoryItem'
     ItemInput:
       oneOf:
-        - $ref: '#/components/schemas/GenericItem'
-        - $ref: '#/components/schemas/ModuleItem'
-        - $ref: '#/components/schemas/AccessoryItem'
+        - $ref: '#/components/schemas/ItemInputBase'
+        - $ref: '#/components/schemas/ModuleItemInput'
+        - $ref: '#/components/schemas/AccessoryItemInput'
       discriminator:
         propertyName: category
     ItemUpdate:
       type: object
+      description: Request body for updating an item.
       properties:
-        item_name: {type: string}
-        description: {type: string}
-        price: {type: number, format: float}
-        in_stock: {type: boolean}
-        is_featured: {type: boolean}
-        is_hidden: {type: boolean}
-        frame_color: {$ref: '#/components/schemas/FrameColor'}
-        surface_material: {type: string}
-        package:
-          oneOf:
-            - $ref: '#/components/schemas/PackageBasic'
-            - $ref: '#/components/schemas/PackageAuto'
-        size: {$ref: '#/components/schemas/ModuleSize'}
-        material: {type: string}
-        color: {type: string}
-        style: {type: string}
-        controller: {$ref: '#/components/schemas/ControllerType'}
+        item_name: {type: string, description: New name of the item.}
+        description: {type: string, description: New description of the item.}
+        price: {type: number, format: float, description: New price of the item.}
+        in_stock: {type: boolean, description: New stock status of the item.}
+        is_featured: {type: boolean, description: New featured status of the item.}
+        is_hidden: {type: boolean, description: New hidden status of the item.}
+        frame_color: {$ref: '#/components/schemas/FrameColor', description: New frame color of the item.}
+        surface_material: {type: string, description: New surface material of the item.}
+        size: {$ref: '#/components/schemas/ModuleSize', description: New size of the module item.}
+        material: {type: string, description: New material of the module item.}
+        color: {type: string, description: New color of the module item.}
+        style: {type: string, description: New style of the module item.}
+        controller: {$ref: '#/components/schemas/ControllerType', description: New controller type for the module item.}
+
+    # --- BUNDLES ---
+    Bundle:
+      type: object
+      description: A bundle containing a collection of items from any category.
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the bundle.
+        name:
+          type: string
+          description: Name of the bundle.
+        item_ids:
+          type: array
+          items:
+            type: integer
+          description: List of item IDs included in the bundle.
+        price:
+          type: number
+          format: float
+          description: Total price of the bundle.
+        description:
+          type: string
+          description: Description of the bundle.
+        created_at:
+          type: string
+          format: date-time
+          description: Date/time the bundle was created.
+        updated_at:
+          type: string
+          format: date-time
+          description: Date/time the bundle was last updated.
+      required: [id, name, item_ids, price]
+    BundleInput:
+      type: object
+      description: Request body for creating or updating a bundle.
+      required: [name, item_ids, price]
+      properties:
+        name:
+          type: string
+          description: Name of the bundle.
+        item_ids:
+          type: array
+          items:
+            type: integer
+          description: List of item IDs to include.
+        price:
+          type: number
+          format: float
+          description: Total price of the bundle.
+        description:
+          type: string
+          description: Description of the bundle.
 
     # --- CART ---
     CartItem:
       type: object
+      description: An item in the user's shopping cart.
       properties:
         item_id:
           type: integer
+          description: ID of the item in the cart.
         quantity:
           type: integer
           minimum: 1
+          description: Quantity of the item in the cart.
         added_at:
           type: string
           format: date-time
+          description: Date/time the item was added to the cart.
         item_details:
           $ref: '#/components/schemas/ItemFetch'
+          description: Details of the item in the cart.
       required: [item_id, quantity]
     CartInsert:
       type: object
+      description: Request body for adding an item to the cart.
       required: [item_id, quantity]
       properties:
         item_id:
           type: integer
+          description: ID of the item to add.
         quantity:
           type: integer
           minimum: 1
-
-    # --- ORDERS ---
+          description: Quantity of the item to add.
     NewOrder:
       type: object
+      description: Request body for placing a new order.
       required: [shipping_address, items]
       properties:
         shipping_address:
           $ref: '#/components/schemas/UserAddress'
+          description: Shipping address for the order.
         items:
           type: array
           minItems: 1
           items:
             $ref: '#/components/schemas/OrderItemInput'
+          description: List of items in the order.
     Order:
       type: object
+      description: An order placed by a user.
       properties:
         id:
           type: integer
+          description: Unique identifier for the order.
         user_id:
           type: integer
+          description: ID of the user who placed the order.
         status:
           type: string
           enum: [pending, processing, shipped, delivered, cancelled]
+          description: Current status of the order.
         total:
           type: number
           format: float
+          description: Total price of the order.
         shipping_address:
           $ref: '#/components/schemas/UserAddress'
+          description: Shipping address for the order.
         created_at:
           type: string
           format: date-time
+          description: Date/time the order was created.
         updated_at:
           type: string
           format: date-time
+          description: Date/time the order was last updated.
         items:
           type: array
           items:
             $ref: '#/components/schemas/OrderItem'
+          description: List of items in the order.
     OrderItem:
       type: object
+      description: An item included in an order.
       properties:
         item_id:
           type: integer
+          description: ID of the item.
         quantity:
           type: integer
           minimum: 1
+          description: Quantity of the item.
         price_at_purchase:
           type: number
           format: float
+          description: Price of the item at the time of purchase.
         item_name:
           type: string
+          description: Name of the item.
         item_snapshot:
           type: object
+          description: Snapshot of the item details at purchase time.
           properties:
-            item_name: {type: string}
-            price: {type: number, format: float}
+            item_name: {type: string, description: Name of the item.}
+            price: {type: number, format: float, description: Price of the item.}
     OrderItemInput:
       type: object
+      description: Request body for adding an item to an order.
       required: [item_id, quantity]
       properties:
         item_id:
           type: integer
+          description: ID of the item to order.
         quantity:
           type: integer
           minimum: 1
+          description: Quantity to order.
     UserAddress:
       type: object
+      description: User's shipping address.
       required: [street, city, zip, country]
       properties:
         street:
           type: string
+          description: Street address.
         city:
           type: string
+          description: City.
         zip:
           type: string
+          description: ZIP or postal code.
         country:
           type: string
+          description: Country.
+        phone:
+          type: string
+          format: phone
+          minLength: 10
+          maxLength: 15
+          description: Contact phone number for the address.
+    ErrorResponse:
+      type: object
+      description: Standard error response.
+      properties:
+        message:
+          type: string
+          description: Error message.
+        code:
+          type: integer
+          description: Error code.
+      required: [message, code]

@@ -1,13 +1,13 @@
-import { sql, Selectable, Insertable, Updateable } from "kysely";
-import { Item as ItemTableInterface } from "../../../dtos/generated/item.js";
+import { sql } from "kysely";
 import { logger } from "../../../utils/logger.js";
 import { Items } from "../../../database/types.js";
-import { Item } from "../../../dtos/generated/item.js";
 import { db } from '../../../database/index.js';
 import { NotFoundError } from "../../../utils/errors.js";
+import type { components } from "../../../dtos/generated/openapi.js";
+import camelcaseKeys from "camelcase-keys";
 
-type ItemFromDb = Selectable<ItemTableInterface>;
-type ItemForDb = Insertable<ItemTableInterface>;
+// type ItemFromDb = Selectable<ItemTableInterface>;
+type ItemFromDb = components["schemas"]["ItemFetch"];
 
 export const getAllItems = async (admin: boolean) => {
   logger.debug(`Service: Attempting to fetch all items`);
@@ -22,33 +22,20 @@ export const getAllItems = async (admin: boolean) => {
     };
 
     if (admin) {
-      const itemsDto = queryResult.rows.map(dbItem => {
-        return {
-          id: dbItem.id,
-          itemName: dbItem.item_name,
-          price: dbItem.price,
-          inStock: dbItem.in_stock,
-          imgUrl: dbItem.img_url,
-          createdAt: dbItem.created_at,
-          updatedAt: dbItem.updated_at,
-          isFeatured: dbItem.is_featured,
-          isHidden: dbItem.is_hidden,
-        }
-      });
-      return itemsDto;
+      return queryResult.rows.map(row => 
+        camelcaseKeys(row, { deep: true })
+      );
     };
 
-    const itemsDto = queryResult.rows.map(dbItem => {
+    return queryResult.rows.map(dbItem => {
       return {
         id: dbItem.id,
         itemName: dbItem.item_name,
         price: dbItem.price,
         inStock: dbItem.in_stock,
-        imgUrl: dbItem.img_url,
+        imgUrls: dbItem.img_urls,
       }
     });
-    return itemsDto;
-
   } catch (error) {
     if (error instanceof NotFoundError) {
       throw (error);
@@ -71,29 +58,14 @@ export const getItemById = async (id: number, admin: boolean) => {
     };
     const dbItem = queryResult.rows[0];
 
-    let itemDto;
-    if (admin) {
-      itemDto = {
-        id: dbItem.id,
-        itemName: dbItem.item_name,
-        price: dbItem.price,
-        inStock: dbItem.in_stock,
-        imgUrl: dbItem.img_url,
-        createdAt: dbItem.created_at,
-        updatedAt: dbItem.updated_at,
-        isFeatured: dbItem.is_featured,
-        isHidden: dbItem.is_hidden,
-      }
-    } else {
-      itemDto = {
-        id: dbItem.id,
-        itemName: dbItem.item_name,
-        price: dbItem.price,
-        inStock: dbItem.in_stock,
-        imgUrl: dbItem.img_url,
-      }
+    if (admin) return camelcaseKeys(queryResult.rows, { deep: true });
+    return {
+      id: dbItem.id,
+      itemName: dbItem.item_name,
+      price: dbItem.price,
+      inStock: dbItem.in_stock,
+      imgUrls: dbItem.img_urls,
     };
-    return itemDto;
   } catch (error) {
     logger.error(`Service: Error fetching item by ID ${id}`);
     throw new Error('Database error while fetching item.');
