@@ -1,15 +1,15 @@
-import { sql } from "kysely";
+import { sql, Selectable } from "kysely";
 import { logger } from "../../../utils/logger.js";
-import { Items } from "../../../database/types.js";
+import { Items as ItemTableInterface } from "../../../database/types.js";
 import { db } from '../../../database/index.js';
 import { NotFoundError } from "../../../utils/errors.js";
 import type { components } from "../../../dtos/generated/openapi.js";
 import camelcaseKeys from "camelcase-keys";
 
-// type ItemFromDb = Selectable<ItemTableInterface>;
-type ItemFromDb = components["schemas"]["ItemFetch"];
+type ItemFromDb = Selectable<ItemTableInterface>;
+type ItemResponse = components["schemas"]["ItemFetch"];
 
-export const getAllItems = async (admin: boolean) => {
+export const getAllItems = async (admin: boolean): Promise<ItemResponse> => {
   logger.debug(`Service: Attempting to fetch all items`);
   try {
     const queryResult = await sql<ItemFromDb>`

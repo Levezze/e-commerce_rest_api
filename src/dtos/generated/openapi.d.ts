@@ -33,7 +33,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserResponse"];
+                        "application/json": components["schemas"]["UserWithToken"];
                     };
                 };
                 /** @description Bad request */
@@ -118,7 +118,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserResponse"];
+                        "application/json": components["schemas"]["UserWithToken"];
                     };
                 };
                 /** @description Bad request */
@@ -276,7 +276,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserResponse"];
+                        "application/json": components["schemas"]["UserSelf"];
                     };
                 };
                 /** @description Bad request */
@@ -351,7 +351,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserResponse"];
+                        "application/json": components["schemas"]["UserSelf"];
                     };
                 };
                 /** @description Bad request */
@@ -426,7 +426,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserResponse"][];
+                        "application/json": components["schemas"]["UserAdmin"][];
                     };
                 };
                 /** @description Bad request */
@@ -509,7 +509,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserResponse"];
+                        "application/json": components["schemas"]["UserAdmin"];
                     };
                 };
                 /** @description Not found */
@@ -622,7 +622,7 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["UserResponse"];
+                        "application/json": components["schemas"]["UserAdmin"];
                     };
                 };
                 /** @description Bad request */
@@ -2005,18 +2005,60 @@ export interface components {
          * @description Role of the user in the system.
          * @enum {string}
          */
-        UserRole: "user" | "manager" | "admin";
-        /**
-         * @description New role for the user (admin/manager/customer).
-         * @enum {string}
-         */
-        UserRoleUpdate: "admin" | "manager" | "customer";
+        UserRole: "customer" | "manager" | "admin";
         /**
          * @description Current status of the order.
          * @enum {string}
          */
         OrderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-        /** @description Base fields for user creation and update. */
+        /** @description User's own information. */
+        UserSelf: {
+            /**
+             * Format: int64
+             * @description Unique identifier for the user.
+             */
+            id: number;
+            /**
+             * Format: email
+             * @description User's email address.
+             */
+            email: string;
+            /** @description Unique username for the user. */
+            username: string;
+            /** @description User's default shipping address (nullable). */
+            address?: components["schemas"]["UserAddress"];
+            /**
+             * Format: date-time
+             * @description Last login timestamp.
+             */
+            lastLogin?: string | null;
+            /**
+             * Format: date-time
+             * @description Account creation timestamp.
+             */
+            createdAt: string;
+        };
+        /** @description Full user info for admin (no password, no token). */
+        UserAdmin: {
+            /** Format: int64 */
+            id: number;
+            /** Format: email */
+            email: string;
+            username: string;
+            address?: components["schemas"]["UserAddress"];
+            /** Format: date-time */
+            lastLogin?: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            userRole: components["schemas"]["UserRole"];
+            isActive: boolean;
+            isVerified: boolean;
+            /** @description Password reset token (for password reset flows; not returned in normal user queries). */
+            passwordResetToken?: string | null;
+        };
+        /** @description Base fields for user. */
         UserInputBase: {
             /**
              * Format: email
@@ -2025,52 +2067,18 @@ export interface components {
             email: string;
             /** @description Unique username for the user. */
             username?: string;
+            /** @description User's default shipping address. */
+            address?: components["schemas"]["UserAddress"];
+        };
+        /** @description Request body for user registration. */
+        RegisterUser: WithRequired<components["schemas"]["UserInputBase"], "username"> & {
+            /** @description Unique username for the user. */
+            username: string;
             /**
              * Format: password
              * @description User's password (write-only, min 8 characters)
              */
             password: string;
-            /** @description User's default shipping address. */
-            address?: components["schemas"]["UserAddress"];
-        };
-        User: components["schemas"]["UserInputBase"] & {
-            /** @description Unique identifier for the user. */
-            readonly id?: number;
-            /**
-             * Format: date-time
-             * @description Date/time the user was created.
-             */
-            readonly created_at?: string;
-            /**
-             * Format: date-time
-             * @description Date/time the user was last updated.
-             */
-            readonly updated_at?: string;
-            /** @description Role of the user in the system. */
-            readonly user_role?: components["schemas"]["UserRole"];
-            /**
-             * Format: date-time
-             * @description Date/time of the user's last login.
-             */
-            readonly last_login?: string;
-            /** @description Whether the user account is active. */
-            readonly is_active?: boolean;
-        };
-        UserResponse: components["schemas"]["User"] & {
-            /** Format: jwt */
-            token: string;
-        };
-        /** @description Request body for user registration. */
-        RegisterUser: components["schemas"]["UserInputBase"] & {
-            /** @description Unique username for the user. */
-            username: string;
-        };
-        /** @description Request body for user creation (by admin). */
-        CreateUser: components["schemas"]["UserInputBase"] & {
-            /** @description Unique username for the user. */
-            username: string;
-            /** @description Role of the user in the system. */
-            user_role?: components["schemas"]["UserRole"];
         };
         /** @description Request body for user login. */
         LoginRequest: {
@@ -2081,9 +2089,26 @@ export interface components {
             email: string;
             /**
              * Format: password
-             * @description User's password (write-only)
+             * @description User's password (write-only, min 8 characters)
              */
             password: string;
+        };
+        /** @description Request body for user creation (by admin). */
+        CreateUser: WithRequired<components["schemas"]["UserInputBase"], "email" | "username"> & {
+            /**
+             * Format: email
+             * @description User's email address.
+             */
+            email: string;
+            /** @description Unique username for the user. */
+            username: string;
+            /**
+             * Format: password
+             * @description User's password (write-only, min 8 characters)
+             */
+            password: string;
+            /** @description Role of the user in the system. */
+            userRole: components["schemas"]["UserRole"];
         };
         /** @description Request body for updating current user's info. */
         UpdateMe: {
@@ -2094,16 +2119,11 @@ export interface components {
              * @description New email address.
              */
             email?: string;
-            /**
-             * Format: password
-             * @description New password (write-only)
-             */
-            password?: string;
             /** @description New shipping address. */
             address?: components["schemas"]["UserAddress"];
         };
         /** @description Request body for updating any user (admin/manager). */
-        UpdateUser: {
+        UpdateUser: components["schemas"]["UserInputBase"] & {
             /** @description New username. */
             username?: string;
             /**
@@ -2111,8 +2131,71 @@ export interface components {
              * @description New email address.
              */
             email?: string;
+            /**
+             * Format: password
+             * @description New password (write-only, min 8 characters)
+             */
+            password?: string;
             /** @description New role for the user. */
-            role?: components["schemas"]["UserRoleUpdate"];
+            userRole?: components["schemas"]["UserRole"];
+            /** @description Whether the user account is active. */
+            isActive?: boolean;
+        };
+        /** @description Request body for changing current user's password. */
+        ChangePassword: {
+            /**
+             * Format: password
+             * @description Current password (write-only)
+             */
+            oldPassword: string;
+            /**
+             * Format: password
+             * @description New password (write-only)
+             */
+            newPassword: string;
+        };
+        /** @description Request body for resetting a forgotten password. */
+        ResetPassword: {
+            /** @description Password reset token. */
+            token: string;
+            /**
+             * Format: password
+             * @description New password (write-only)
+             */
+            newPassword: string;
+        };
+        /** @description Request a password-reset email. */
+        ForgotPasswordRequest: {
+            /**
+             * Format: email
+             * @description User's email address.
+             */
+            email: string;
+        };
+        /** @description User's shipping address. */
+        UserAddress: {
+            /** @description Street address. */
+            street: string;
+            /** @description City. */
+            city: string;
+            /** @description ZIP or postal code. */
+            zip: string;
+            /** @description Country. */
+            country: string;
+            /**
+             * Format: phone
+             * @description Contact phone number for the address.
+             */
+            phone?: string;
+        };
+        /** @description Authenticated user with JWT token. */
+        UserWithToken: {
+            user: components["schemas"]["UserSelf"];
+            /**
+             * Format: jwt
+             * @description JWT access token
+             */
+            token: string;
         };
         /**
          * @description Category of the item in the store.
@@ -2144,11 +2227,11 @@ export interface components {
             /** @description Unique identifier for the item. */
             readonly id: number;
             /** @description Name of the item. */
-            item_name: string;
+            itemName: string;
             /** @description Description of the item. */
             description?: string;
             /** @description List of image URLs for the item. */
-            img_urls: string[];
+            imgUrls: string[];
             /**
              * Format: float
              * @description Price of the item.
@@ -2159,34 +2242,34 @@ export interface components {
             /** @description Type of the item. */
             type: components["schemas"]["ItemType"];
             /** @description Whether the item is in stock. */
-            in_stock: boolean;
+            inStock: boolean;
             /** @description Frame color of the item. */
-            frame_color?: components["schemas"]["FrameColor"];
+            frameColor?: components["schemas"]["FrameColor"];
             /** @description Surface material of the item. */
-            surface_material?: string;
+            surfaceMaterial?: string;
             /**
              * Format: date-time
              * @description Date/time the item was created.
              */
-            created_at?: string;
+            createdAt?: string;
             /**
              * Format: date-time
              * @description Date/time the item was last updated.
              */
-            updated_at?: string;
+            updatedAt?: string;
             /** @description Whether the item is featured. */
-            is_featured?: boolean;
+            isFeatured?: boolean;
             /** @description Whether the item is hidden from public view. */
-            is_hidden?: boolean;
+            isHidden?: boolean;
         };
         /** @description Base fields for creating or updating an item. */
         ItemInputBase: {
             /** @description Name of the item. */
-            item_name: string;
+            itemName: string;
             /** @description Description of the item. */
             description?: string;
             /** @description List of image URLs for the item. */
-            img_urls: string[];
+            imgUrls: string[];
             /**
              * Format: float
              * @description Price of the item.
@@ -2200,15 +2283,15 @@ export interface components {
             /** @description Type of the item. */
             type: components["schemas"]["ItemType"];
             /** @description Whether the item is in stock. */
-            in_stock: boolean;
+            inStock: boolean;
             /** @description Frame color of the item. */
-            frame_color?: components["schemas"]["FrameColor"];
+            frameColor?: components["schemas"]["FrameColor"];
             /** @description Surface material of the item. */
-            surface_material?: string;
+            surfaceMaterial?: string;
             /** @description Whether the item is featured. */
-            is_featured?: boolean;
+            isFeatured?: boolean;
             /** @description Whether the item is hidden from public view. */
-            is_hidden?: boolean;
+            isHidden?: boolean;
         };
         GenericItem: components["schemas"]["ItemBase"] & {
             /**
@@ -2291,7 +2374,7 @@ export interface components {
         /** @description Request body for updating an item. */
         ItemUpdate: {
             /** @description New name of the item. */
-            item_name?: string;
+            itemName?: string;
             /** @description New description of the item. */
             description?: string;
             /**
@@ -2300,15 +2383,15 @@ export interface components {
              */
             price?: number;
             /** @description New stock status of the item. */
-            in_stock?: boolean;
+            inStock?: boolean;
             /** @description New featured status of the item. */
-            is_featured?: boolean;
+            isFeatured?: boolean;
             /** @description New hidden status of the item. */
-            is_hidden?: boolean;
+            isHidden?: boolean;
             /** @description New frame color of the item. */
-            frame_color?: components["schemas"]["FrameColor"];
+            frameColor?: components["schemas"]["FrameColor"];
             /** @description New surface material of the item. */
-            surface_material?: string;
+            surfaceMaterial?: string;
             /** @description New size of the module item. */
             size?: components["schemas"]["ModuleSize"];
             /** @description New material of the module item. */
@@ -2327,7 +2410,7 @@ export interface components {
             /** @description Name of the bundle. */
             name: string;
             /** @description List of item IDs included in the bundle. */
-            item_ids: number[];
+            itemIds: number[];
             /**
              * Format: float
              * @description Total price of the bundle.
@@ -2339,19 +2422,19 @@ export interface components {
              * Format: date-time
              * @description Date/time the bundle was created.
              */
-            created_at?: string;
+            createdAt?: string;
             /**
              * Format: date-time
              * @description Date/time the bundle was last updated.
              */
-            updated_at?: string;
+            updatedAt?: string;
         };
         /** @description Request body for creating or updating a bundle. */
         BundleInput: {
             /** @description Name of the bundle. */
             name: string;
             /** @description List of item IDs to include. */
-            item_ids: number[];
+            itemIds: number[];
             /**
              * Format: float
              * @description Total price of the bundle.
@@ -2363,28 +2446,28 @@ export interface components {
         /** @description An item in the user's shopping cart. */
         CartItem: {
             /** @description ID of the item in the cart. */
-            item_id: number;
+            itemId: number;
             /** @description Quantity of the item in the cart. */
             quantity: number;
             /**
              * Format: date-time
              * @description Date/time the item was added to the cart.
              */
-            added_at?: string;
+            addedAt?: string;
             /** @description Details of the item in the cart. */
-            item_details?: components["schemas"]["ItemFetch"];
+            itemDetails?: components["schemas"]["ItemFetch"];
         };
         /** @description Request body for adding an item to the cart. */
         CartInsert: {
             /** @description ID of the item to add. */
-            item_id: number;
+            itemId: number;
             /** @description Quantity of the item to add. */
             quantity: number;
         };
         /** @description Request body for placing a new order. */
         NewOrder: {
             /** @description Shipping address for the order. */
-            shipping_address: components["schemas"]["UserAddress"];
+            shippingAddress: components["schemas"]["UserAddress"];
             /** @description List of items in the order. */
             items: components["schemas"]["OrderItemInput"][];
         };
@@ -2393,7 +2476,7 @@ export interface components {
             /** @description Unique identifier for the order. */
             id?: number;
             /** @description ID of the user who placed the order. */
-            user_id?: number;
+            userId?: number;
             /** @description Current status of the order. */
             status?: components["schemas"]["OrderStatus"];
             /**
@@ -2402,37 +2485,37 @@ export interface components {
              */
             total?: number;
             /** @description Shipping address for the order. */
-            shipping_address?: components["schemas"]["UserAddress"];
+            shippingAddress?: components["schemas"]["UserAddress"];
             /**
              * Format: date-time
              * @description Date/time the order was created.
              */
-            created_at?: string;
+            createdAt?: string;
             /**
              * Format: date-time
              * @description Date/time the order was last updated.
              */
-            updated_at?: string;
+            updatedAt?: string;
             /** @description List of items in the order. */
             items?: components["schemas"]["OrderItem"][];
         };
         /** @description An item included in an order. */
         OrderItem: {
             /** @description ID of the item. */
-            item_id?: number;
+            itemId?: number;
             /** @description Quantity of the item. */
             quantity?: number;
             /**
              * Format: float
              * @description Price of the item at the time of purchase.
              */
-            price_at_purchase?: number;
+            priceAtPurchase?: number;
             /** @description Name of the item. */
-            item_name?: string;
+            itemName?: string;
             /** @description Snapshot of the item details at purchase time. */
-            item_snapshot?: {
+            itemSnapshot?: {
                 /** @description Name of the item. */
-                item_name?: string;
+                itemName?: string;
                 /**
                  * Format: float
                  * @description Price of the item.
@@ -2443,25 +2526,9 @@ export interface components {
         /** @description Request body for adding an item to an order. */
         OrderItemInput: {
             /** @description ID of the item to order. */
-            item_id: number;
+            itemId: number;
             /** @description Quantity to order. */
             quantity: number;
-        };
-        /** @description User's shipping address. */
-        UserAddress: {
-            /** @description Street address. */
-            street: string;
-            /** @description City. */
-            city: string;
-            /** @description ZIP or postal code. */
-            zip: string;
-            /** @description Country. */
-            country: string;
-            /**
-             * Format: phone
-             * @description Contact phone number for the address.
-             */
-            phone?: string;
         };
         /** @description Standard error response. */
         ErrorResponse: {
@@ -2478,4 +2545,7 @@ export interface components {
     pathItems: never;
 }
 export type $defs = Record<string, never>;
+type WithRequired<T, K extends keyof T> = T & {
+    [P in K]-?: T[P];
+};
 export type operations = Record<string, never>;

@@ -1,0 +1,171 @@
+// Enums
+
+Enum user_role {
+  customer
+  manager
+  admin
+}
+
+Enum order_status {
+  pending
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+Enum item_category {
+  generic_item
+  module
+  accessory
+}
+
+Enum item_type {
+  basic
+  auto
+  general
+}
+
+Enum frame_color {
+  white
+  black
+  silver
+}
+
+Enum module_size {
+  small
+  medium
+  large
+}
+
+Enum controller_type {
+  remote
+  app
+}
+
+// Users
+
+Table users {
+  id integer [primary key]
+  email varchar [unique]
+  username varchar [unique]
+  password varchar [note: 'Hashed']
+  address_id integer [ref: > user_addresses.id]
+  last_login timestamp
+  created_at timestamp
+  updated_at timestamp
+  role user_role
+  is_active boolean
+  is_verified boolean
+  password_reset_token varchar
+}
+
+// Addresses
+
+Table user_addresses {
+  id integer [primary key]
+  street varchar
+  city varchar
+  zip varchar
+  country varchar
+  phone varchar
+}
+
+// Items
+
+Table items {
+  id integer [primary key]
+  item_name varchar
+  description text
+  img_urls text [note: 'Comma-separated URLs']
+  price decimal
+  category item_category
+  type item_type
+  in_stock boolean
+  frame_color frame_color
+  surface_material varchar
+  created_at timestamp
+  updated_at timestamp
+  is_featured boolean
+  is_hidden boolean
+}
+
+// Modules
+
+Table module_items {
+  id integer [primary key, ref: > items.id]
+  size module_size
+  material varchar
+  color varchar
+  style varchar
+  controller controller_type
+}
+
+// Accessories
+
+Table accessory_items {
+  id integer [primary key, ref: > items.id]
+  size module_size
+  material varchar
+  color varchar
+  style varchar
+}
+
+// Bundles
+
+Table bundles {
+  id integer [primary key]
+  name varchar
+  description text
+  price decimal
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table bundles_items {
+  bundle_id integer [ref: > bundles.id]
+  item_id integer [ref: > items.id]
+  primary key (bundle_id, item_id)
+}
+
+// Cart
+
+Table cart_items {
+  user_id integer [ref: > users.id]
+  item_id integer [ref: > items.id]
+  quantity integer
+  added_at timestamp
+  primary key (user_id, item_id)
+}
+
+// Orders
+
+Table orders {
+  id integer [primary key]
+  user_id integer [ref: > users.id]
+  status order_status
+  total decimal
+  shipping_address_id integer [ref: > user_addresses.id]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table orders_items {
+  order_id integer [ref: > orders.id]
+  item_id integer [ref: > items.id]
+  quantity integer
+  price_at_purchase decimal
+  item_name varchar
+  primary key (order_id, item_id)
+}
+
+// Reviews (optional future)
+
+Table reviews {
+  id integer [primary key]
+  user_id integer [ref: > users.id]
+  item_id integer [ref: > items.id]
+  rating integer [note: '1 to 5']
+  review text
+  created_at timestamp
+}

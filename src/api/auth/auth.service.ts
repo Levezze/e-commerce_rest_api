@@ -1,45 +1,50 @@
-import { sql, Insertable, Selectable, Updateable } from 'kysely';
+import { sql, Insertable, Selectable } from 'kysely';
 import bcrypt from 'bcrypt';
 import * as jose from 'jose';
-import { db } from '../../database/index.js';
-import { Users as UsersTableInterface } from '../../database/types.js';
 import { logger } from '../../utils/logger.js';
-import { User } from '../../dtos/generated/user.js';
-import { RegisterUser } from '../../dtos/generated/registerUser.js';
-import { UpdatedUserResponse } from '../../dtos/generated/UpdatedUserResponse.js';
+import { db } from '../../database/index.js';
+// Db Inferred Types
+import { Users as UsersTableInterface } from '../../database/types.js';
+// Dtos
+// import { User } from '../../dtos/generated/user.js';
+// import { RegisterUser } from '../../dtos/generated/registerUser.js';
+// import { UpdatedUserResponse } from '../../dtos/generated/UpdatedUserResponse.js';
+// import { PartialUserUpdate } from '../../dtos/generated/partialUserUpdate.js';
+import { components } from '../../dtos/generated/openapi.js';
+
 import { BadRequestError, 
   ConflictError, 
   NotFoundError, 
   UnauthorizedError } from '../../utils/errors.js';
-import { PartialUserUpdate } from '../../dtos/generated/partialUserUpdate.js';
-import { components } from '../../dtos/generated/openapi.js';
+import camelcaseKeys from "camelcase-keys";
 
 
-// type UserForDb = Insertable<UsersTableInterface>;
-type SelectableDbUser = Selectable<UsersTableInterface>;
-type UserForDb = components["schemas"]["RegisterUser"];
+type NewUserDb = Insertable<UsersTableInterface>;
+type DbUser = Selectable<UsersTableInterface>;
+type UserSelfResponse = components["schemas"]["UserSelf"];
+type UserTokenResponse = components["schemas"]["UserWithToken"];
+type UserRegisterInput = components["schemas"]["RegisterUser"];
+type UserUpdateMe = components["schemas"]["UpdateMe"];
+type UserUpdateAdmin = components["schemas"]["UpdateUser"];
 
 export const verifyCredentials = async (
   email: string,
   password: string
-): Promise<User> => {
+): Promise<UserSelfResponse> => {
   try {
-    const queryResult = await sql<SelectableDbUser>`
+    const queryResult = await sql<DbUser>`
     SELECT *
     FROM users
     WHERE email = ${email};
     `.execute(db);
 
     const userFromDb = queryResult.rows[0]
-
     if (queryResult.rows.length === 0) {
       throw new UnauthorizedError(`Login failed: User ${email} not found`)
     };
-
     if (!userFromDb.password) {
       throw new UnauthorizedError(`User ${email} found but is missing password hash`);
     };
-
     const isValid = await bcrypt.compare(password, userFromDb.password);
 
     if (isValid) {
@@ -50,13 +55,12 @@ export const verifyCredentials = async (
         ...userWithoutPassword
       } = userFromDb;
 
-      const userDto: User = {
+      const userDto: UserSelfResponse = {
         id: userWithoutPassword.id,
         username: userWithoutPassword.username,
         email: userWithoutPassword.email,
-        role: userWithoutPassword.user_role,
-        created_at: userWithoutPassword.created_at.toISOString(),
-        last_login: userWithoutPassword.last_login
+        createdAt: userWithoutPassword.created_at.toISOString(),
+        lastLogin: userWithoutPassword.last_login
           ? userWithoutPassword.last_login.toISOString()
           : undefined,
       };
@@ -76,7 +80,7 @@ export const verifyCredentials = async (
   }
 };
 
-export const generateJwtToken = async (user: User): Promise<string> => {
+export const generateJwtToken = async (user: UserSelfResponse): Promise<UserTokenResponse> => {
   logger.info(`Generating token for user ID: ${user.id}`);
   try {
     const secret = process.env.JWT_SECRET;
@@ -89,7 +93,6 @@ export const generateJwtToken = async (user: User): Promise<string> => {
 
     const payload = {
       sub: user.id.toString(),
-      role: user.role,
       email: user.email,
     };
 
@@ -102,18 +105,21 @@ export const generateJwtToken = async (user: User): Promise<string> => {
       .sign(secretKey)
     
     logger.info(`Token generated successfully for user ID: ${user.id}`);
-    return token;
-
+    const userDto = {
+      user: user,
+      token: token,
+    };
+    return userDto;
   } catch (error: any) {
     logger.error('Error generating JWT', error);
     throw new Error('Failed to generate authentication token.');
   };
 };
 
-export const registerUser = async (userData: RegisterUser): Promise<User> => {
+export const registerUser = async (userData: UserRegisterInput): Promise<UserSelfResponse> => {
   logger.info(`Service: Registration attempt for email: ${userData.email}`);
   try {
-    const getUserQueryResult = await sql<SelectableDbUser>`
+    const getUserQueryResult = await sql<DbUser>`
     SELECT *
     FROM users
     WHERE email = ${userData.email};
@@ -128,37 +134,33 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
     const saltRounds = 10;
     const hash = await bcrypt.hash(userData.password, saltRounds);
 
-    const newUserDbData: Omit<UserForDb,
-      'id' | 'created_at' | 'is_active' | 'last_login' | 'password_reset_expires' | 'password_reset_token'
-      > = {
-        username: userData.username,
-        email: userData.email,
-        password: hash,
-        user_role: 'customer'
-      };
+    const newUserDbData: NewUserDb = {
+      username: userData.username,
+      email: userData.email,
+      password: hash,
+      user_role: 'customer',
+    };
     
-    const registerUserQueryResult = await sql<SelectableDbUser>`
+    const registerUserQueryResult = await sql<DbUser>`
     INSERT INTO users (username, email, password, user_role)
-    VALUES (${newUserDbData.username}, ${newUserDbData.email}, ${newUserDbData.password}, ${newUserDbData.user_role})
-    RETURNING id, username, email, user_role, created_at, updated_at, last_login;
+    VALUES (${newUserDbData.username}, 
+    ${newUserDbData.email}, 
+    ${newUserDbData.password}), 
+    ${newUserDbData.user_role})
+    RETURNING id, username, email, created_at;
     `.execute(db);
 
     const registerResult = registerUserQueryResult.rows[0];
     
     logger.info(`User registered successfully: ${registerResult.email} (ID: ${registerResult.id})`);
 
-    const userDto: User = {
+    const userDto = {
       id: registerResult.id,
       username: registerResult.username,
       email: registerResult.email,
-      role: registerResult.user_role,
-      created_at: registerResult.created_at.toISOString(),
-      updated_at: registerResult.updated_at.toISOString(),
-      last_login: registerResult.last_login?.toISOString(),
-    }
-
+      createdAt: registerResult.created_at.toISOString(),
+    };
     return userDto;
-
   } catch (error: any) {
     if (error instanceof ConflictError) {
       throw error;
@@ -169,7 +171,7 @@ export const registerUser = async (userData: RegisterUser): Promise<User> => {
   };
 };
 
-export const updateUser = async (id: number, updatedValues: PartialUserUpdate) => {
+export const updateUser = async (id: number, updatedValues: UserUpdateMe) => {
   logger.info(`Service: User update attempt on ID: ${id}`);
   try {
     const columnsToReturn = [
@@ -189,7 +191,7 @@ export const updateUser = async (id: number, updatedValues: PartialUserUpdate) =
       throw new NotFoundError(`Failed to find user with ID: ${id}`);
     };
 
-    const userDto: UpdatedUserResponse = {
+    const userDto: Omit<UserSelfResponse, "createdAt"> = {
       id: updatedUser.id,
       username: updatedUser.username,
       email: updatedUser.email,

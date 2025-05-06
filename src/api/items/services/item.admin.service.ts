@@ -10,7 +10,7 @@ type NewItemInput = components["schemas"]["ItemInput"];
 export const createNewItem = async (newItem: NewItemInput) => {
   logger.debug(`Service: Attempting to create new item`);
   try {
-    const itemName = `${newItem.item_name}`;
+    const itemName = `${newItem.itemName}`;
 
     const itemQueryResult = await sql<Items>`
     SELECT item_name
@@ -24,7 +24,7 @@ export const createNewItem = async (newItem: NewItemInput) => {
 
     const newItemQueryResult = await sql<NewItemInput>`
     INSERT INTO items (category, item_name, description, price, img_urls)
-    VALUES (${newItem.category}, ${newItem.item_name}, ${newItem.description}, ${newItem.price}, ${newItem.img_urls})
+    VALUES (${newItem.category}, ${newItem.itemName}, ${newItem.description}, ${newItem.price}, ${newItem.imgUrls})
     RETURNING id, category, item_name, description, price, img_urls;
     `.execute(db);
 

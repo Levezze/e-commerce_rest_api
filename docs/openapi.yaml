@@ -28,7 +28,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserWithToken'
         '400':
           description: Bad request
           content:
@@ -76,7 +76,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserWithToken'
         '400':
           description: Bad request
           content:
@@ -160,7 +160,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserSelf'
         '400':
           description: Bad request
           content:
@@ -209,7 +209,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserSelf'
         '400':
           description: Bad request
           content:
@@ -240,6 +240,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+    /auth/change-password:
+      post:
+        summary: Change your own password
+        security:
+          - bearerAuth: []
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePassword'
+        responses:
+          '204':
+            description: Password changed
+    /auth/forgot-password:
+      post:
+        summary: Send password reset email
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgotPasswordRequest'
+        responses:
+          '202':
+            description: Reset email queued
+    /auth/reset-password:
+      post:
+        summary: Reset password using token
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetPassword'
+        responses:
+          '204':
+            description: Password reset successful
   # --- USER ROUTES ---
   /users:
     get:
@@ -256,7 +294,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserResponse'
+                  $ref: '#/components/schemas/UserAdmin'
         '400':
           description: Bad request
           content:
@@ -306,7 +344,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserAdmin'
         '404':
           description: Not found
           content:
@@ -337,7 +375,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserAdmin'
         '400':
           description: Bad request
           content:
@@ -1284,7 +1322,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
 components:
   securitySchemes:
     bearerAuth:
@@ -1295,20 +1332,79 @@ components:
     # --- ENUMS ---
     UserRole:
       type: string
-      enum: [user, manager, admin]
+      enum: [customer, manager, admin]
       description: Role of the user in the system.
-    UserRoleUpdate:
-      type: string
-      enum: [admin, manager, customer]
-      description: New role for the user (admin/manager/customer).
     OrderStatus:
       type: string
       enum: [pending, processing, shipped, delivered, cancelled]
       description: Current status of the order.
     # --- USER ---
+    UserSelf:
+      type: object
+      description: User's own information.
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the user.
+        email:
+          type: string
+          format: email
+          description: User's email address.
+        username:
+          type: string
+          description: Unique username for the user.
+        address:
+          $ref: '#/components/schemas/UserAddress'
+          description: User's default shipping address (nullable).
+        lastLogin:
+          type: string
+          format: date-time
+          nullable: true
+          description: Last login timestamp.
+        createdAt:
+          type: string
+          format: date-time
+          description: Account creation timestamp.
+      required: [id, email, username, createdAt]
+    UserAdmin:
+      type: object
+      description: Full user info for admin (no password, no token).
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        address:
+          $ref: '#/components/schemas/UserAddress'
+        lastLogin:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        userRole:
+          $ref: '#/components/schemas/UserRole'
+        isActive:
+          type: boolean
+        isVerified:
+          type: boolean
+        passwordResetToken:
+          type: string
+          nullable: true
+          description: Password reset token (for password reset flows; not returned in normal user queries).
+      required: [id, email, username, createdAt, updatedAt, userRole, isActive, isVerified]
     UserInputBase:
       type: object
-      description: Base fields for user creation and update.
+      description: Base fields for user.
       properties: 
         email:
           type: string
@@ -1320,62 +1416,11 @@ components:
           minLength: 3
           maxLength: 20
           description: Unique username for the user.
-        password:
-          type: string
-          format: password
-          minLength: 8
-          description: User's password (write-only, min 8 characters)
-          writeOnly: true
         address:
           $ref: '#/components/schemas/UserAddress'
           description: User's default shipping address.
-      required: [email, password]
+      required: [email]
       additionalProperties: false
-    User:
-      allOf: 
-        - $ref: '#/components/schemas/UserInputBase'
-        - type: object
-          description: Complete user object as stored in the database.
-          properties:
-            id:
-              type: integer
-              readOnly: true
-              description: Unique identifier for the user.
-            created_at:
-              type: string
-              format: date-time
-              readOnly: true
-              description: Date/time the user was created.
-            updated_at:
-              type: string
-              format: date-time
-              readOnly: true
-              description: Date/time the user was last updated.
-            user_role:
-              $ref: '#/components/schemas/UserRole'
-              readOnly: true
-              description: Role of the user in the system.
-            last_login:
-              type: string
-              format: date-time
-              readOnly: true
-              description: Date/time of the user's last login.
-            is_active:
-              type: boolean
-              readOnly: true
-              description: Whether the user account is active.
-          additionalProperties: false
-    UserResponse:
-      allOf:
-        - $ref: '#/components/schemas/User'
-        - type: object
-          properties:
-            token:
-              type: string
-              format: jwt
-          required: [token]
-          additionalProperties: false
-    # --- AUTH ---
     RegisterUser:
       type: object
       description: Request body for user registration.
@@ -1386,27 +1431,17 @@ components:
             username:
               type: string
               description: Unique username for the user.
-          required: [username]
-          additionalProperties: false
-    CreateUser:
-      type: object
-      description: Request body for user creation (by admin).
-      allOf:
-        - $ref: '#/components/schemas/UserInputBase'
-        - type: object
-          properties:
-            username:
+            password:
               type: string
-              description: Unique username for the user.
-            user_role:
-              $ref: '#/components/schemas/UserRole'
-              description: Role of the user in the system.
-          required: [username]
-          additionalProperties: false
+              format: password
+              minLength: 8
+              description: User's password (write-only, min 8 characters)
+              writeOnly: true
+      required: [username, password]
+      additionalProperties: false
     LoginRequest:
       type: object
       description: Request body for user login.
-      required: [email, password]
       properties:
         email:
           type: string
@@ -1415,8 +1450,36 @@ components:
         password:
           type: string
           format: password
-          description: User's password (write-only)
+          minLength: 8
+          description: User's password (write-only, min 8 characters)
           writeOnly: true
+      required: [email, password]
+      additionalProperties: false
+    CreateUser:
+      type: object
+      description: Request body for user creation (by admin).
+      allOf:
+        - $ref: '#/components/schemas/UserInputBase'
+        - type: object
+          properties:
+            email:
+              type: string
+              format: email
+              description: User's email address.
+            username:
+              type: string
+              description: Unique username for the user.
+            password:
+              type: string
+              format: password
+              minLength: 8
+              description: User's password (write-only, min 8 characters)
+              writeOnly: true
+            userRole:
+              $ref: '#/components/schemas/UserRole'
+              description: Role of the user in the system.
+      required: [email, username, userRole, password]
+      additionalProperties: false
     UpdateMe:
       type: object
       description: Request body for updating current user's info.
@@ -1428,29 +1491,113 @@ components:
           type: string
           format: email
           description: New email address.
-        password:
-          type: string
-          format: password
-          description: New password (write-only)
-          writeOnly: true
         address:
           $ref: '#/components/schemas/UserAddress'
           description: New shipping address.
     UpdateUser:
       type: object
       description: Request body for updating any user (admin/manager).
+      allOf: 
+        - $ref: '#/components/schemas/UserInputBase'
+        - type: object
+          properties:
+            username:
+              type: string
+              description: New username.
+            email:
+              type: string
+              format: email
+              description: New email address.
+            password:
+              type: string
+              format: password
+              minLength: 8
+              description: New password (write-only, min 8 characters)
+              writeOnly: true
+            userRole:
+              $ref: '#/components/schemas/UserRole'
+              description: New role for the user.
+            isActive:
+              type: boolean
+              description: Whether the user account is active.
+      additionalProperties: false
+    ChangePassword:
+      type: object
+      description: Request body for changing current user's password.
       properties:
-        username:
+        oldPassword:
           type: string
-          description: New username.
+          format: password
+          minLength: 8
+          description: Current password (write-only)
+          writeOnly: true
+        newPassword:
+          type: string
+          format: password
+          minLength: 8
+          description: New password (write-only)
+          writeOnly: true
+      required: [oldPassword, newPassword]
+      additionalProperties: false
+    ResetPassword:
+      type: object
+      description: Request body for resetting a forgotten password.
+      properties:
+        token:
+          type: string
+          description: Password reset token.
+        newPassword:
+          type: string
+          format: password
+          minLength: 8
+          description: New password (write-only)
+          writeOnly: true
+      required: [token, newPassword]
+      additionalProperties: false
+    ForgotPasswordRequest:
+      type: object
+      description: Request a password-reset email.
+      properties:
         email:
           type: string
           format: email
-          description: New email address.
-        role:
-          $ref: '#/components/schemas/UserRoleUpdate'
-          description: New role for the user.
-
+          description: User's email address.
+      required: [email]
+      additionalProperties: false
+    UserAddress:
+      type: object
+      description: User's shipping address.
+      required: [street, city, zip, country]
+      properties:
+        street:
+          type: string
+          description: Street address.
+        city:
+          type: string
+          description: City.
+        zip:
+          type: string
+          description: ZIP or postal code.
+        country:
+          type: string
+          description: Country.
+        phone:
+          type: string
+          format: phone
+          minLength: 10
+          maxLength: 15
+          description: Contact phone number for the address.
+    UserWithToken:
+      type: object
+      description: Authenticated user with JWT token.
+      properties:
+        user:
+          $ref: '#/components/schemas/UserSelf'
+        token:
+          type: string
+          format: jwt
+          description: JWT access token
+      required: [user, token]
     # --- ITEMS ---
     ItemCategory:
       type: string
@@ -1480,13 +1627,13 @@ components:
           type: integer
           readOnly: true
           description: Unique identifier for the item.
-        item_name:
+        itemName:
           type: string
           description: Name of the item.
         description:
           type: string
           description: Description of the item.
-        img_urls:
+        imgUrls:
           type: array
           items:
             type: string
@@ -1502,48 +1649,48 @@ components:
         type:
           $ref: '#/components/schemas/ItemType'
           description: Type of the item.
-        in_stock:
+        inStock:
           type: boolean
           description: Whether the item is in stock.
-        frame_color:
+        frameColor:
           $ref: '#/components/schemas/FrameColor'
           description: Frame color of the item.
-        surface_material:
+        surfaceMaterial:
           type: string
           description: Surface material of the item.
-        created_at:
+        createdAt:
           type: string
           format: date-time
           description: Date/time the item was created.
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
           description: Date/time the item was last updated.
-        is_featured:
+        isFeatured:
           type: boolean
           description: Whether the item is featured.
-        is_hidden:
+        isHidden:
           type: boolean
           description: Whether the item is hidden from public view.
       required:
         - id
-        - item_name
+        - itemName
         - price
         - category
         - type
-        - in_stock
-        - img_urls
+        - inStock
+        - imgUrls
     ItemInputBase:
       type: object
       description: Base fields for creating or updating an item.
       properties:
-        item_name:
+        itemName:
           type: string
           description: Name of the item.
         description:
           type: string
           description: Description of the item.
-        img_urls:
+        imgUrls:
           type: array
           items:
             type: string
@@ -1559,28 +1706,28 @@ components:
         type:
           $ref: '#/components/schemas/ItemType'
           description: Type of the item.
-        in_stock:
+        inStock:
           type: boolean
           description: Whether the item is in stock.
-        frame_color:
+        frameColor:
           $ref: '#/components/schemas/FrameColor'
           description: Frame color of the item.
-        surface_material:
+        surfaceMaterial:
           type: string
           description: Surface material of the item.
-        is_featured:
+        isFeatured:
           type: boolean
           description: Whether the item is featured.
-        is_hidden:
+        isHidden:
           type: boolean
           description: Whether the item is hidden from public view.
       required:
-        - item_name
+        - itemName
         - price
         - category
         - type
-        - in_stock
-        - img_urls
+        - inStock
+        - imgUrls
     GenericItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
@@ -1683,20 +1830,19 @@ components:
       type: object
       description: Request body for updating an item.
       properties:
-        item_name: {type: string, description: New name of the item.}
+        itemName: {type: string, description: New name of the item.}
         description: {type: string, description: New description of the item.}
         price: {type: number, format: float, description: New price of the item.}
-        in_stock: {type: boolean, description: New stock status of the item.}
-        is_featured: {type: boolean, description: New featured status of the item.}
-        is_hidden: {type: boolean, description: New hidden status of the item.}
-        frame_color: {$ref: '#/components/schemas/FrameColor', description: New frame color of the item.}
-        surface_material: {type: string, description: New surface material of the item.}
+        inStock: {type: boolean, description: New stock status of the item.}
+        isFeatured: {type: boolean, description: New featured status of the item.}
+        isHidden: {type: boolean, description: New hidden status of the item.}
+        frameColor: {$ref: '#/components/schemas/FrameColor', description: New frame color of the item.}
+        surfaceMaterial: {type: string, description: New surface material of the item.}
         size: {$ref: '#/components/schemas/ModuleSize', description: New size of the module item.}
         material: {type: string, description: New material of the module item.}
         color: {type: string, description: New color of the module item.}
         style: {type: string, description: New style of the module item.}
         controller: {$ref: '#/components/schemas/ControllerType', description: New controller type for the module item.}
-
     # --- BUNDLES ---
     Bundle:
       type: object
@@ -1708,7 +1854,7 @@ components:
         name:
           type: string
           description: Name of the bundle.
-        item_ids:
+        itemIds:
           type: array
           items:
             type: integer
@@ -1720,24 +1866,24 @@ components:
         description:
           type: string
           description: Description of the bundle.
-        created_at:
+        createdAt:
           type: string
           format: date-time
           description: Date/time the bundle was created.
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
           description: Date/time the bundle was last updated.
-      required: [id, name, item_ids, price]
+      required: [id, name, itemIds, price]
     BundleInput:
       type: object
       description: Request body for creating or updating a bundle.
-      required: [name, item_ids, price]
+      required: [name, itemIds, price]
       properties:
         name:
           type: string
           description: Name of the bundle.
-        item_ids:
+        itemIds:
           type: array
           items:
             type: integer
@@ -1749,45 +1895,45 @@ components:
         description:
           type: string
           description: Description of the bundle.
-
     # --- CART ---
     CartItem:
       type: object
       description: An item in the user's shopping cart.
       properties:
-        item_id:
+        itemId:
           type: integer
           description: ID of the item in the cart.
         quantity:
           type: integer
           minimum: 1
           description: Quantity of the item in the cart.
-        added_at:
+        addedAt:
           type: string
           format: date-time
           description: Date/time the item was added to the cart.
-        item_details:
+        itemDetails:
           $ref: '#/components/schemas/ItemFetch'
           description: Details of the item in the cart.
-      required: [item_id, quantity]
+      required: [itemId, quantity]
     CartInsert:
       type: object
       description: Request body for adding an item to the cart.
-      required: [item_id, quantity]
+      required: [itemId, quantity]
       properties:
-        item_id:
+        itemId:
           type: integer
           description: ID of the item to add.
         quantity:
           type: integer
           minimum: 1
           description: Quantity of the item to add.
+    # --- ORDER ---
     NewOrder:
       type: object
       description: Request body for placing a new order.
-      required: [shipping_address, items]
+      required: [shippingAddress, items]
       properties:
-        shipping_address:
+        shippingAddress:
           $ref: '#/components/schemas/UserAddress'
           description: Shipping address for the order.
         items:
@@ -1803,7 +1949,7 @@ components:
         id:
           type: integer
           description: Unique identifier for the order.
-        user_id:
+        userId:
           type: integer
           description: ID of the user who placed the order.
         status:
@@ -1813,14 +1959,14 @@ components:
           type: number
           format: float
           description: Total price of the order.
-        shipping_address:
+        shippingAddress:
           $ref: '#/components/schemas/UserAddress'
           description: Shipping address for the order.
-        created_at:
+        createdAt:
           type: string
           format: date-time
           description: Date/time the order was created.
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
           description: Date/time the order was last updated.
@@ -1833,61 +1979,38 @@ components:
       type: object
       description: An item included in an order.
       properties:
-        item_id:
+        itemId:
           type: integer
           description: ID of the item.
         quantity:
           type: integer
           minimum: 1
           description: Quantity of the item.
-        price_at_purchase:
+        priceAtPurchase:
           type: number
           format: float
           description: Price of the item at the time of purchase.
-        item_name:
+        itemName:
           type: string
           description: Name of the item.
-        item_snapshot:
+        itemSnapshot:
           type: object
           description: Snapshot of the item details at purchase time.
           properties:
-            item_name: {type: string, description: Name of the item.}
+            itemName: {type: string, description: Name of the item.}
             price: {type: number, format: float, description: Price of the item.}
     OrderItemInput:
       type: object
       description: Request body for adding an item to an order.
-      required: [item_id, quantity]
+      required: [itemId, quantity]
       properties:
-        item_id:
+        itemId:
           type: integer
           description: ID of the item to order.
         quantity:
           type: integer
           minimum: 1
           description: Quantity to order.
-    UserAddress:
-      type: object
-      description: User's shipping address.
-      required: [street, city, zip, country]
-      properties:
-        street:
-          type: string
-          description: Street address.
-        city:
-          type: string
-          description: City.
-        zip:
-          type: string
-          description: ZIP or postal code.
-        country:
-          type: string
-          description: Country.
-        phone:
-          type: string
-          format: phone
-          minLength: 10
-          maxLength: 15
-          description: Contact phone number for the address.
     ErrorResponse:
       type: object
       description: Standard error response.

@@ -23,7 +23,7 @@ export type OrderStatus = "cancelled" | "pending" | "returned" | "shipped";
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export type UserRoles = "admin" | "customer";
+export type UserRoles = "admin" | "manager" | "customer";
 
 export interface Earring {
   earring_color: Colors | null;

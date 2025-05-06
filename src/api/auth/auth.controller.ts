@@ -1,14 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import * as authService from './auth.service.js';
 import * as userService from '../users/user.service.js';
-import { RegisterUser } from '../../dtos/generated/registerUser.js';
-import { LoginRequest } from '../../dtos/generated/loginRequest.js';
-import { User } from '../../dtos/generated/user.js';
-import { AuthSession } from '../../dtos/generated/authSession.js';
+// Dtos
+import { components } from '../../dtos/generated/openapi.js';
 import { UserJWTPayload } from './auth.middleware.js'
 import { logger } from '../../utils/logger.js';
 import { unknown } from 'zod';
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../../utils/errors.js';
+
+type LoginRequest = components["schemas"]["LoginRequest"];
+type RegisterRequest = components["schemas"]["RegisterUser"];
+type UserSelfResponse = components["schemas"]["UserSelf"];
+type UserTokenResponse = components["schemas"]["UserWithToken"];
 
 export const handleRegister = async (
   req: Request, 
@@ -16,8 +19,8 @@ export const handleRegister = async (
   next: NextFunction
 ) => {
   try {
-    const newUserInput = req.body as RegisterUser
-    const createdUser: User = await authService.registerUser(newUserInput)
+    const newUserInput = req.body as RegisterRequest
+    const createdUser: UserSelfResponse = await authService.registerUser(newUserInput)
     res.status(201).json(createdUser);
   } catch (error: any) {
     if (error instanceof ConflictError) {
@@ -33,17 +36,12 @@ export const handleLogin = async (
   res: Response, 
   next: NextFunction
 ) => {
-  const { email, password } = req.body as LoginRequest;
   try {
-    const user = await authService.verifyCredentials(email, password) as User;
-    const generatedToken = await authService.generateJwtToken(user);
+    const { email, password } = req.body as LoginRequest;
+    const user = await authService.verifyCredentials(email, password);
+    const generatedToken: UserTokenResponse = await authService.generateJwtToken(user);
 
-    const responseBody: AuthSession = {
-      token: generatedToken, 
-      user: user
-    };
-
-    res.status(200).json(responseBody);
+    res.status(200).json(generatedToken);
 
   } catch (error: any) {
     if (error instanceof UnauthorizedError) {
@@ -81,7 +79,7 @@ export const handleGetMe = async (req: Request, res: Response, next: NextFunctio
       return;
     };
 
-    const user: User | null = await userService.findUserById(userId);
+    const user: UserSelfResponse | null = await userService.findUserById(userId);
 
     logger.debug({ userReceivedInController: user }, "User object received from service");
 

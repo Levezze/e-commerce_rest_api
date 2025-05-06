@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import * as itemService from '../services/item.admin.service.js';
-import { NewItemInput } from "../../../dtos/generated/newItemInput.js";
+// import { NewItemInput } from "../../../dtos/generated/newItemInput.js";
+import { components } from "../../../dtos/generated/openapi.js";
+
+type NewItemInput = components["schemas"]["ItemInput"]
 
 export const createItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
