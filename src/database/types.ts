@@ -11,6 +11,8 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
+export type MediaParentType = "bundle" | "item";
+
 export type ModuleSize = "large" | "medium" | "small";
 
 export type Numeric = ColumnType<string, number | string, number | string>;
@@ -28,6 +30,21 @@ export interface Accessories {
   updated_at: Timestamp | null;
 }
 
+export interface Bundles {
+  created_at: Generated<Timestamp>;
+  description: string | null;
+  discount: Numeric | null;
+  id: Generated<number>;
+  name: string | null;
+  price: Numeric | null;
+  updated_at: Timestamp | null;
+}
+
+export interface BundlesItems {
+  bundle_id: number;
+  item_id: number;
+}
+
 export interface CartItems {
   created_at: Generated<Timestamp | null>;
   id: Generated<number>;
@@ -40,18 +57,21 @@ export interface CartItems {
 export interface Items {
   created_at: Generated<Timestamp>;
   id: Generated<number>;
-  img_url: string | null;
+  img_url: string;
   in_stock: boolean;
   is_featured: boolean | null;
   is_hidden: boolean | null;
-  item_name: string | null;
+  item_name: string;
   price: Numeric;
   updated_at: Timestamp | null;
 }
 
-export interface ItemsTags {
-  item_id: number;
-  tag_id: number;
+export interface Media {
+  created_at: Generated<Timestamp>;
+  id: Generated<number>;
+  parent_id: number;
+  parent_type: MediaParentType;
+  url: string;
 }
 
 export interface Modules {
@@ -77,6 +97,17 @@ export interface Orders {
   user_id: number | null;
 }
 
+export interface OrdersItems {
+  bundle_id: number;
+  created_at: Generated<Timestamp>;
+  item_id: number;
+  item_name: string | null;
+  order_id: number;
+  price_at_purchase: Numeric | null;
+  quantity: number;
+  updated_at: Timestamp | null;
+}
+
 export interface Reviews {
   created_at: Timestamp | null;
   id: Generated<number>;
@@ -91,6 +122,11 @@ export interface Tags {
   id: Generated<number>;
   name: string;
   updated_at: Timestamp | null;
+}
+
+export interface TagsItems {
+  item_id: number;
+  tag_id: number;
 }
 
 export interface UserAddresses {
@@ -121,14 +157,18 @@ export interface Users {
 
 export interface DB {
   accessories: Accessories;
+  bundles: Bundles;
+  bundles_items: BundlesItems;
   cart_items: CartItems;
   items: Items;
-  items_tags: ItemsTags;
+  media: Media;
   modules: Modules;
   modules_items: ModulesItems;
   orders: Orders;
+  orders_items: OrdersItems;
   reviews: Reviews;
   tags: Tags;
+  tags_items: TagsItems;
   user_addresses: UserAddresses;
   users: Users;
 }

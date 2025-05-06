@@ -11,11 +11,11 @@
     "dev:serve": "tsx watch --clear-screen=false -r dotenv/config src/server/index.ts | pino-pretty",
     "dev:typecheck": "npx tsc-watch --noClear --noEmit --preserveWatchOutput",
     "dev": "npm-run-all --parallel dev:serve dev:typecheck",
-    "generate:db-types": "kysely-codegen --dialect postgres --out-file ./src/database/types.ts",
     "seed": "tsx src/db/seed.ts | pino-pretty",
     "build": "tsc",
     "start": "node -r dotenv/config dist/server/index.js",
-    "generate:api": "npx openapi-typescript ./docs/openapi.yaml --output ./temp-generated/openapi.d.ts",
+    "generate:db-types": "kysely-codegen --dialect postgres --out-file ./src/database/types.ts",
+    "generate:api": "npx openapi-typescript ./docs/openapi.yaml --output ./src/dtos/generated/openapi.d.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {

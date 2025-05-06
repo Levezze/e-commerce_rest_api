@@ -709,6 +709,170 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /admin/items/{itemId}/media:
+    post:
+      summary: Add media to item
+      tags: [Media, Admin]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, type, order]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: URL to the media file.
+                type:
+                  type: string
+                  enum: [image, video]
+                  description: Type of media.
+                order:
+                  type: integer
+                  description: Order of the media for this item.
+      responses:
+        '201':
+          description: Media added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /admin/items/{itemId}/media/{mediaId}:
+    patch:
+      summary: Update media (url, type, or order)
+      tags: [Media, Admin]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: New URL to the media file.
+                type:
+                  type: string
+                  enum: [image, video]
+                  description: New type of media.
+                order:
+                  type: integer
+                  description: New order for the media.
+      responses:
+        '200':
+          description: Media updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Remove media from item
+      tags: [Media, Admin]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      responses:
+        '204':
+          description: Media removed
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   # --- BUNDLES ---
   /bundles:
     get:
@@ -1637,12 +1801,11 @@ components:
         description:
           type: string
           description: Description of the item.
-        imgUrls:
+        media:
           type: array
           items:
-            type: string
-            format: uri
-          description: List of image URLs for the item.
+            $ref: '#/components/schemas/Media'
+          description: List of media objects for the item, ordered by the 'order' field.
         price:
           type: number
           format: float
@@ -1683,7 +1846,6 @@ components:
         - category
         - type
         - inStock
-        - imgUrls
     ItemInputBase:
       type: object
       description: Base fields for creating or updating an item.
@@ -1694,12 +1856,11 @@ components:
         description:
           type: string
           description: Description of the item.
-        imgUrls:
+        media:
           type: array
           items:
-            type: string
-            format: uri
-          description: List of image URLs for the item.
+            $ref: '#/components/schemas/Media'
+          description: List of media objects for the item, ordered by the 'order' field.
         price:
           type: number
           format: float
@@ -1722,7 +1883,6 @@ components:
         surfaceMaterial:
           $ref: '#/components/schemas/SurfaceMaterial'
           description: Surface material of the item.
-        surfaceStyle:
         isFeatured:
           type: boolean
           description: Whether the item is featured.
@@ -1735,7 +1895,6 @@ components:
         - category
         - type
         - inStock
-        - imgUrls
     GenericItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
@@ -1751,7 +1910,7 @@ components:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the module item.
             material:
-              $ref: '#/components/schemas/surfaceMaterial'
+              $ref: '#/components/schemas/SurfaceMaterial'
               description: Material of the module item.
             color:
               type: string
@@ -2019,6 +2178,37 @@ components:
           type: integer
           minimum: 1
           description: Quantity to order.
+    Media:
+      type: object
+      description: Media file associated with an item (image, video, etc.).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          description: Unique identifier for the media.
+        itemId:
+          type: integer
+          description: Item ID this media belongs to.
+        url:
+          type: string
+          format: uri
+          description: URL to the media file.
+        type:
+          type: string
+          enum: [image, video]
+          description: Type of media.
+        order:
+          type: integer
+          description: Order of the media for this item.
+        createdAt:
+          type: string
+          format: date-time
+          description: Date/time the media was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date/time the media was last updated.
+      required: [id, itemId, url, type, order]
     ErrorResponse:
       type: object
       description: Standard error response.

@@ -100,7 +100,6 @@ Table items {
   id integer [primary key]
   item_name varchar
   description text
-  img_urls string[] [note: 'Comma-separated URLs']
   price decimal
   discount decimal
   model model_name

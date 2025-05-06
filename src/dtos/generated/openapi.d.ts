@@ -1037,6 +1037,265 @@ export interface paths {
         };
         trace?: never;
     };
+    "/admin/items/{itemId}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add media to item */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * Format: uri
+                         * @description URL to the media file.
+                         */
+                        url: string;
+                        /**
+                         * @description Type of media.
+                         * @enum {string}
+                         */
+                        type: "image" | "video";
+                        /** @description Order of the media for this item. */
+                        order: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description Media added */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Media"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/items/{itemId}/media/{mediaId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove media from item */
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Media removed */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        /** Update media (url, type, or order) */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /**
+                         * Format: uri
+                         * @description New URL to the media file.
+                         */
+                        url?: string;
+                        /**
+                         * @description New type of media.
+                         * @enum {string}
+                         */
+                        type?: "image" | "video";
+                        /** @description New order for the media. */
+                        order?: number;
+                    };
+                };
+            };
+            responses: {
+                /** @description Media updated */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["Media"];
+                    };
+                };
+                /** @description Bad request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Unauthorized */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Forbidden */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+                /** @description Internal server error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorResponse"];
+                    };
+                };
+            };
+        };
+        trace?: never;
+    };
     "/bundles": {
         parameters: {
             query?: never;
@@ -2011,11 +2270,6 @@ export interface components {
          * @enum {string}
          */
         OrderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
-        /**
-         * @description Base material for surface modules.
-         * @enum {string}
-         */
-        surfaceMaterial: "white_polymer" | "black_polymer" | "wood_oak" | "wood_maple" | "wood_pine";
         /** @description User's own information. */
         UserSelf: {
             /**
@@ -2218,6 +2472,11 @@ export interface components {
          */
         FrameColor: "white" | "black" | "silver";
         /**
+         * @description Base material for surface modules.
+         * @enum {string}
+         */
+        SurfaceMaterial: "white_polymer" | "black_polymer" | "wood_oak" | "wood_maple" | "wood_pine";
+        /**
          * @description Size of the module item.
          * @enum {string}
          */
@@ -2235,8 +2494,8 @@ export interface components {
             itemName: string;
             /** @description Description of the item. */
             description?: string;
-            /** @description List of image URLs for the item. */
-            imgUrls: string[];
+            /** @description List of media objects for the item, ordered by the 'order' field. */
+            media?: components["schemas"]["Media"][];
             /**
              * Format: float
              * @description Price of the item.
@@ -2251,7 +2510,7 @@ export interface components {
             /** @description Frame color of the item. */
             frameColor?: components["schemas"]["FrameColor"];
             /** @description Surface material of the item. */
-            surfaceMaterial?: string;
+            surfaceMaterial?: components["schemas"]["SurfaceMaterial"];
             /**
              * Format: date-time
              * @description Date/time the item was created.
@@ -2273,8 +2532,8 @@ export interface components {
             itemName: string;
             /** @description Description of the item. */
             description?: string;
-            /** @description List of image URLs for the item. */
-            imgUrls: string[];
+            /** @description List of media objects for the item, ordered by the 'order' field. */
+            media?: components["schemas"]["Media"][];
             /**
              * Format: float
              * @description Price of the item.
@@ -2294,7 +2553,7 @@ export interface components {
             /** @description Combination of modules. */
             surfaceStyle?: string;
             /** @description Surface material of the item. */
-            surfaceMaterial?: string;
+            surfaceMaterial?: components["schemas"]["SurfaceMaterial"];
             /** @description Whether the item is featured. */
             isFeatured?: boolean;
             /** @description Whether the item is hidden from public view. */
@@ -2312,7 +2571,7 @@ export interface components {
             /** @description Size of the module item. */
             size?: components["schemas"]["ModuleSize"];
             /** @description Material of the module item. */
-            material?: string;
+            material?: components["schemas"]["SurfaceMaterial"];
             /** @description Color of the module item. */
             color?: string;
             /** @description Style of the module item. */
@@ -2536,6 +2795,35 @@ export interface components {
             itemId: number;
             /** @description Quantity to order. */
             quantity: number;
+        };
+        /** @description Media file associated with an item (image, video, etc.). */
+        Media: {
+            /** @description Unique identifier for the media. */
+            readonly id: number;
+            /** @description Item ID this media belongs to. */
+            itemId: number;
+            /**
+             * Format: uri
+             * @description URL to the media file.
+             */
+            url: string;
+            /**
+             * @description Type of media.
+             * @enum {string}
+             */
+            type: "image" | "video";
+            /** @description Order of the media for this item. */
+            order: number;
+            /**
+             * Format: date-time
+             * @description Date/time the media was created.
+             */
+            createdAt?: string;
+            /**
+             * Format: date-time
+             * @description Date/time the media was last updated.
+             */
+            updatedAt?: string;
         };
         /** @description Standard error response. */
         ErrorResponse: {

@@ -51,10 +51,9 @@ CREATE TYPE controller_type AS ENUM ('remote', 'app');
 
 CREATE TABLE items (
   id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  item_name varchar(100),
+  item_name varchar(100) NOT NULL,
   price numeric(10, 2) CHECK (price > 0) NOT NULL,
   in_stock boolean NOT NULL,
-  img_url text,
   created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at timestamp,
   is_featured boolean,
@@ -70,6 +69,23 @@ CREATE TABLE bundles (
   discount numeric(10, 2),
   created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at timestamp
+);
+
+-- Media Table
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'media_parent_type') THEN
+    CREATE TYPE media_parent_type AS ENUM ('item', 'bundle');
+  END IF;
+END$$;
+
+CREATE TABLE media (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  parent_type media_parent_type NOT NULL,
+  parent_id INT NOT NULL,
+  url TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 -- Bundles_Items Join Table
