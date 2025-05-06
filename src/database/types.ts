@@ -5,45 +5,46 @@
 
 import type { ColumnType } from "kysely";
 
-export type Colors = "gold" | "silver";
-
-export type GemShapes = "chaa" | "choo" | "flippy" | "floopy";
-
-export type GemSizes = "chonki" | "midi" | "mini" | "tini";
+export type ControllerType = "app" | "remote";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type JewelryTypes = "earring" | "necklace" | "ring";
+export type ModuleSize = "large" | "medium" | "small";
 
 export type Numeric = ColumnType<string, number | string, number | string>;
 
-export type OrderStatus = "cancelled" | "pending" | "returned" | "shipped";
+export type OrderStatus = "cancelled" | "delivered" | "pending" | "processing" | "shipped";
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export type UserRoles = "admin" | "manager" | "customer";
+export type UserRole = "admin" | "customer" | "manager";
 
-export interface Earring {
-  earring_color: Colors | null;
-  earring_id: number;
-  earring_size: Numeric | null;
-  earring_style: string | null;
+export interface Accessories {
+  created_at: Generated<Timestamp>;
+  id: Generated<number>;
+  size: ModuleSize | null;
+  updated_at: Timestamp | null;
+}
+
+export interface CartItems {
+  created_at: Generated<Timestamp | null>;
+  id: Generated<number>;
+  item_id: number | null;
+  quantity: number;
+  updated_at: Timestamp | null;
+  user_id: number | null;
 }
 
 export interface Items {
   created_at: Generated<Timestamp>;
-  gem_name: string;
-  gem_shape: GemShapes | null;
-  gem_size: GemSizes | null;
   id: Generated<number>;
   img_url: string | null;
   in_stock: boolean;
   is_featured: boolean | null;
   is_hidden: boolean | null;
   item_name: string | null;
-  jewelry_type: JewelryTypes | null;
   price: Numeric;
   updated_at: Timestamp | null;
 }
@@ -53,11 +54,17 @@ export interface ItemsTags {
   tag_id: number;
 }
 
-export interface Necklace {
-  necklace_color: Colors | null;
-  necklace_id: number;
-  necklace_length: Numeric | null;
-  necklace_style: string | null;
+export interface Modules {
+  controller: ControllerType;
+  created_at: Generated<Timestamp>;
+  id: Generated<number>;
+  size: ModuleSize;
+  updated_at: Timestamp | null;
+}
+
+export interface ModulesItems {
+  item_id: number;
+  module_id: number;
 }
 
 export interface Orders {
@@ -66,13 +73,8 @@ export interface Orders {
   shipping_address: string;
   status: Generated<OrderStatus | null>;
   total: Numeric;
+  updated_at: Timestamp | null;
   user_id: number | null;
-}
-
-export interface OrdersItems {
-  item_id: number;
-  order_id: number;
-  price_at_purchase: Numeric | null;
 }
 
 export interface Reviews {
@@ -80,24 +82,31 @@ export interface Reviews {
   id: Generated<number>;
   rating: number | null;
   review: string;
+  updated_at: Timestamp | null;
   user_id: number | null;
 }
 
-export interface Ring {
-  ring_color: Colors | null;
-  ring_id: number;
-  ring_size: Numeric | null;
-  ring_style: string | null;
+export interface Tags {
+  created_at: Generated<Timestamp>;
+  id: Generated<number>;
+  name: string;
+  updated_at: Timestamp | null;
 }
 
-export interface Tags {
+export interface UserAddresses {
+  city: string;
+  country: string;
+  created_at: Generated<Timestamp>;
   id: Generated<number>;
-  tag: string;
+  phone: string | null;
+  street: string;
+  updated_at: Timestamp | null;
+  user_id: number;
+  zip: string | null;
 }
 
 export interface Users {
   created_at: Generated<Timestamp>;
-  updated_at: Generated<Timestamp>;
   email: string;
   id: Generated<number>;
   is_active: Generated<boolean | null>;
@@ -105,19 +114,21 @@ export interface Users {
   password: string;
   password_reset_expires: Timestamp | null;
   password_reset_token: string | null;
-  user_role: UserRoles;
+  updated_at: Generated<Timestamp>;
+  user_role: UserRole;
   username: string;
 }
 
 export interface DB {
-  earring: Earring;
+  accessories: Accessories;
+  cart_items: CartItems;
   items: Items;
   items_tags: ItemsTags;
-  necklace: Necklace;
+  modules: Modules;
+  modules_items: ModulesItems;
   orders: Orders;
-  orders_items: OrdersItems;
   reviews: Reviews;
-  ring: Ring;
   tags: Tags;
+  user_addresses: UserAddresses;
   users: Users;
 }
