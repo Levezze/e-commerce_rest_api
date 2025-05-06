@@ -4,12 +4,13 @@ import { Items as ItemTableInterface } from "../../../database/types.js";
 import { db } from '../../../database/index.js';
 import { NotFoundError } from "../../../utils/errors.js";
 import type { components } from "../../../dtos/generated/openapi.js";
+import type { MediaTypes } from "../../../dtos/custom/customTypes.js";
 import camelcaseKeys from "camelcase-keys";
 
 type ItemFromDb = Selectable<ItemTableInterface>;
 type ItemResponse = components["schemas"]["ItemFetch"];
 
-export const getAllItems = async (admin: boolean): Promise<ItemResponse> => {
+export const getAllItems = async (admin: boolean, mediaType: string): Promise<ItemResponse> => {
   logger.debug(`Service: Attempting to fetch all items`);
   try {
     const queryResult = await sql<ItemFromDb>`
@@ -21,7 +22,7 @@ export const getAllItems = async (admin: boolean): Promise<ItemResponse> => {
     const allMediaQueryResult = await sql`
       SELECT *
       FROM media
-      WHERE parent_type = 'item';
+      WHERE parent_type = ${mediaType};
     `.execute(db);
 
     // Group media by parent_id

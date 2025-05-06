@@ -15,7 +15,7 @@
     "build": "tsc",
     "start": "node -r dotenv/config dist/server/index.js",
     "generate:db-types": "kysely-codegen --dialect postgres --out-file ./src/database/types.ts",
-    "generate:api": "npx openapi-typescript ./docs/openapi.yaml --output ./src/dtos/generated/openapi.d.ts",
+    "generate:api": "npx openapi-typescript ./docs/openapi.yaml --output ./src/dtos/temp-generated/temp-openapi.d.ts",
     "clean": "rm -rf dist"
   },
   "dependencies": {

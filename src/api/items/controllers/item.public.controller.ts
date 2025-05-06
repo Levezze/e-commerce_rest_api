@@ -1,8 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import * as itemService from '../services/item.public.service.js';
-import { Item } from "../../../dtos/generated/item.js";
+import { components } from "../../../dtos/generated/openapi.js";
 import { logger } from "../../../utils/logger.js";
 import { BadRequestError, NotFoundError } from "../../../utils/errors.js";
+
+type NewItemInput = components['schemas']['ItemInput'];
+type ItemResponse = components['schemas']['ItemFetch'];
 
 export const handleGetItems = async (
   req: Request, 
@@ -12,7 +15,9 @@ export const handleGetItems = async (
   logger.info('Attempting to fetch all items.');
   try {
     const admin = req.query.admin === 'true';
-    const response = await itemService.getAllItems(admin);
+    const mediaType = req.params.media;
+
+    const response: ItemResponse = await itemService.getAllItems(admin, mediaType);
     res.status(200).json(response);
   } catch (error) {
     next(error);

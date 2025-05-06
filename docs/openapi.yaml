@@ -491,7 +491,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  total_count:
+                  totalCount:
                     type: integer
                   items:
                     type: array
@@ -730,7 +730,10 @@ paths:
                   description: URL to the media file.
                 type:
                   type: string
-                  enum: [image, video]
+                  schema:
+                    enum: 
+                      - image
+                      - video
                   description: Type of media.
                 order:
                   type: integer
@@ -792,7 +795,10 @@ paths:
                   description: New URL to the media file.
                 type:
                   type: string
-                  enum: [image, video]
+                  schema:
+                    enum: 
+                      - image
+                      - video
                   description: New type of media.
                 order:
                   type: integer
@@ -1448,7 +1454,13 @@ paths:
               required: [status]
               properties:
                 status:
-                  $ref: '#/components/schemas/OrderStatus'
+                  type: string
+                  enum: 
+                    - pending
+                    - processing
+                    - shipped
+                    - delivered
+                    - cancelled
       responses:
         '200':
           description: Order status updated
@@ -1496,12 +1508,69 @@ components:
     # --- ENUMS ---
     UserRole:
       type: string
-      enum: [customer, manager, admin]
+      enum: 
+        - customer
+        - manager
+        - admin
       description: Role of the user in the system.
     OrderStatus:
       type: string
-      enum: [pending, processing, shipped, delivered, cancelled]
+      enum: 
+        - pending
+        - processing
+        - shipped
+        - delivered
+        - cancelled
       description: Current status of the order.
+    ItemCategoryEnum:
+      type: string
+      enum: 
+        - genericItem
+        - moduleItem
+        - accessoryItem
+      description: Category of the item in the store.
+    ItemType:
+      type: string
+      enum: 
+        - basic
+        - auto
+        - general
+      description: Type of the item.
+    FrameColor:
+      type: string
+      enum: 
+        - white
+        - black
+        - silver
+      description: Frame color for module items.
+    SurfaceMaterial:
+      type: string
+      enum: 
+        - whitePolymer
+        - blackPolymer
+        - woodOak
+        - woodMaple
+        - woodPine
+      description: Base material for surface modules.
+    ModuleSize:
+      type: string
+      enum: 
+        - small
+        - medium
+        - large
+      description: Size of the module item.
+    ControllerType:
+      type: string
+      enum: 
+        - remote
+        - app
+      description: Controller type for module items.
+    MediaType:
+      type: string
+      enum: 
+        - image
+        - video
+      description: Media type for media items.
     # --- USER ---
     UserSelf:
       type: object
@@ -1763,30 +1832,6 @@ components:
           description: JWT access token
       required: [user, token]
     # --- ITEMS ---
-    ItemCategory:
-      type: string
-      enum: [generic_item, module, accessory]
-      description: Category of the item in the store.
-    ItemType:
-      type: string
-      enum: [basic, auto, general]
-      description: Type of the item in the store.
-    FrameColor:
-      type: string
-      enum: [white, black, silver]
-      description: Color of the item's frame.
-    SurfaceMaterial:
-      type: string
-      enum: [white_polymer, black_polymer, wood_oak, wood_maple, wood_pine]
-      description: Base material for surface modules.
-    ModuleSize:
-      type: string
-      enum: [small, medium, large]
-      description: Size of the module item.
-    ControllerType:
-      type: string
-      enum: [remote, app]
-      description: Controller type for module items.
     ItemBase:
       type: object
       description: Base fields for an item in the store.
@@ -1810,10 +1855,10 @@ components:
           type: number
           format: float
           description: Price of the item.
-        category:
-          $ref: '#/components/schemas/ItemCategory'
+        itemCategory:
+          $ref: '#/components/schemas/ItemCategoryEnum'
           description: Category of the item.
-        type:
+        itemType:
           $ref: '#/components/schemas/ItemType'
           description: Type of the item.
         inStock:
@@ -1843,8 +1888,8 @@ components:
         - id
         - itemName
         - price
-        - category
-        - type
+        - itemCategory
+        - itemType
         - inStock
     ItemInputBase:
       type: object
@@ -1865,10 +1910,10 @@ components:
           type: number
           format: float
           description: Price of the item.
-        category:
-          $ref: '#/components/schemas/ItemCategory'
+        itemCategory:
+          $ref: '#/components/schemas/ItemCategoryEnum'
           description: Category of the item.
-        type:
+        itemType:
           $ref: '#/components/schemas/ItemType'
           description: Type of the item.
         inStock:
@@ -1892,8 +1937,8 @@ components:
       required:
         - itemName
         - price
-        - category
-        - type
+        - itemCategory
+        - itemType
         - inStock
     GenericItem:
       allOf:
@@ -1983,9 +2028,9 @@ components:
       discriminator:
         propertyName: category
         mapping:
-          generic_item: '#/components/schemas/GenericItem'
-          module: '#/components/schemas/ModuleItem'
-          accessory: '#/components/schemas/AccessoryItem'
+          genericItem: '#/components/schemas/GenericItem'
+          moduleItem: '#/components/schemas/ModuleItem'
+          accessoryItem: '#/components/schemas/AccessoryItem'
     ItemInput:
       oneOf:
         - $ref: '#/components/schemas/ItemInputBase'
@@ -2195,7 +2240,10 @@ components:
           description: URL to the media file.
         type:
           type: string
-          enum: [image, video]
+          schema:
+            enum: 
+              - image
+              - video
           description: Type of media.
         order:
           type: integer
