@@ -52,6 +52,7 @@ CREATE TYPE controller_type AS ENUM ('remote', 'app');
 CREATE TABLE items (
   id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   item_name varchar(100) NOT NULL,
+  description text NOT NULL,
   price numeric(10, 2) CHECK (price > 0) NOT NULL,
   in_stock boolean NOT NULL,
   created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,

@@ -17,6 +17,57 @@ export const getAllItems = async (admin: boolean): Promise<ItemResponse> => {
     FROM items;
     `.execute(db);
 
+    // Fetch all media records related to items in one query
+    const allMediaQueryResult = await sql`
+      SELECT *
+      FROM media
+      WHERE parent_type = 'item';
+    `.execute(db);
+
+    // Group media by parent_id
+    const mediaGroupedByItemId = allMediaQueryResult.rows.reduce((acc, mediaRow) => {
+      const itemId = mediaRow.parent_id;
+      if (!acc[itemId]) {
+        acc[itemId] = [];
+      }
+      acc[itemId].push({
+        id: mediaRow.id,
+        itemId: itemId,
+        url: mediaRow.url,
+        // Add additional properties if necessary
+      });
+      return acc;
+    }, {});
+    
+    /*
+    In this code:
+
+    A single query is made to fetch all media for items.
+    The results are then grouped by parent_id using the reduce method to create a map where each key is an item_id and each value is an array of media objects.
+    When mapping the items to their return format, the associated media array is included based on the item_id.
+    By doing this, you're reducing the number of database queries, which will improve performance, especially when dealing with a large number of items.
+
+    Remember that if the media table is large, this approach might still be inefficient, as it loads all media records into memory. If performance becomes an issue, consider alternative strategies such as paginating the items and fetching media in batches, or using a more complex SQL query to fetch all the necessary information in a joined format.
+    */
+
+    // Now map the items with their associated media
+    return queryResult.rows.map(dbItem => {
+    const media = mediaGroupedByItemId[dbItem.id] || [];
+
+    return {
+      id: dbItem.id,
+      itemName: dbItem.item_name,
+      price: dbItem.price,
+      inStock: dbItem.in_stock,
+      createdAt: dbItem.created_at,
+      updatedAt: dbItem.updated_at,
+      isFeatured: dbItem.is_featured,
+      isHidden: dbItem.is_hidden,
+      // Include additional properties from dbItem if necessary
+      media: media,
+    };
+    });
+
     if (queryResult.rows.length === 0) {
       throw new NotFoundError('No items found in database.');
     };
