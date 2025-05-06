@@ -1611,6 +1611,10 @@ components:
       type: string
       enum: [white, black, silver]
       description: Color of the item's frame.
+    SurfaceMaterial:
+      type: string
+      enum: [white_polymer, black_polymer, wood_oak, wood_maple, wood_pine]
+      description: Base material for surface modules.
     ModuleSize:
       type: string
       enum: [small, medium, large]
@@ -1656,7 +1660,7 @@ components:
           $ref: '#/components/schemas/FrameColor'
           description: Frame color of the item.
         surfaceMaterial:
-          type: string
+          $ref: '#/components/schemas/SurfaceMaterial'
           description: Surface material of the item.
         createdAt:
           type: string
@@ -1712,9 +1716,13 @@ components:
         frameColor:
           $ref: '#/components/schemas/FrameColor'
           description: Frame color of the item.
-        surfaceMaterial:
+        surfaceStyle:
           type: string
+          description: Combination of modules.
+        surfaceMaterial:
+          $ref: '#/components/schemas/SurfaceMaterial'
           description: Surface material of the item.
+        surfaceStyle:
         isFeatured:
           type: boolean
           description: Whether the item is featured.
@@ -1743,7 +1751,7 @@ components:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the module item.
             material:
-              type: string
+              $ref: '#/components/schemas/surfaceMaterial'
               description: Material of the module item.
             color:
               type: string

@@ -3,7 +3,6 @@ import * as authService from './auth.service.js';
 import * as userService from '../users/user.service.js';
 // Dtos
 import { components } from '../../dtos/generated/openapi.js';
-import { UserJWTPayload } from './auth.middleware.js'
 import { logger } from '../../utils/logger.js';
 import { unknown } from 'zod';
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../../utils/errors.js';

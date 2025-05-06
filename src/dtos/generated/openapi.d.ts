@@ -2011,6 +2011,11 @@ export interface components {
          * @enum {string}
          */
         OrderStatus: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+        /**
+         * @description Base material for surface modules.
+         * @enum {string}
+         */
+        surfaceMaterial: "white_polymer" | "black_polymer" | "wood_oak" | "wood_maple" | "wood_pine";
         /** @description User's own information. */
         UserSelf: {
             /**
@@ -2286,6 +2291,8 @@ export interface components {
             inStock: boolean;
             /** @description Frame color of the item. */
             frameColor?: components["schemas"]["FrameColor"];
+            /** @description Combination of modules. */
+            surfaceStyle?: string;
             /** @description Surface material of the item. */
             surfaceMaterial?: string;
             /** @description Whether the item is featured. */
