@@ -57,7 +57,6 @@ export interface CartItems {
 export interface Items {
   created_at: Generated<Timestamp>;
   id: Generated<number>;
-  img_url: string;
   in_stock: boolean;
   is_featured: boolean | null;
   is_hidden: boolean | null;
