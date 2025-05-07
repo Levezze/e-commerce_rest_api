@@ -30,35 +30,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserWithToken'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /auth/login:
     post:
       summary: User login
@@ -78,35 +58,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserWithToken'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /auth/logout:
     post:
       summary: Logout user
@@ -118,35 +78,15 @@ paths:
         '204':
           description: Logged out
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /auth/me:
     get:
       summary: Get current user
@@ -162,35 +102,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserSelf'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     patch:
       summary: Update current user
       tags: [Auth]
@@ -211,38 +131,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserSelf'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     /auth/change-password:
       post:
         summary: Change your own password
+        tags: [Auth]
         security:
           - bearerAuth: []
         requestBody:
@@ -296,35 +197,15 @@ paths:
                 items:
                   $ref: '#/components/schemas/UserAdmin'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /users/{id}:
     get:
       summary: Get user by ID (admin only)
@@ -377,35 +258,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserAdmin'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     delete:
       summary: Delete user by ID (admin only)
       tags: [Users]
@@ -422,35 +283,15 @@ paths:
         '204':
           description: User deleted
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   # --- ITEM ROUTES (ADMIN & PUBLIC) ---
   /items:
     get:
@@ -498,35 +339,15 @@ paths:
                     items:
                       $ref: '#/components/schemas/ItemFetch'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     post:
       summary: Add a new item
       tags: [Items]
@@ -548,35 +369,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/ItemFetch'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /items/{id}:
     get:
       summary: Get item by ID
@@ -634,35 +435,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/ItemFetch'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     delete:
       summary: Delete item by ID
       tags: [Items]
@@ -680,35 +461,15 @@ paths:
         '204':
           description: Deleted successfully
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /admin/items/{itemId}/media:
     post:
       summary: Add media to item
@@ -746,35 +507,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Media'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /admin/items/{itemId}/media/{mediaId}:
     patch:
       summary: Update media (url, type, or order)
@@ -811,35 +552,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Media'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     delete:
       summary: Remove media from item
       tags: [Media, Admin]
@@ -850,35 +571,15 @@ paths:
         '204':
           description: Media removed
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   # --- BUNDLES ---
   /bundles:
     get:
@@ -895,35 +596,15 @@ paths:
                 items:
                   $ref: '#/components/schemas/Bundle'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     post:
       summary: Create a new bundle
       tags: [Bundles]
@@ -945,35 +626,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Bundle'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /bundles/{id}:
     get:
       summary: Get bundle by ID
@@ -1158,35 +819,15 @@ paths:
         '204':
           description: Cart cleared
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /cart/items/{itemId}:
     patch:
       summary: Update quantity of item in cart
@@ -1220,35 +861,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/CartItem'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     delete:
       summary: Remove item from cart
       tags: [Cart]
@@ -1266,35 +887,15 @@ paths:
         '204':
           description: Item removed from cart
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   # --- ORDERS ---
   /orders:
     get:
@@ -1314,35 +915,15 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
     post:
       summary: Place new order
       tags: [Orders]
@@ -1368,35 +949,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/Order'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
   /orders/{id}:
     get:
       summary: Get order by ID
@@ -1469,42 +1030,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/Order'
         '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
         '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/CommonErrorResponses'
 components:
+  responses:
+    CommonErrorResponses:
+      description: Common error responses
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    # --- BASE FIELDS FOR COMPOSITION ---
+    BaseItemFields:
+      type: object
+      properties:
+        itemName:
+          type: string
+          description: Name of the item.
+        description:
+          type: string
+          description: Description of the item.
+        price:
+          type: number
+          format: float
+          description: Price of the item.
+    BaseBundleFields:
+      type: object
+      properties:
+        bundleName:
+          type: string
+          description: Name of the bundle.
+        description:
+          type: string
+          description: Description of the bundle.
+        price:
+          type: number
+          format: float
+          description: Total price of the bundle.
     # --- ENUMS ---
     UserRole:
       type: string
@@ -1522,9 +1097,9 @@ components:
         - delivered
         - cancelled
       description: Current status of the order.
-    ItemCategoryEnum:
+    ItemCategory:
       type: string
-      enum: 
+      enum:
         - genericItem
         - moduleItem
         - accessoryItem
@@ -1543,7 +1118,7 @@ components:
         - black
         - silver
       description: Frame color for module items.
-    SurfaceMaterial:
+    BaseMaterial:
       type: string
       enum: 
         - whitePolymer
@@ -1571,6 +1146,13 @@ components:
         - image
         - video
       description: Media type for media items.
+    ModulePackage:
+      type: string
+      enum: 
+        - custom
+        - basic
+        - minimal
+      description: Module package type for generic items.
     # --- USER ---
     UserSelf:
       type: object
@@ -1602,38 +1184,21 @@ components:
       required: [id, email, username, createdAt]
     UserAdmin:
       type: object
-      description: Full user info for admin (no password, no token).
-      properties:
-        id:
-          type: integer
-          format: int64
-        email:
-          type: string
-          format: email
-        username:
-          type: string
-        address:
-          $ref: '#/components/schemas/UserAddress'
-        lastLogin:
-          type: string
-          format: date-time
-          nullable: true
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        userRole:
-          $ref: '#/components/schemas/UserRole'
-        isActive:
-          type: boolean
-        isVerified:
-          type: boolean
-        passwordResetToken:
-          type: string
-          nullable: true
-          description: Password reset token (for password reset flows; not returned in normal user queries).
+      description: User information for admin queries.
+      allOf:
+        - $ref: '#/components/schemas/UserSelf'
+        - type: object
+          properties:
+            userRole:
+              $ref: '#/components/schemas/UserRole'
+            isActive:
+              type: boolean
+            isVerified:
+              type: boolean
+            passwordResetToken:
+              type: string
+              nullable: true
+              description: Password reset token (for password reset flows; not returned in normal user queries).
       required: [id, email, username, createdAt, updatedAt, userRole, isActive, isVerified]
     UserInputBase:
       type: object
@@ -1652,7 +1217,6 @@ components:
         address:
           $ref: '#/components/schemas/UserAddress'
           description: User's default shipping address.
-      required: [email]
       additionalProperties: false
     RegisterUser:
       type: object
@@ -1670,7 +1234,7 @@ components:
               minLength: 8
               description: User's password (write-only, min 8 characters)
               writeOnly: true
-      required: [username, password]
+      required: [email, username, password]
       additionalProperties: false
     LoginRequest:
       type: object
@@ -1695,13 +1259,6 @@ components:
         - $ref: '#/components/schemas/UserInputBase'
         - type: object
           properties:
-            email:
-              type: string
-              format: email
-              description: User's email address.
-            username:
-              type: string
-              description: Unique username for the user.
             password:
               type: string
               format: password
@@ -1731,16 +1288,9 @@ components:
       type: object
       description: Request body for updating any user (admin/manager).
       allOf: 
-        - $ref: '#/components/schemas/UserInputBase'
+        - $ref: '#/components/schemas/UpdateMe'
         - type: object
           properties:
-            username:
-              type: string
-              description: New username.
-            email:
-              type: string
-              format: email
-              description: New email address.
             password:
               type: string
               format: password
@@ -1832,114 +1382,64 @@ components:
           description: JWT access token
       required: [user, token]
     # --- ITEMS ---
-    ItemBase:
-      type: object
-      description: Base fields for an item in the store.
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          description: Unique identifier for the item.
-        itemName:
-          type: string
-          description: Name of the item.
-        description:
-          type: string
-          description: Description of the item.
-        media:
-          type: array
-          items:
-            $ref: '#/components/schemas/Media'
-          description: List of media objects for the item, ordered by the 'order' field.
-        price:
-          type: number
-          format: float
-          description: Price of the item.
-        itemCategory:
-          $ref: '#/components/schemas/ItemCategoryEnum'
-          description: Category of the item.
-        itemType:
-          $ref: '#/components/schemas/ItemType'
-          description: Type of the item.
-        inStock:
-          type: boolean
-          description: Whether the item is in stock.
-        frameColor:
-          $ref: '#/components/schemas/FrameColor'
-          description: Frame color of the item.
-        surfaceMaterial:
-          $ref: '#/components/schemas/SurfaceMaterial'
-          description: Surface material of the item.
-        createdAt:
-          type: string
-          format: date-time
-          description: Date/time the item was created.
-        updatedAt:
-          type: string
-          format: date-time
-          description: Date/time the item was last updated.
-        isFeatured:
-          type: boolean
-          description: Whether the item is featured.
-        isHidden:
-          type: boolean
-          description: Whether the item is hidden from public view.
-      required:
-        - id
-        - itemName
-        - price
-        - itemCategory
-        - itemType
-        - inStock
     ItemInputBase:
-      type: object
-      description: Base fields for creating or updating an item.
-      properties:
-        itemName:
-          type: string
-          description: Name of the item.
-        description:
-          type: string
-          description: Description of the item.
-        media:
-          type: array
-          items:
-            $ref: '#/components/schemas/Media'
-          description: List of media objects for the item, ordered by the 'order' field.
-        price:
-          type: number
-          format: float
-          description: Price of the item.
-        itemCategory:
-          $ref: '#/components/schemas/ItemCategoryEnum'
-          description: Category of the item.
-        itemType:
-          $ref: '#/components/schemas/ItemType'
-          description: Type of the item.
-        inStock:
-          type: boolean
-          description: Whether the item is in stock.
-        frameColor:
-          $ref: '#/components/schemas/FrameColor'
-          description: Frame color of the item.
-        surfaceStyle:
-          type: string
-          description: Combination of modules.
-        surfaceMaterial:
-          $ref: '#/components/schemas/SurfaceMaterial'
-          description: Surface material of the item.
-        isFeatured:
-          type: boolean
-          description: Whether the item is featured.
-        isHidden:
-          type: boolean
-          description: Whether the item is hidden from public view.
-      required:
-        - itemName
-        - price
-        - itemCategory
-        - itemType
-        - inStock
+      allOf:
+        - $ref: '#/components/schemas/BaseItemFields'
+        - type: object
+          description: Base fields for creating or updating an item.
+          properties:
+            itemMedia:
+              type: array
+              items:
+                $ref: '#/components/schemas/Media'
+              description: List of media objects for the item, ordered by the 'order' field.
+            itemCategory:
+              $ref: '#/components/schemas/ItemCategory'
+              description: Category of the item.
+            itemType:
+              $ref: '#/components/schemas/ItemType'
+              description: Type of the item.
+            inStock:
+              type: boolean
+              description: Whether the item is in stock.
+            frameColor:
+              $ref: '#/components/schemas/FrameColor'
+              description: Frame color of the item.
+            baseStyle:
+              type: string
+              description: Combination of modules.
+            baseMaterial:
+              $ref: '#/components/schemas/BaseMaterial'
+              description: Surface material of the item.
+            isFeatured:
+              type: boolean
+              description: Whether the item is featured.
+            isHidden:
+              type: boolean
+              description: Whether the item is hidden from public view.
+          required:
+            - itemName
+            - price
+            - itemCategory
+            - itemType
+            - inStock
+    ItemBase:
+      allOf:  
+        - $ref: '#/components/schemas/ItemInputBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              readOnly: true
+              description: Unique identifier for the item.
+            createdAt:
+              type: string
+              format: date-time
+              description: Date/time the item was created.
+            updatedAt:
+              type: string
+              format: date-time
+              description: Date/time the item was last updated.
     GenericItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
@@ -1951,82 +1451,51 @@ components:
         - $ref: '#/components/schemas/ItemBase'
         - type: object
           properties:
-            size:
+            moduleSize:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the module item.
-            material:
-              $ref: '#/components/schemas/SurfaceMaterial'
-              description: Material of the module item.
-            color:
+            moduleColor:
               type: string
               description: Color of the module item.
-            style:
-              type: string
-              description: Style of the module item.
-            controller:
+            moduleController:
               $ref: '#/components/schemas/ControllerType'
               description: Controller type for the module item.
     ModuleItemInput:
       allOf:
         - $ref: '#/components/schemas/ItemInputBase'
+        - $ref: '#/components/schemas/ModuleItem'
         - type: object
-          properties:
-            size:
-              $ref: '#/components/schemas/ModuleSize'
-              description: Size of the module item.
-            material:
-              type: string
-              description: Material of the module item.
-            color:
-              type: string
-              description: Color of the module item.
-            style:
-              type: string
-              description: Style of the module item.
-            controller:
-              $ref: '#/components/schemas/ControllerType'
-              description: Controller type for the module item.
+      required: [moduleSize, moduleColor, moduleController]
     AccessoryItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
         - type: object
           properties:
-            size:
+            accessorySize:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the accessory item.
-            material:
+            accessoryMaterial:
               type: string
               description: Material of the accessory item.
-            color:
+            accessoryColor:
               type: string
               description: Color of the accessory item.
-            style:
+            accessoryStyle:
               type: string
               description: Style of the accessory item.
     AccessoryItemInput:
       allOf:
         - $ref: '#/components/schemas/ItemInputBase'
+        - $ref: '#/components/schemas/AccessoryItem'
         - type: object
-          properties:
-            size:
-              $ref: '#/components/schemas/ModuleSize'
-              description: Size of the accessory item.
-            material:
-              type: string
-              description: Material of the accessory item.
-            color:
-              type: string
-              description: Color of the accessory item.
-            style:
-              type: string
-              description: Style of the accessory item.
+      required: [accessoryColor]
     ItemFetch:
       oneOf:
         - $ref: '#/components/schemas/GenericItem'
         - $ref: '#/components/schemas/ModuleItem'
         - $ref: '#/components/schemas/AccessoryItem'
       discriminator:
-        propertyName: category
+        propertyName: ItemCategory
         mapping:
           genericItem: '#/components/schemas/GenericItem'
           moduleItem: '#/components/schemas/ModuleItem'
@@ -2037,76 +1506,79 @@ components:
         - $ref: '#/components/schemas/ModuleItemInput'
         - $ref: '#/components/schemas/AccessoryItemInput'
       discriminator:
-        propertyName: category
+        propertyName: ItemCategory
     ItemUpdate:
-      type: object
-      description: Request body for updating an item.
-      properties:
-        itemName: {type: string, description: New name of the item.}
-        description: {type: string, description: New description of the item.}
-        price: {type: number, format: float, description: New price of the item.}
-        inStock: {type: boolean, description: New stock status of the item.}
-        isFeatured: {type: boolean, description: New featured status of the item.}
-        isHidden: {type: boolean, description: New hidden status of the item.}
-        frameColor: {$ref: '#/components/schemas/FrameColor', description: New frame color of the item.}
-        surfaceMaterial: {type: string, description: New surface material of the item.}
-        size: {$ref: '#/components/schemas/ModuleSize', description: New size of the module item.}
-        material: {type: string, description: New material of the module item.}
-        color: {type: string, description: New color of the module item.}
-        style: {type: string, description: New style of the module item.}
-        controller: {$ref: '#/components/schemas/ControllerType', description: New controller type for the module item.}
+      allOf:
+        - $ref: '#/components/schemas/BaseItemFields'
+        - type: object
+          description: Request body for updating an item.
+          properties:
+            inStock:
+              type: boolean
+              description: New stock status of the item.
+            isFeatured:
+              type: boolean
+              description: New featured status of the item.
+            isHidden:
+              type: boolean
+              description: New hidden status of the item.
+            frameColor:
+              $ref: '#/components/schemas/FrameColor'
+              description: New frame color of the item.
+            surfaceMaterial:
+              type: string
+              description: New surface material of the item.
+            size:
+              $ref: '#/components/schemas/ModuleSize'
+              description: New size of the module item.
+            material:
+              type: string
+              description: New material of the module item.
+            color:
+              type: string
+              description: New color of the module item.
+            style:
+              type: string
+              description: New style of the module item.
+            controller:
+              $ref: '#/components/schemas/ControllerType'
+              description: New controller type for the module item.
     # --- BUNDLES ---
     Bundle:
-      type: object
-      description: A bundle containing a collection of items from any category.
-      properties:
-        id:
-          type: integer
-          description: Unique identifier for the bundle.
-        name:
-          type: string
-          description: Name of the bundle.
-        itemIds:
-          type: array
-          items:
-            type: integer
-          description: List of item IDs included in the bundle.
-        price:
-          type: number
-          format: float
-          description: Total price of the bundle.
-        description:
-          type: string
-          description: Description of the bundle.
-        createdAt:
-          type: string
-          format: date-time
-          description: Date/time the bundle was created.
-        updatedAt:
-          type: string
-          format: date-time
-          description: Date/time the bundle was last updated.
-      required: [id, name, itemIds, price]
+      allOf:
+        - $ref: '#/components/schemas/BaseBundleFields'
+        - type: object
+          description: A bundle containing a collection of items from any ItemCategory.
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the bundle.
+            itemIds:
+              type: array
+              items:
+                type: integer
+              description: List of item IDs included in the bundle.
+            createdAt:
+              type: string
+              format: date-time
+              description: Date/time the bundle was created.
+            updatedAt:
+              type: string
+              format: date-time
+              description: Date/time the bundle was last updated.
+          required: [id, bundleName, itemIds, price]
     BundleInput:
-      type: object
-      description: Request body for creating or updating a bundle.
-      required: [name, itemIds, price]
-      properties:
-        name:
-          type: string
-          description: Name of the bundle.
-        itemIds:
-          type: array
-          items:
-            type: integer
-          description: List of item IDs to include.
-        price:
-          type: number
-          format: float
-          description: Total price of the bundle.
-        description:
-          type: string
-          description: Description of the bundle.
+      allOf:
+        - $ref: '#/components/schemas/BaseBundleFields'
+        - type: object
+          description: Request body for creating or updating a bundle.
+          required: [bundleName, itemIds, price]
+          properties:
+            itemIds:
+              type: array
+              items:
+                type: integer
+              description: List of item IDs to include.
     # --- CART ---
     CartItem:
       type: object

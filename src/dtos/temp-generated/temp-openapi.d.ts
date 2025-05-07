@@ -36,51 +36,11 @@ export interface paths {
                         "application/json": components["schemas"]["UserWithToken"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         delete?: never;
@@ -121,51 +81,11 @@ export interface paths {
                         "application/json": components["schemas"]["UserWithToken"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         delete?: never;
@@ -200,51 +120,11 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         delete?: never;
@@ -279,51 +159,11 @@ export interface paths {
                         "application/json": components["schemas"]["UserSelf"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         put?: never;
@@ -354,51 +194,11 @@ export interface paths {
                         "application/json": components["schemas"]["UserSelf"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         trace?: never;
@@ -429,51 +229,11 @@ export interface paths {
                         "application/json": components["schemas"]["UserAdmin"][];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         put?: never;
@@ -553,51 +313,11 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         options?: never;
@@ -625,51 +345,11 @@ export interface paths {
                         "application/json": components["schemas"]["UserAdmin"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         trace?: never;
@@ -712,51 +392,11 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         put?: never;
@@ -786,51 +426,11 @@ export interface paths {
                         "application/json": components["schemas"]["ItemFetch"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         delete?: never;
@@ -911,51 +511,11 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         options?: never;
@@ -988,51 +548,11 @@ export interface paths {
                         "application/json": components["schemas"]["ItemFetch"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         trace?: never;
@@ -1079,51 +599,11 @@ export interface paths {
                         "application/json": components["schemas"]["Media"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         delete?: never;
@@ -1159,51 +639,11 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         options?: never;
@@ -1241,51 +681,11 @@ export interface paths {
                         "application/json": components["schemas"]["Media"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         trace?: never;
@@ -1316,51 +716,11 @@ export interface paths {
                         "application/json": components["schemas"]["Bundle"][];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         put?: never;
@@ -1390,51 +750,11 @@ export interface paths {
                         "application/json": components["schemas"]["Bundle"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         delete?: never;
@@ -1728,51 +1048,11 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         options?: never;
@@ -1812,51 +1092,11 @@ export interface paths {
                     };
                     content?: never;
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         options?: never;
@@ -1891,51 +1131,11 @@ export interface paths {
                         "application/json": components["schemas"]["CartItem"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         trace?: never;
@@ -1969,51 +1169,11 @@ export interface paths {
                         "application/json": components["schemas"]["Order"][];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         put?: never;
@@ -2045,51 +1205,11 @@ export interface paths {
                         "application/json": components["schemas"]["Order"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         delete?: never;
@@ -2202,51 +1322,11 @@ export interface paths {
                         "application/json": components["schemas"]["Order"];
                     };
                 };
-                /** @description Bad request */
-                400: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Unauthorized */
-                401: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Forbidden */
-                403: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Not found */
-                404: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
-                /** @description Internal server error */
-                500: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["ErrorResponse"];
-                    };
-                };
+                400: components["responses"]["CommonErrorResponses"];
+                401: components["responses"]["CommonErrorResponses"];
+                403: components["responses"]["CommonErrorResponses"];
+                404: components["responses"]["CommonErrorResponses"];
+                500: components["responses"]["CommonErrorResponses"];
             };
         };
         trace?: never;
@@ -2255,6 +1335,28 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        BaseItemFields: {
+            /** @description Name of the item. */
+            itemName?: string;
+            /** @description Description of the item. */
+            description?: string;
+            /**
+             * Format: float
+             * @description Price of the item.
+             */
+            price?: number;
+        };
+        BaseBundleFields: {
+            /** @description Name of the bundle. */
+            bundleName?: string;
+            /** @description Description of the bundle. */
+            description?: string;
+            /**
+             * Format: float
+             * @description Total price of the bundle.
+             */
+            price?: number;
+        };
         /**
          * @description Role of the user in the system.
          * @enum {string}
@@ -2269,7 +1371,7 @@ export interface components {
          * @description Category of the item in the store.
          * @enum {string}
          */
-        ItemCategoryEnum: "genericItem" | "moduleItem" | "accessoryItem";
+        ItemCategory: "genericItem" | "moduleItem" | "accessoryItem";
         /**
          * @description Type of the item.
          * @enum {string}
@@ -2284,7 +1386,7 @@ export interface components {
          * @description Base material for surface modules.
          * @enum {string}
          */
-        SurfaceMaterial: "whitePolymer" | "blackPolymer" | "woodOak" | "woodMaple" | "woodPine";
+        BaseMaterial: "whitePolymer" | "blackPolymer" | "woodOak" | "woodMaple" | "woodPine";
         /**
          * @description Size of the module item.
          * @enum {string}
@@ -2300,6 +1402,11 @@ export interface components {
          * @enum {string}
          */
         MediaType: "image" | "video";
+        /**
+         * @description Module package type for generic items.
+         * @enum {string}
+         */
+        ModulePackage: "custom" | "basic" | "minimal";
         /** @description User's own information. */
         UserSelf: {
             /**
@@ -2327,20 +1434,8 @@ export interface components {
              */
             createdAt: string;
         };
-        /** @description Full user info for admin (no password, no token). */
-        UserAdmin: {
-            /** Format: int64 */
-            id: number;
-            /** Format: email */
-            email: string;
-            username: string;
-            address?: components["schemas"]["UserAddress"];
-            /** Format: date-time */
-            lastLogin?: string | null;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
+        /** @description User information for admin queries. */
+        UserAdmin: WithRequired<components["schemas"]["UserSelf"], "id" | "email" | "username" | "createdAt"> & {
             userRole: components["schemas"]["UserRole"];
             isActive: boolean;
             isVerified: boolean;
@@ -2353,14 +1448,14 @@ export interface components {
              * Format: email
              * @description User's email address.
              */
-            email: string;
+            email?: string;
             /** @description Unique username for the user. */
             username?: string;
             /** @description User's default shipping address. */
             address?: components["schemas"]["UserAddress"];
         };
         /** @description Request body for user registration. */
-        RegisterUser: WithRequired<components["schemas"]["UserInputBase"], "username"> & {
+        RegisterUser: WithRequired<components["schemas"]["UserInputBase"], "email" | "username"> & {
             /** @description Unique username for the user. */
             username: string;
             /**
@@ -2385,13 +1480,6 @@ export interface components {
         /** @description Request body for user creation (by admin). */
         CreateUser: WithRequired<components["schemas"]["UserInputBase"], "email" | "username"> & {
             /**
-             * Format: email
-             * @description User's email address.
-             */
-            email: string;
-            /** @description Unique username for the user. */
-            username: string;
-            /**
              * Format: password
              * @description User's password (write-only, min 8 characters)
              */
@@ -2412,14 +1500,7 @@ export interface components {
             address?: components["schemas"]["UserAddress"];
         };
         /** @description Request body for updating any user (admin/manager). */
-        UpdateUser: components["schemas"]["UserInputBase"] & {
-            /** @description New username. */
-            username?: string;
-            /**
-             * Format: email
-             * @description New email address.
-             */
-            email?: string;
+        UpdateUser: components["schemas"]["UpdateMe"] & {
             /**
              * Format: password
              * @description New password (write-only, min 8 characters)
@@ -2486,31 +1567,35 @@ export interface components {
              */
             token: string;
         };
-        /** @description Base fields for an item in the store. */
-        ItemBase: {
-            /** @description Unique identifier for the item. */
-            readonly id: number;
-            /** @description Name of the item. */
-            itemName: string;
-            /** @description Description of the item. */
-            description?: string;
+        ItemInputBase: components["schemas"]["BaseItemFields"] & {
             /** @description List of media objects for the item, ordered by the 'order' field. */
-            media?: components["schemas"]["Media"][];
-            /**
-             * Format: float
-             * @description Price of the item.
-             */
-            price: number;
+            itemMedia?: components["schemas"]["Media"][];
             /** @description Category of the item. */
-            itemCategory: components["schemas"]["ItemCategoryEnum"];
+            itemCategory: components["schemas"]["ItemCategory"];
             /** @description Type of the item. */
             itemType: components["schemas"]["ItemType"];
             /** @description Whether the item is in stock. */
             inStock: boolean;
             /** @description Frame color of the item. */
             frameColor?: components["schemas"]["FrameColor"];
+            /** @description Combination of modules. */
+            baseStyle?: string;
             /** @description Surface material of the item. */
-            surfaceMaterial?: components["schemas"]["SurfaceMaterial"];
+            baseMaterial?: components["schemas"]["BaseMaterial"];
+            /** @description Whether the item is featured. */
+            isFeatured?: boolean;
+            /** @description Whether the item is hidden from public view. */
+            isHidden?: boolean;
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            ItemCategory: "ItemInputBase";
+        };
+        ItemBase: components["schemas"]["ItemInputBase"] & {
+            /** @description Unique identifier for the item. */
+            readonly id?: number;
             /**
              * Format: date-time
              * @description Date/time the item was created.
@@ -2521,135 +1606,62 @@ export interface components {
              * @description Date/time the item was last updated.
              */
             updatedAt?: string;
-            /** @description Whether the item is featured. */
-            isFeatured?: boolean;
-            /** @description Whether the item is hidden from public view. */
-            isHidden?: boolean;
-        };
-        /** @description Base fields for creating or updating an item. */
-        ItemInputBase: {
-            /** @description Name of the item. */
-            itemName: string;
-            /** @description Description of the item. */
-            description?: string;
-            /** @description List of media objects for the item, ordered by the 'order' field. */
-            media?: components["schemas"]["Media"][];
-            /**
-             * Format: float
-             * @description Price of the item.
-             */
-            price: number;
-            /** @description Category of the item. */
-            itemCategory: components["schemas"]["ItemCategoryEnum"];
-            /** @description Type of the item. */
-            itemType: components["schemas"]["ItemType"];
-            /** @description Whether the item is in stock. */
-            inStock: boolean;
-            /** @description Frame color of the item. */
-            frameColor?: components["schemas"]["FrameColor"];
-            /** @description Combination of modules. */
-            surfaceStyle?: string;
-            /** @description Surface material of the item. */
-            surfaceMaterial?: components["schemas"]["SurfaceMaterial"];
-            /** @description Whether the item is featured. */
-            isFeatured?: boolean;
-            /** @description Whether the item is hidden from public view. */
-            isHidden?: boolean;
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            category: "ItemInputBase";
         };
         GenericItem: components["schemas"]["ItemBase"] & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            category: "genericItem";
+            ItemCategory: "genericItem";
         };
         GenericItemInput: components["schemas"]["ItemInputBase"];
         ModuleItem: components["schemas"]["ItemBase"] & {
             /** @description Size of the module item. */
-            size?: components["schemas"]["ModuleSize"];
-            /** @description Material of the module item. */
-            material?: components["schemas"]["SurfaceMaterial"];
+            moduleSize?: components["schemas"]["ModuleSize"];
             /** @description Color of the module item. */
-            color?: string;
-            /** @description Style of the module item. */
-            style?: string;
+            moduleColor?: string;
             /** @description Controller type for the module item. */
-            controller?: components["schemas"]["ControllerType"];
+            moduleController?: components["schemas"]["ControllerType"];
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            category: "moduleItem";
+            ItemCategory: "moduleItem";
         };
-        ModuleItemInput: components["schemas"]["ItemInputBase"] & {
-            /** @description Size of the module item. */
-            size?: components["schemas"]["ModuleSize"];
-            /** @description Material of the module item. */
-            material?: string;
-            /** @description Color of the module item. */
-            color?: string;
-            /** @description Style of the module item. */
-            style?: string;
-            /** @description Controller type for the module item. */
-            controller?: components["schemas"]["ControllerType"];
-        } & {
+        ModuleItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["ModuleItem"] & Record<string, never> & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            category: "ModuleItemInput";
+            ItemCategory: "ModuleItemInput";
         };
         AccessoryItem: components["schemas"]["ItemBase"] & {
             /** @description Size of the accessory item. */
-            size?: components["schemas"]["ModuleSize"];
+            accessorySize?: components["schemas"]["ModuleSize"];
             /** @description Material of the accessory item. */
-            material?: string;
+            accessoryMaterial?: string;
             /** @description Color of the accessory item. */
-            color?: string;
+            accessoryColor?: string;
             /** @description Style of the accessory item. */
-            style?: string;
+            accessoryStyle?: string;
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            category: "accessoryItem";
+            ItemCategory: "accessoryItem";
         };
-        AccessoryItemInput: components["schemas"]["ItemInputBase"] & {
-            /** @description Size of the accessory item. */
-            size?: components["schemas"]["ModuleSize"];
-            /** @description Material of the accessory item. */
-            material?: string;
-            /** @description Color of the accessory item. */
-            color?: string;
-            /** @description Style of the accessory item. */
-            style?: string;
-        } & {
+        AccessoryItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["AccessoryItem"] & Record<string, never> & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            category: "AccessoryItemInput";
+            ItemCategory: "AccessoryItemInput";
         };
         ItemFetch: components["schemas"]["GenericItem"] | components["schemas"]["ModuleItem"] | components["schemas"]["AccessoryItem"];
         ItemInput: components["schemas"]["ItemInputBase"] | components["schemas"]["ModuleItemInput"] | components["schemas"]["AccessoryItemInput"];
-        /** @description Request body for updating an item. */
-        ItemUpdate: {
-            /** @description New name of the item. */
-            itemName?: string;
-            /** @description New description of the item. */
-            description?: string;
-            /**
-             * Format: float
-             * @description New price of the item.
-             */
-            price?: number;
+        ItemUpdate: components["schemas"]["BaseItemFields"] & {
             /** @description New stock status of the item. */
             inStock?: boolean;
             /** @description New featured status of the item. */
@@ -2671,21 +1683,11 @@ export interface components {
             /** @description New controller type for the module item. */
             controller?: components["schemas"]["ControllerType"];
         };
-        /** @description A bundle containing a collection of items from any category. */
-        Bundle: {
+        Bundle: components["schemas"]["BaseBundleFields"] & {
             /** @description Unique identifier for the bundle. */
             id: number;
-            /** @description Name of the bundle. */
-            name: string;
             /** @description List of item IDs included in the bundle. */
             itemIds: number[];
-            /**
-             * Format: float
-             * @description Total price of the bundle.
-             */
-            price: number;
-            /** @description Description of the bundle. */
-            description?: string;
             /**
              * Format: date-time
              * @description Date/time the bundle was created.
@@ -2697,19 +1699,9 @@ export interface components {
              */
             updatedAt?: string;
         };
-        /** @description Request body for creating or updating a bundle. */
-        BundleInput: {
-            /** @description Name of the bundle. */
-            name: string;
+        BundleInput: components["schemas"]["BaseBundleFields"] & {
             /** @description List of item IDs to include. */
             itemIds: number[];
-            /**
-             * Format: float
-             * @description Total price of the bundle.
-             */
-            price: number;
-            /** @description Description of the bundle. */
-            description?: string;
         };
         /** @description An item in the user's shopping cart. */
         CartItem: {
@@ -2832,7 +1824,17 @@ export interface components {
             code: number;
         };
     };
-    responses: never;
+    responses: {
+        /** @description Common error responses */
+        CommonErrorResponses: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorResponse"];
+            };
+        };
+    };
     parameters: never;
     requestBodies: never;
     headers: never;

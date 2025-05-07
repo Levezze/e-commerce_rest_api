@@ -4,11 +4,11 @@ import { Items as ItemTableInterface } from "../../../database/types.js";
 import { db } from '../../../database/index.js';
 import { NotFoundError } from "../../../utils/errors.js";
 import type { components } from "../../../dtos/generated/openapi.js";
-import type { MediaTypes } from "../../../dtos/custom/customTypes.js";
 import camelcaseKeys from "camelcase-keys";
 
 type ItemFromDb = Selectable<ItemTableInterface>;
 type ItemResponse = components["schemas"]["ItemFetch"];
+type MediaResponse = components['schemas']['Media']
 
 export const getAllItems = async (admin: boolean, mediaType: string): Promise<ItemResponse> => {
   logger.debug(`Service: Attempting to fetch all items`);
@@ -19,12 +19,17 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
     `.execute(db);
 
     // Fetch all media records related to items in one query
-    const allMediaQueryResult = await sql`
+    const allMediaQueryResult = await sql<MediaResponse>`
       SELECT *
       FROM media
       WHERE parent_type = ${mediaType};
     `.execute(db);
 
+    if (allMediaQueryResult.rows.length === 0) {
+      throw new NotFoundError(`No media found in database.`);
+    };
+
+    /*
     // Group media by parent_id
     const mediaGroupedByItemId = allMediaQueryResult.rows.reduce((acc, mediaRow) => {
       const itemId = mediaRow.parent_id;
@@ -39,7 +44,8 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
       });
       return acc;
     }, {});
-    
+    */
+
     /*
     In this code:
 
@@ -53,20 +59,20 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
 
     // Now map the items with their associated media
     return queryResult.rows.map(dbItem => {
-    const media = mediaGroupedByItemId[dbItem.id] || [];
+      const media = mediaGroupedByItemId[dbItem.id] || [];
 
-    return {
-      id: dbItem.id,
-      itemName: dbItem.item_name,
-      price: dbItem.price,
-      inStock: dbItem.in_stock,
-      createdAt: dbItem.created_at,
-      updatedAt: dbItem.updated_at,
-      isFeatured: dbItem.is_featured,
-      isHidden: dbItem.is_hidden,
-      // Include additional properties from dbItem if necessary
-      media: media,
-    };
+      return {
+        id: dbItem.id,
+        itemName: dbItem.item_name,
+        price: dbItem.price,
+        inStock: dbItem.in_stock,
+        createdAt: dbItem.created_at,
+        updatedAt: dbItem.updated_at,
+        isFeatured: dbItem.is_featured,
+        isHidden: dbItem.is_hidden,
+        // Include additional properties from dbItem if necessary
+        media: media,
+      };
     });
 
     if (queryResult.rows.length === 0) {
@@ -74,7 +80,7 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
     };
 
     if (admin) {
-      return queryResult.rows.map(row => 
+      return queryResult.rows.map(row =>
         camelcaseKeys(row, { deep: true })
       );
     };

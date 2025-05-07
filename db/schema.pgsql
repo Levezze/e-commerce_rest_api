@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS items CASCADE;
 DROP TABLE IF EXISTS modules CASCADE;
 DROP TABLE IF EXISTS accessories CASCADE;
 DROP TABLE IF EXISTS bundles CASCADE;
+DROP TABLE IF EXISTS media CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS orders_items CASCADE;
 DROP TABLE IF EXISTS tags CASCADE;
@@ -47,6 +48,12 @@ CREATE TYPE module_size AS ENUM ('small', 'medium', 'large');
 DROP TYPE IF EXISTS controller_type;
 CREATE TYPE controller_type AS ENUM ('remote', 'app');
 
+DROP TYPE IF EXISTS media_parent_type;
+CREATE TYPE media_parent_type AS ENUM ('item', 'bundle');
+
+DROP TYPE IF EXISTS media_type;
+CREATE TYPE media_type AS ENUM ('image', 'video');
+
 -- Catalog Tables
 
 CREATE TABLE items (
@@ -55,6 +62,9 @@ CREATE TABLE items (
   description text NOT NULL,
   price numeric(10, 2) CHECK (price > 0) NOT NULL,
   in_stock boolean NOT NULL,
+  frame_color frame_color NULL,
+  base_material base_material NULL,
+  module_package module_package NULL,
   created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
   updated_at timestamp,
   is_featured boolean,
@@ -62,6 +72,7 @@ CREATE TABLE items (
 );
 
 -- Bundles Table
+
 CREATE TABLE bundles (
   id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name varchar,
@@ -74,22 +85,25 @@ CREATE TABLE bundles (
 
 -- Media Table
 
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'media_parent_type') THEN
-    CREATE TYPE media_parent_type AS ENUM ('item', 'bundle');
-  END IF;
-END$$;
-
 CREATE TABLE media (
   id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  parent_type media_parent_type NOT NULL,
-  parent_id INT NOT NULL,
+  parent_type media_parent_type NOT NULL, -- 'item' or 'bundle'
+  parent_id INT NOT NULL, -- item.id or bundle.id
   url TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+  type media_type NOT NULL,
+  "order" INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  CONSTRAINT fk_item_media FOREIGN KEY (parent_id) REFERENCES items(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED
+  -- Note: If parent_type is 'bundle', you may want to add a similar FK to bundles
+  -- For strict OpenAPI alignment, you may split item_id and bundle_id, but keeping polymorphic for now
 );
 
+-- Index for fast lookup by parent (item/bundle) and order
+CREATE INDEX IF NOT EXISTS idx_media_parent ON media(parent_type, parent_id, "order");
+
 -- Bundles_Items Join Table
+
 CREATE TABLE bundles_items (
   bundle_id int NOT NULL,
   item_id int NOT NULL,
@@ -109,6 +123,7 @@ CREATE TABLE modules (
 );
 
 -- modules_items join table
+
 CREATE TABLE modules_items (
   module_id int NOT NULL,
   item_id int NOT NULL,
@@ -118,6 +133,7 @@ CREATE TABLE modules_items (
 );
 
 -- Accessories Table
+
 CREATE TABLE accessories (
   id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   size module_size NULL,
