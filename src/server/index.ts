@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: '.env.wsl' });
 
 import app from './app.js';
 import { logPortListen } from '../utils/logServerStart.js';

@@ -1,14 +1,17 @@
 import { sql, Selectable } from "kysely";
 import { logger } from "../../../utils/logger.js";
-import { Items as ItemTableInterface } from "../../../database/types.js";
+import {
+  Items as ItemTableInterface,
+  Media as MediaTableInterface
+} from "../../../database/types.js";
 import { db } from '../../../database/index.js';
 import { NotFoundError } from "../../../utils/errors.js";
 import type { components } from "../../../dtos/generated/openapi.js";
-import { Media as MediaTableInterface } from "../../../database/types.js";
 import camelcaseKeys from "camelcase-keys";
 
 type ItemFromDb = Selectable<ItemTableInterface>;
-type ItemResponse = components["schemas"]["ItemFetch"];
+type ItemMediaFromDb = Selectable<MediaTableInterface>;
+type ItemFetch = components["schemas"]["ItemFetch"];
 type MediaResponse = components['schemas']['Media']
 
 export const getAllItems = async (admin: boolean, mediaType: string): Promise<ItemResponse> => {
@@ -23,13 +26,13 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
       throw new NotFoundError(`No items found in database.`);
     };
 
-    const dbItems = queryResult.rows.map(row =>
-      camelcaseKeys(row, { deep: true })
+    const dbItems = queryResult.rows;
+
+    if (admin) return queryResult.rows.map(
+      row => camelcaseKeys(row, { deep: true })
     );
 
-    if (admin) return dbItems;
-
-    const itemsDto: ItemResponse = dbItems.map(dbItem => {
+    const itemsDto: ItemFetch = dbItems.map(dbItem => {
       return {
         id: dbItem.id,
         itemName: dbItem.item_name,

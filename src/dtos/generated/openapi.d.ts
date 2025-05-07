@@ -1567,12 +1567,21 @@ export interface components {
              */
             token: string;
         };
-        ItemInputBase: components["schemas"]["BaseItemFields"] & {
+        /** @description Base fields for all items. */
+        ItemBase: {
+            /** @description Unique identifier for the item. */
+            readonly id?: number;
+            /** @description Discriminator for item type. */
+            kind?: string;
+            /** @description Name of the item. */
+            itemName: string;
+            /** @description Description of the item. */
+            description?: string;
             /**
-             * @description Discriminator for ItemInputBase type.
-             * @enum {string}
+             * Format: float
+             * @description Price of the item.
              */
-            kind?: "ItemInputBase";
+            price: number;
             /** @description List of media objects for the item, ordered by the 'order' field. */
             itemMedia?: components["schemas"]["Media"][];
             /** @description Category of the item. */
@@ -1591,16 +1600,6 @@ export interface components {
             isFeatured?: boolean;
             /** @description Whether the item is hidden from public view. */
             isHidden?: boolean;
-        } & {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "ItemInputBase";
-        };
-        ItemBase: components["schemas"]["ItemInputBase"] & {
-            /** @description Unique identifier for the item. */
-            readonly id?: number;
             /**
              * Format: date-time
              * @description Date/time the item was created.
@@ -1612,12 +1611,18 @@ export interface components {
              */
             updatedAt?: string;
         };
-        GenericItem: components["schemas"]["ItemBase"] & {
+        GenericItem: Omit<components["schemas"]["ItemBase"], "kind"> & {
             /**
              * @description Discriminator for GenericItem type.
              * @enum {string}
              */
-            kind?: "GenericItem";
+            kind: "GenericItem";
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "GenericItem";
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -1625,8 +1630,80 @@ export interface components {
              */
             kind: "GenericItem";
         };
-        GenericItemInput: components["schemas"]["ItemInputBase"];
-        ModuleItem: components["schemas"]["ItemBase"] & {
+        /** @description Base fields for item creation/update requests. */
+        BaseItemInput: {
+            /** @description Name of the item. */
+            itemName: string;
+            /** @description Description of the item. */
+            description?: string;
+            /**
+             * Format: float
+             * @description Price of the item.
+             */
+            price: number;
+            /** @description List of media objects for the item, ordered by the 'order' field. */
+            itemMedia?: components["schemas"]["Media"][];
+            /** @description Category of the item. */
+            itemCategory: components["schemas"]["ItemCategory"];
+            /** @description Type of the item. */
+            itemType: components["schemas"]["ItemType"];
+            /** @description Whether the item is in stock. */
+            inStock: boolean;
+            /** @description Frame color of the item. */
+            frameColor?: components["schemas"]["FrameColor"];
+            /** @description Combination of modules. */
+            baseStyle?: string;
+            /** @description Surface material of the item. */
+            baseMaterial?: components["schemas"]["BaseMaterial"];
+            /** @description Whether the item is featured. */
+            isFeatured?: boolean;
+            /** @description Whether the item is hidden from public view. */
+            isHidden?: boolean;
+        };
+        GenericItemInput: components["schemas"]["BaseItemInput"] & {
+            /**
+             * @description Discriminator for GenericItem type.
+             * @enum {string}
+             */
+            kind: "GenericItem";
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "GenericItem";
+        };
+        ModuleItem: Omit<components["schemas"]["ItemBase"], "kind"> & {
+            /**
+             * @description Discriminator for ModuleItem type.
+             * @enum {string}
+             */
+            kind: "ModuleItem";
+            /** @description Size of the module item. */
+            moduleSize?: components["schemas"]["ModuleSize"];
+            /** @description Color of the module item. */
+            moduleColor?: string;
+            /** @description Controller type for the module item. */
+            moduleController?: components["schemas"]["ControllerType"];
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "ModuleItem";
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "ModuleItem";
+        };
+        ModuleItemInput: components["schemas"]["BaseItemInput"] & {
+            /**
+             * @description Discriminator for ModuleItem type.
+             * @enum {string}
+             */
+            kind: "ModuleItem";
             /** @description Size of the module item. */
             moduleSize?: components["schemas"]["ModuleSize"];
             /** @description Color of the module item. */
@@ -1640,20 +1717,7 @@ export interface components {
              */
             kind: "ModuleItem";
         };
-        ModuleItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["ModuleItem"] & {
-            /**
-             * @description Discriminator for ModuleItemInput type.
-             * @enum {string}
-             */
-            kind?: "ModuleItemInput";
-        } & {
-            /**
-             * @description discriminator enum property added by openapi-typescript
-             * @enum {string}
-             */
-            kind: "ModuleItemInput";
-        };
-        AccessoryItem: components["schemas"]["ItemBase"] & {
+        AccessoryItem: Omit<components["schemas"]["ItemBase"], "kind"> & {
             /**
              * @description Discriminator for AccessoryItem type.
              * @enum {string}
@@ -1673,22 +1737,36 @@ export interface components {
              * @enum {string}
              */
             kind: "AccessoryItem";
-        };
-        AccessoryItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["AccessoryItem"] & {
-            /**
-             * @description Discriminator for AccessoryItemInput type.
-             * @enum {string}
-             */
-            kind?: "AccessoryItemInput";
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            kind: "AccessoryItemInput";
+            kind: "AccessoryItem";
+        };
+        AccessoryItemInput: components["schemas"]["BaseItemInput"] & {
+            /**
+             * @description Discriminator for AccessoryItem type.
+             * @enum {string}
+             */
+            kind: "AccessoryItem";
+            /** @description Size of the accessory item. */
+            accessorySize?: components["schemas"]["ModuleSize"];
+            /** @description Material of the accessory item. */
+            accessoryMaterial?: string;
+            /** @description Color of the accessory item. */
+            accessoryColor: string;
+            /** @description Style of the accessory item. */
+            accessoryStyle?: string;
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "AccessoryItem";
         };
         ItemFetch: components["schemas"]["GenericItem"] | components["schemas"]["ModuleItem"] | components["schemas"]["AccessoryItem"];
-        ItemInput: components["schemas"]["ItemInputBase"] | components["schemas"]["ModuleItemInput"] | components["schemas"]["AccessoryItemInput"];
+        ItemInput: components["schemas"]["GenericItemInput"] | components["schemas"]["ModuleItemInput"] | components["schemas"]["AccessoryItemInput"];
         ItemUpdate: components["schemas"]["BaseItemFields"] & {
             /** @description New stock status of the item. */
             inStock?: boolean;

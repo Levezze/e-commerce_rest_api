@@ -3,7 +3,7 @@ import { DB } from './types.js';
 import pg from 'pg';
 import * as dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ path: '.env.wsl' });
 
 const dialect = new PostgresDialect({
   pool: new pg.Pool({
