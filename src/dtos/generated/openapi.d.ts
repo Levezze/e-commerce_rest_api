@@ -1568,6 +1568,11 @@ export interface components {
             token: string;
         };
         ItemInputBase: components["schemas"]["BaseItemFields"] & {
+            /**
+             * @description Discriminator for ItemInputBase type.
+             * @enum {string}
+             */
+            kind?: "ItemInputBase";
             /** @description List of media objects for the item, ordered by the 'order' field. */
             itemMedia?: components["schemas"]["Media"][];
             /** @description Category of the item. */
@@ -1591,7 +1596,7 @@ export interface components {
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            ItemCategory: "ItemInputBase";
+            kind: "ItemInputBase";
         };
         ItemBase: components["schemas"]["ItemInputBase"] & {
             /** @description Unique identifier for the item. */
@@ -1609,10 +1614,16 @@ export interface components {
         };
         GenericItem: components["schemas"]["ItemBase"] & {
             /**
+             * @description Discriminator for GenericItem type.
+             * @enum {string}
+             */
+            kind?: "GenericItem";
+        } & {
+            /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            ItemCategory: "genericItem";
+            kind: "GenericItem";
         };
         GenericItemInput: components["schemas"]["ItemInputBase"];
         ModuleItem: components["schemas"]["ItemBase"] & {
@@ -1627,16 +1638,27 @@ export interface components {
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            ItemCategory: "moduleItem";
+            kind: "ModuleItem";
         };
-        ModuleItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["ModuleItem"] & Record<string, never> & {
+        ModuleItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["ModuleItem"] & {
+            /**
+             * @description Discriminator for ModuleItemInput type.
+             * @enum {string}
+             */
+            kind?: "ModuleItemInput";
+        } & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            ItemCategory: "ModuleItemInput";
+            kind: "ModuleItemInput";
         };
         AccessoryItem: components["schemas"]["ItemBase"] & {
+            /**
+             * @description Discriminator for AccessoryItem type.
+             * @enum {string}
+             */
+            kind?: "AccessoryItem";
             /** @description Size of the accessory item. */
             accessorySize?: components["schemas"]["ModuleSize"];
             /** @description Material of the accessory item. */
@@ -1650,14 +1672,20 @@ export interface components {
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            ItemCategory: "accessoryItem";
+            kind: "AccessoryItem";
         };
-        AccessoryItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["AccessoryItem"] & Record<string, never> & {
+        AccessoryItemInput: components["schemas"]["ItemInputBase"] & components["schemas"]["AccessoryItem"] & {
+            /**
+             * @description Discriminator for AccessoryItemInput type.
+             * @enum {string}
+             */
+            kind?: "AccessoryItemInput";
+        } & {
             /**
              * @description discriminator enum property added by openapi-typescript
              * @enum {string}
              */
-            ItemCategory: "AccessoryItemInput";
+            kind: "AccessoryItemInput";
         };
         ItemFetch: components["schemas"]["GenericItem"] | components["schemas"]["ModuleItem"] | components["schemas"]["AccessoryItem"];
         ItemInput: components["schemas"]["ItemInputBase"] | components["schemas"]["ModuleItemInput"] | components["schemas"]["AccessoryItemInput"];

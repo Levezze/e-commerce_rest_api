@@ -4,6 +4,7 @@ import { Items as ItemTableInterface } from "../../../database/types.js";
 import { db } from '../../../database/index.js';
 import { NotFoundError } from "../../../utils/errors.js";
 import type { components } from "../../../dtos/generated/openapi.js";
+import { Media as MediaTableInterface } from "../../../database/types.js";
 import camelcaseKeys from "camelcase-keys";
 
 type ItemFromDb = Selectable<ItemTableInterface>;
@@ -18,8 +19,28 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
     FROM items;
     `.execute(db);
 
+    if (queryResult.rows.length === 0) {
+      throw new NotFoundError(`No items found in database.`);
+    };
+
+    const dbItems = queryResult.rows.map(row =>
+      camelcaseKeys(row, { deep: true })
+    );
+
+    if (admin) return dbItems;
+
+    const itemsDto: ItemResponse = dbItems.map(dbItem => {
+      return {
+        id: dbItem.id,
+        itemName: dbItem.item_name,
+        price: dbItem.price,
+        inStock: dbItem.in_stock,
+        imgUrls: dbItem.img_urls,
+      }
+    });
+
     // Fetch all media records related to items in one query
-    const allMediaQueryResult = await sql<MediaResponse>`
+    const allMediaQueryResult = await sql<MediaTableInterface>`
       SELECT *
       FROM media
       WHERE parent_type = ${mediaType};
@@ -28,6 +49,7 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
     if (allMediaQueryResult.rows.length === 0) {
       throw new NotFoundError(`No media found in database.`);
     };
+
 
     /*
     // Group media by parent_id

@@ -1382,75 +1382,157 @@ components:
           description: JWT access token
       required: [user, token]
     # --- ITEMS ---
-    ItemInputBase:
-      allOf:
-        - $ref: '#/components/schemas/BaseItemFields'
-        - type: object
-          description: Base fields for creating or updating an item.
-          properties:
-            itemMedia:
-              type: array
-              items:
-                $ref: '#/components/schemas/Media'
-              description: List of media objects for the item, ordered by the 'order' field.
-            itemCategory:
-              $ref: '#/components/schemas/ItemCategory'
-              description: Category of the item.
-            itemType:
-              $ref: '#/components/schemas/ItemType'
-              description: Type of the item.
-            inStock:
-              type: boolean
-              description: Whether the item is in stock.
-            frameColor:
-              $ref: '#/components/schemas/FrameColor'
-              description: Frame color of the item.
-            baseStyle:
-              type: string
-              description: Combination of modules.
-            baseMaterial:
-              $ref: '#/components/schemas/BaseMaterial'
-              description: Surface material of the item.
-            isFeatured:
-              type: boolean
-              description: Whether the item is featured.
-            isHidden:
-              type: boolean
-              description: Whether the item is hidden from public view.
-          required:
-            - itemName
-            - price
-            - itemCategory
-            - itemType
-            - inStock
     ItemBase:
-      allOf:  
-        - $ref: '#/components/schemas/ItemInputBase'
-        - type: object
-          properties:
-            id:
-              type: integer
-              readOnly: true
-              description: Unique identifier for the item.
-            createdAt:
-              type: string
-              format: date-time
-              description: Date/time the item was created.
-            updatedAt:
-              type: string
-              format: date-time
-              description: Date/time the item was last updated.
+      type: object
+      description: Base fields for all items.
+      discriminator:
+        propertyName: kind
+        mapping:
+          GenericItem: '#/components/schemas/GenericItem'
+          ModuleItem: '#/components/schemas/ModuleItem'
+          AccessoryItem: '#/components/schemas/AccessoryItem'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          description: Unique identifier for the item.
+        kind:
+          type: string
+          description: Discriminator for item type.
+        itemName:
+          type: string
+          description: Name of the item.
+        description:
+          type: string
+          description: Description of the item.
+        price:
+          type: number
+          format: float
+          description: Price of the item.
+        itemMedia:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+          description: List of media objects for the item, ordered by the 'order' field.
+        itemCategory:
+          $ref: '#/components/schemas/ItemCategory'
+          description: Category of the item.
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+          description: Type of the item.
+        inStock:
+          type: boolean
+          description: Whether the item is in stock.
+        frameColor:
+          $ref: '#/components/schemas/FrameColor'
+          description: Frame color of the item.
+        baseStyle:
+          type: string
+          description: Combination of modules.
+        baseMaterial:
+          $ref: '#/components/schemas/BaseMaterial'
+          description: Surface material of the item.
+        isFeatured:
+          type: boolean
+          description: Whether the item is featured.
+        isHidden:
+          type: boolean
+          description: Whether the item is hidden from public view.
+        createdAt:
+          type: string
+          format: date-time
+          description: Date/time the item was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date/time the item was last updated.
+      required:
+        - itemName
+        - price
+        - itemCategory
+        - itemType
+        - inStock
     GenericItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
+        - type: object
+          properties:
+            kind:
+              type: string
+              enum: [GenericItem]
+              description: Discriminator for GenericItem type.
+          required:
+            - kind
+    BaseItemInput:
+      type: object
+      description: Base fields for item creation/update requests.
+      properties:
+        itemName:
+          type: string
+          description: Name of the item.
+        description:
+          type: string
+          description: Description of the item.
+        price:
+          type: number
+          format: float
+          description: Price of the item.
+        itemMedia:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+          description: List of media objects for the item, ordered by the 'order' field.
+        itemCategory:
+          $ref: '#/components/schemas/ItemCategory'
+          description: Category of the item.
+        itemType:
+          $ref: '#/components/schemas/ItemType'
+          description: Type of the item.
+        inStock:
+          type: boolean
+          description: Whether the item is in stock.
+        frameColor:
+          $ref: '#/components/schemas/FrameColor'
+          description: Frame color of the item.
+        baseStyle:
+          type: string
+          description: Combination of modules.
+        baseMaterial:
+          $ref: '#/components/schemas/BaseMaterial'
+          description: Surface material of the item.
+        isFeatured:
+          type: boolean
+          description: Whether the item is featured.
+        isHidden:
+          type: boolean
+          description: Whether the item is hidden from public view.
+      required:
+        - itemName
+        - price
+        - itemCategory
+        - itemType
+        - inStock
+        
     GenericItemInput:
       allOf:
-        - $ref: '#/components/schemas/ItemInputBase'
+        - $ref: '#/components/schemas/BaseItemInput'
+        - type: object
+          properties:
+            kind:
+              type: string
+              enum: [GenericItem]
+              description: Discriminator for GenericItem type.
+          required:
+            - kind
     ModuleItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
         - type: object
           properties:
+            kind:
+              type: string
+              enum: [ModuleItem]
+              description: Discriminator for ModuleItem type.
             moduleSize:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the module item.
@@ -1460,17 +1542,37 @@ components:
             moduleController:
               $ref: '#/components/schemas/ControllerType'
               description: Controller type for the module item.
+          required:
+            - kind
     ModuleItemInput:
       allOf:
-        - $ref: '#/components/schemas/ItemInputBase'
-        - $ref: '#/components/schemas/ModuleItem'
+        - $ref: '#/components/schemas/BaseItemInput'
         - type: object
-      required: [moduleSize, moduleColor, moduleController]
+          properties:
+            kind:
+              type: string
+              enum: [ModuleItem]
+              description: Discriminator for ModuleItem type.
+            moduleSize:
+              $ref: '#/components/schemas/ModuleSize'
+              description: Size of the module item.
+            moduleColor:
+              type: string
+              description: Color of the module item.
+            moduleController:
+              $ref: '#/components/schemas/ControllerType'
+              description: Controller type for the module item.
+          required:
+            - kind
     AccessoryItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
         - type: object
           properties:
+            kind:
+              type: string
+              enum: [AccessoryItem]
+              description: Discriminator for AccessoryItem type.
             accessorySize:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the accessory item.
@@ -1485,28 +1587,50 @@ components:
               description: Style of the accessory item.
     AccessoryItemInput:
       allOf:
-        - $ref: '#/components/schemas/ItemInputBase'
-        - $ref: '#/components/schemas/AccessoryItem'
+        - $ref: '#/components/schemas/BaseItemInput'
         - type: object
-      required: [accessoryColor]
+          properties:
+            kind:
+              type: string
+              enum: [AccessoryItem]
+              description: Discriminator for AccessoryItem type.
+            accessorySize:
+              $ref: '#/components/schemas/ModuleSize'
+              description: Size of the accessory item.
+            accessoryMaterial:
+              type: string
+              description: Material of the accessory item.
+            accessoryColor:
+              type: string
+              description: Color of the accessory item.
+            accessoryStyle:
+              type: string
+              description: Style of the accessory item.
+          required:
+            - kind
+            - accessoryColor
     ItemFetch:
       oneOf:
         - $ref: '#/components/schemas/GenericItem'
         - $ref: '#/components/schemas/ModuleItem'
         - $ref: '#/components/schemas/AccessoryItem'
       discriminator:
-        propertyName: ItemCategory
+        propertyName: kind
         mapping:
-          genericItem: '#/components/schemas/GenericItem'
-          moduleItem: '#/components/schemas/ModuleItem'
-          accessoryItem: '#/components/schemas/AccessoryItem'
+          GenericItem: '#/components/schemas/GenericItem'
+          ModuleItem: '#/components/schemas/ModuleItem'
+          AccessoryItem: '#/components/schemas/AccessoryItem'
     ItemInput:
       oneOf:
-        - $ref: '#/components/schemas/ItemInputBase'
+        - $ref: '#/components/schemas/GenericItemInput'
         - $ref: '#/components/schemas/ModuleItemInput'
         - $ref: '#/components/schemas/AccessoryItemInput'
       discriminator:
-        propertyName: ItemCategory
+        propertyName: kind
+        mapping:
+          GenericItem: '#/components/schemas/GenericItemInput'
+          ModuleItem: '#/components/schemas/ModuleItemInput'
+          AccessoryItem: '#/components/schemas/AccessoryItemInput'
     ItemUpdate:
       allOf:
         - $ref: '#/components/schemas/BaseItemFields'

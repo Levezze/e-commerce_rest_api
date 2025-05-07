@@ -5,13 +5,21 @@
 
 import type { ColumnType } from "kysely";
 
+export type BaseMaterial = "black_polymer" | "white_polymer" | "wood_maple" | "wood_oak" | "wood_pine";
+
 export type ControllerType = "app" | "remote";
+
+export type FrameColor = "black" | "bronze" | "white";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
 export type MediaParentType = "bundle" | "item";
+
+export type MediaType = "image" | "video";
+
+export type ModulePackage = "basic" | "custom" | "minimal";
 
 export type ModuleSize = "large" | "medium" | "small";
 
@@ -55,12 +63,16 @@ export interface CartItems {
 }
 
 export interface Items {
+  base_material: BaseMaterial | null;
   created_at: Generated<Timestamp>;
+  description: string;
+  frame_color: FrameColor | null;
   id: Generated<number>;
   in_stock: boolean;
   is_featured: boolean | null;
   is_hidden: boolean | null;
   item_name: string;
+  module_package: ModulePackage | null;
   price: Numeric;
   updated_at: Timestamp | null;
 }
@@ -68,8 +80,11 @@ export interface Items {
 export interface Media {
   created_at: Generated<Timestamp>;
   id: Generated<number>;
+  order: number;
   parent_id: number;
   parent_type: MediaParentType;
+  type: MediaType;
+  updated_at: Generated<Timestamp>;
   url: string;
 }
 
