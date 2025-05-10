@@ -1371,7 +1371,7 @@ export interface components {
          * @description Category of the item in the store.
          * @enum {string}
          */
-        ItemCategory: "genericItem" | "moduleItem" | "accessoryItem";
+        ItemCategory: "generic" | "module" | "accessory";
         /**
          * @description Type of the item.
          * @enum {string}

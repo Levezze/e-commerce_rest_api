@@ -1100,9 +1100,9 @@ components:
     ItemCategory:
       type: string
       enum:
-        - genericItem
-        - moduleItem
-        - accessoryItem
+        - generic
+        - module
+        - accessory
       description: Category of the item in the store.
     ItemType:
       type: string

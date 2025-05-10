@@ -15,6 +15,10 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
+export type ItemCategory = "accessory" | "bundle" | "generic_item" | "module";
+
+export type ItemType = "auto" | "general" | "manual";
+
 export type MediaParentType = "bundle" | "item";
 
 export type MediaType = "image" | "video";
@@ -71,9 +75,11 @@ export interface Items {
   in_stock: boolean;
   is_featured: boolean | null;
   is_hidden: boolean | null;
+  item_category: ItemCategory;
   item_name: string;
+  item_type: ItemType;
   module_package: ModulePackage | null;
-  price: Numeric;
+  price: number;
   updated_at: Timestamp | null;
 }
 
