@@ -13,6 +13,7 @@
     "dev": "concurrently -n serve,typecheck -c green,blue \"pnpm dev:serve\" \"pnpm dev:typecheck\"",
     "seed": "tsx src/db/seed.ts | pino-pretty",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "start": "node -r dotenv/config dist/server/index.js",
     "generate:db-types": "kysely-codegen --dialect postgres --out-file ./src/database/types.ts",
     "generate:api": "pnpm dlx openapi-typescript ./docs/openapi.yaml --output ./src/dtos/temp-generated/temp-openapi.d.ts",
