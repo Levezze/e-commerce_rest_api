@@ -43,7 +43,7 @@ DROP TYPE IF EXISTS module_package;
 CREATE TYPE module_package AS ENUM ('custom', 'basic', 'minimal');
 
 DROP TYPE IF EXISTS module_size;
-CREATE TYPE module_size AS ENUM ('small', 'medium', 'large');
+CREATE TYPE module_size AS ENUM ('1x1', '2x1', '3x2', '4x2');
 
 DROP TYPE IF EXISTS controller_type;
 CREATE TYPE controller_type AS ENUM ('remote', 'app');

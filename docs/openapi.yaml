@@ -1112,12 +1112,18 @@ components:
         - auto
         - general
       description: Type of the item.
+    ModelName:
+      type: string
+      enum:
+        - manualV1
+        - autoV1
+      description: Name of generic item model.
     FrameColor:
       type: string
       enum: 
         - white
         - black
-        - silver
+        - bronze
       description: Frame color for module items.
     BaseMaterial:
       type: string
@@ -1131,9 +1137,10 @@ components:
     ModuleSize:
       type: string
       enum: 
-        - small
-        - medium
-        - large
+        - 1x1
+        - 2x1
+        - 3x2
+        - 4x2
       description: Size of the module item.
     ControllerType:
       type: string
@@ -1147,6 +1154,12 @@ components:
         - image
         - video
       description: Media type for media items.
+    MediaParentType:
+      type: string
+      enum:
+        - item
+        - bundle
+      description: Item parent table for the media assets. 
     ModulePackage:
       type: string
       enum: 
