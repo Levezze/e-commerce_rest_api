@@ -6,15 +6,20 @@ import {
 } from "../../../database/types.js";
 import { db } from '../../../database/index.js';
 import { NotFoundError } from "../../../utils/errors.js";
-import type { components } from "../../../dtos/generated/openapi.js";
+import { z } from "zod";
+import { schemas } from "../../zod.js";
+import { transformValidate } from "../../../utils/transformValidate.js";
 import camelcaseKeys from "camelcase-keys";
 
 type ItemFromDb = Selectable<ItemTableInterface>;
 type ItemMediaFromDb = Selectable<MediaTableInterface>;
-type ItemFetch = components["schemas"]["ItemFetch"];
-type MediaResponse = components['schemas']['Media']
+type ItemFetch = z.infer<typeof schemas.ItemFetch>;
+type MediaResponse = z.infer<typeof schemas.Media>;
 
-export const getAllItems = async (admin: boolean, mediaType: string): Promise<ItemResponse> => {
+export const getAllItems = async (
+  admin: boolean,
+  mediaType: string
+): Promise<ItemFetch[]> => {
   logger.debug(`Service: Attempting to fetch all items`);
   try {
     const queryResult = await sql<ItemFromDb>`
@@ -29,16 +34,17 @@ export const getAllItems = async (admin: boolean, mediaType: string): Promise<It
     const dbItems = queryResult.rows;
 
     if (admin) return queryResult.rows.map(
-      row => camelcaseKeys(row, { deep: true })
+      row => transformValidate(row, schemas.ItemFetch)
     );
 
-    const itemsDto: ItemFetch = dbItems.map(dbItem => {
+    const itemsDto: ItemFetch[] = dbItems.map(dbItem => {
       return {
         id: dbItem.id,
         itemName: dbItem.item_name,
         price: dbItem.price,
         inStock: dbItem.in_stock,
-        imgUrls: dbItem.img_urls,
+        itemCategory: dbItem.item_category,
+        itemType: dbItem.item_type,
       }
     });
 

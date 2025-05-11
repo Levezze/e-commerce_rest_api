@@ -1103,11 +1103,12 @@ components:
         - generic
         - module
         - accessory
+        - bundle
       description: Category of the item in the store.
     ItemType:
       type: string
       enum: 
-        - basic
+        - manual
         - auto
         - general
       description: Type of the item.

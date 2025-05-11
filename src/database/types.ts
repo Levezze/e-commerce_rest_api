@@ -15,7 +15,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type ItemCategory = "accessory" | "bundle" | "generic_item" | "module";
+export type ItemCategory = "accessory" | "bundle" | "generic" | "module";
 
 export type ItemType = "auto" | "general" | "manual";
 
