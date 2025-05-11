@@ -25,7 +25,7 @@ DROP TYPE IF EXISTS order_status;
 CREATE TYPE order_status AS ENUM ('pending', 'processing', 'shipped', 'delivered', 'cancelled');
 
 DROP TYPE IF EXISTS item_category;
-CREATE TYPE item_category AS ENUM ('generic_item', 'module', 'accessory', 'bundle');
+CREATE TYPE item_category AS ENUM ('generic', 'module', 'accessory', 'bundle');
 
 DROP TYPE IF EXISTS item_type;
 CREATE TYPE item_type AS ENUM ('manual', 'auto', 'general');
