@@ -78,7 +78,7 @@ export const getAllDbUsers = async () => {
     });
 
     if (AllDbUsers.length === 0) {
-      logger.info('No users were found in the database') ;
+      logger.info('No users were found in the database');
     } else {
       logger.debug({ userCount: usersDto.length }, "Mapped users DTO array in service");
     }
@@ -108,7 +108,7 @@ export const deleteUserById = async (id: number) => {
     if (dbUser.username === 'admin') {
       throw new ForbiddenError(`Cannot delete the primary admin user.`);
     };
-    
+
     logger.debug(`User ${dbUser?.email} was found, proceeding to delete.`);
 
     await sql`

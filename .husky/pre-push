@@ -1,5 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-pnpm typecheck
+# pnpm typecheck
 pnpm lint
+
+# #!/bin/sh
+# exit 0

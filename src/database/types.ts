@@ -5,7 +5,15 @@
 
 import type { ColumnType } from "kysely";
 
-export type BaseMaterial = "black_polymer" | "white_polymer" | "wood_maple" | "wood_oak" | "wood_pine";
+export type AuthAalLevel = "aal1" | "aal2" | "aal3";
+
+export type AuthCodeChallengeMethod = "plain" | "s256";
+
+export type AuthFactorStatus = "unverified" | "verified";
+
+export type AuthFactorType = "phone" | "totp" | "webauthn";
+
+export type AuthOneTimeTokenType = "confirmation_token" | "email_change_token_current" | "email_change_token_new" | "phone_change_token" | "reauthentication_token" | "recovery_token";
 
 export type ControllerType = "app" | "remote";
 
@@ -15,9 +23,19 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
-export type ItemCategory = "accessory" | "bundle" | "generic" | "module";
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
 
-export type ItemType = "auto" | "general" | "manual";
+export type Json = JsonValue;
+
+export type JsonArray = JsonValue[];
+
+export type JsonObject = {
+  [x: string]: JsonValue | undefined;
+};
+
+export type JsonPrimitive = boolean | number | string | null;
+
+export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
 export type MediaParentType = "bundle" | "item";
 
@@ -25,7 +43,7 @@ export type MediaType = "image" | "video";
 
 export type ModulePackage = "basic" | "custom" | "minimal";
 
-export type ModuleSize = "large" | "medium" | "small";
+export type ModuleSize = "1x1" | "2x1" | "3x2" | "4x2";
 
 export type Numeric = ColumnType<string, number | string, number | string>;
 
@@ -36,19 +54,233 @@ export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 export type UserRole = "admin" | "customer" | "manager";
 
 export interface Accessories {
+  color: string | null;
   created_at: Generated<Timestamp>;
+  frame_color: FrameColor | null;
   id: Generated<number>;
-  size: ModuleSize | null;
+  module_size: ModuleSize | null;
+  updated_at: Timestamp | null;
+}
+
+export interface AccessoriesItems {
+  accessory_id: number;
+  item_id: number;
+}
+
+export interface AuthAuditLogEntries {
+  created_at: Timestamp | null;
+  id: string;
+  instance_id: string | null;
+  ip_address: Generated<string>;
+  payload: Json | null;
+}
+
+export interface AuthFlowState {
+  auth_code: string;
+  auth_code_issued_at: Timestamp | null;
+  authentication_method: string;
+  code_challenge: string;
+  code_challenge_method: AuthCodeChallengeMethod;
+  created_at: Timestamp | null;
+  id: string;
+  provider_access_token: string | null;
+  provider_refresh_token: string | null;
+  provider_type: string;
+  updated_at: Timestamp | null;
+  user_id: string | null;
+}
+
+export interface AuthIdentities {
+  created_at: Timestamp | null;
+  /**
+   * Auth: Email is a generated column that references the optional email property in the identity_data
+   */
+  email: Generated<string | null>;
+  id: Generated<string>;
+  identity_data: Json;
+  last_sign_in_at: Timestamp | null;
+  provider: string;
+  provider_id: string;
+  updated_at: Timestamp | null;
+  user_id: string;
+}
+
+export interface AuthInstances {
+  created_at: Timestamp | null;
+  id: string;
+  raw_base_config: string | null;
+  updated_at: Timestamp | null;
+  uuid: string | null;
+}
+
+export interface AuthMfaAmrClaims {
+  authentication_method: string;
+  created_at: Timestamp;
+  id: string;
+  session_id: string;
+  updated_at: Timestamp;
+}
+
+export interface AuthMfaChallenges {
+  created_at: Timestamp;
+  factor_id: string;
+  id: string;
+  ip_address: string;
+  otp_code: string | null;
+  verified_at: Timestamp | null;
+  web_authn_session_data: Json | null;
+}
+
+export interface AuthMfaFactors {
+  created_at: Timestamp;
+  factor_type: AuthFactorType;
+  friendly_name: string | null;
+  id: string;
+  last_challenged_at: Timestamp | null;
+  phone: string | null;
+  secret: string | null;
+  status: AuthFactorStatus;
+  updated_at: Timestamp;
+  user_id: string;
+  web_authn_aaguid: string | null;
+  web_authn_credential: Json | null;
+}
+
+export interface AuthOneTimeTokens {
+  created_at: Generated<Timestamp>;
+  id: string;
+  relates_to: string;
+  token_hash: string;
+  token_type: AuthOneTimeTokenType;
+  updated_at: Generated<Timestamp>;
+  user_id: string;
+}
+
+export interface AuthRefreshTokens {
+  created_at: Timestamp | null;
+  id: Generated<Int8>;
+  instance_id: string | null;
+  parent: string | null;
+  revoked: boolean | null;
+  session_id: string | null;
+  token: string | null;
+  updated_at: Timestamp | null;
+  user_id: string | null;
+}
+
+export interface AuthSamlProviders {
+  attribute_mapping: Json | null;
+  created_at: Timestamp | null;
+  entity_id: string;
+  id: string;
+  metadata_url: string | null;
+  metadata_xml: string;
+  name_id_format: string | null;
+  sso_provider_id: string;
+  updated_at: Timestamp | null;
+}
+
+export interface AuthSamlRelayStates {
+  created_at: Timestamp | null;
+  flow_state_id: string | null;
+  for_email: string | null;
+  id: string;
+  redirect_to: string | null;
+  request_id: string;
+  sso_provider_id: string;
+  updated_at: Timestamp | null;
+}
+
+export interface AuthSchemaMigrations {
+  version: string;
+}
+
+export interface AuthSessions {
+  aal: AuthAalLevel | null;
+  created_at: Timestamp | null;
+  factor_id: string | null;
+  id: string;
+  ip: string | null;
+  /**
+   * Auth: Not after is a nullable column that contains a timestamp after which the session should be regarded as expired.
+   */
+  not_after: Timestamp | null;
+  refreshed_at: Timestamp | null;
+  tag: string | null;
+  updated_at: Timestamp | null;
+  user_agent: string | null;
+  user_id: string;
+}
+
+export interface AuthSsoDomains {
+  created_at: Timestamp | null;
+  domain: string;
+  id: string;
+  sso_provider_id: string;
+  updated_at: Timestamp | null;
+}
+
+export interface AuthSsoProviders {
+  created_at: Timestamp | null;
+  id: string;
+  /**
+   * Auth: Uniquely identifies a SSO provider according to a user-chosen resource ID (case insensitive), useful in infrastructure as code.
+   */
+  resource_id: string | null;
+  updated_at: Timestamp | null;
+}
+
+export interface AuthUsers {
+  aud: string | null;
+  banned_until: Timestamp | null;
+  confirmation_sent_at: Timestamp | null;
+  confirmation_token: string | null;
+  confirmed_at: Generated<Timestamp | null>;
+  created_at: Timestamp | null;
+  deleted_at: Timestamp | null;
+  email: string | null;
+  email_change: string | null;
+  email_change_confirm_status: Generated<number | null>;
+  email_change_sent_at: Timestamp | null;
+  email_change_token_current: Generated<string | null>;
+  email_change_token_new: string | null;
+  email_confirmed_at: Timestamp | null;
+  encrypted_password: string | null;
+  id: string;
+  instance_id: string | null;
+  invited_at: Timestamp | null;
+  is_anonymous: Generated<boolean>;
+  /**
+   * Auth: Set this column to true when the account comes from SSO. These accounts can have duplicate emails.
+   */
+  is_sso_user: Generated<boolean>;
+  is_super_admin: boolean | null;
+  last_sign_in_at: Timestamp | null;
+  phone: Generated<string | null>;
+  phone_change: Generated<string | null>;
+  phone_change_sent_at: Timestamp | null;
+  phone_change_token: Generated<string | null>;
+  phone_confirmed_at: Timestamp | null;
+  raw_app_meta_data: Json | null;
+  raw_user_meta_data: Json | null;
+  reauthentication_sent_at: Timestamp | null;
+  reauthentication_token: Generated<string | null>;
+  recovery_sent_at: Timestamp | null;
+  recovery_token: string | null;
+  role: string | null;
   updated_at: Timestamp | null;
 }
 
 export interface Bundles {
+  bundle_name: string;
   created_at: Generated<Timestamp>;
-  description: string | null;
+  description: string;
   discount: Numeric | null;
   id: Generated<number>;
-  name: string | null;
-  price: Numeric | null;
+  in_stock: boolean;
+  is_featured: boolean | null;
+  is_hidden: boolean | null;
+  price: Numeric;
   updated_at: Timestamp | null;
 }
 
@@ -58,47 +290,117 @@ export interface BundlesItems {
 }
 
 export interface CartItems {
+  cart_id: number;
   created_at: Generated<Timestamp | null>;
   id: Generated<number>;
-  item_id: number | null;
+  item_id: number;
   quantity: number;
   updated_at: Timestamp | null;
-  user_id: number | null;
+  user_id: number;
+}
+
+export interface Carts {
+  created_at: Generated<Timestamp>;
+  id: Generated<number>;
+  status: Generated<string | null>;
+  updated_at: Timestamp | null;
+  user_id: number;
+}
+
+export interface ExtensionsPgStatStatements {
+  blk_read_time: number | null;
+  blk_write_time: number | null;
+  calls: Int8 | null;
+  dbid: number | null;
+  jit_emission_count: Int8 | null;
+  jit_emission_time: number | null;
+  jit_functions: Int8 | null;
+  jit_generation_time: number | null;
+  jit_inlining_count: Int8 | null;
+  jit_inlining_time: number | null;
+  jit_optimization_count: Int8 | null;
+  jit_optimization_time: number | null;
+  local_blks_dirtied: Int8 | null;
+  local_blks_hit: Int8 | null;
+  local_blks_read: Int8 | null;
+  local_blks_written: Int8 | null;
+  max_exec_time: number | null;
+  max_plan_time: number | null;
+  mean_exec_time: number | null;
+  mean_plan_time: number | null;
+  min_exec_time: number | null;
+  min_plan_time: number | null;
+  plans: Int8 | null;
+  query: string | null;
+  queryid: Int8 | null;
+  rows: Int8 | null;
+  shared_blks_dirtied: Int8 | null;
+  shared_blks_hit: Int8 | null;
+  shared_blks_read: Int8 | null;
+  shared_blks_written: Int8 | null;
+  stddev_exec_time: number | null;
+  stddev_plan_time: number | null;
+  temp_blk_read_time: number | null;
+  temp_blk_write_time: number | null;
+  temp_blks_read: Int8 | null;
+  temp_blks_written: Int8 | null;
+  toplevel: boolean | null;
+  total_exec_time: number | null;
+  total_plan_time: number | null;
+  userid: number | null;
+  wal_bytes: Numeric | null;
+  wal_fpi: Int8 | null;
+  wal_records: Int8 | null;
+}
+
+export interface ExtensionsPgStatStatementsInfo {
+  dealloc: Int8 | null;
+  stats_reset: Timestamp | null;
+}
+
+export interface Generics {
+  created_at: Generated<Timestamp>;
+  frame_color: FrameColor;
+  id: Generated<number>;
+  module_package: ModulePackage;
+  updated_at: Timestamp | null;
+}
+
+export interface GenericsItems {
+  generic_id: number;
+  item_id: number;
 }
 
 export interface Items {
-  base_material: BaseMaterial | null;
   created_at: Generated<Timestamp>;
   description: string;
-  frame_color: FrameColor | null;
+  discount: Numeric | null;
   id: Generated<number>;
   in_stock: boolean;
   is_featured: boolean | null;
   is_hidden: boolean | null;
-  item_category: ItemCategory;
   item_name: string;
-  item_type: ItemType;
-  module_package: ModulePackage | null;
-  price: number;
+  price: Numeric;
   updated_at: Timestamp | null;
 }
 
 export interface Media {
+  bundle_id: number | null;
   created_at: Generated<Timestamp>;
+  display_order: number;
   id: Generated<number>;
-  order: number;
-  parent_id: number;
+  item_id: number | null;
+  media_type: MediaType;
   parent_type: MediaParentType;
-  type: MediaType;
   updated_at: Generated<Timestamp>;
   url: string;
 }
 
 export interface Modules {
-  controller: ControllerType;
+  controller_type: ControllerType;
   created_at: Generated<Timestamp>;
   id: Generated<number>;
-  size: ModuleSize;
+  module_size: ModuleSize;
   updated_at: Timestamp | null;
 }
 
@@ -118,9 +420,10 @@ export interface Orders {
 }
 
 export interface OrdersItems {
-  bundle_id: number;
+  bundle_id: number | null;
   created_at: Generated<Timestamp>;
-  item_id: number;
+  id: Generated<number>;
+  item_id: number | null;
   item_name: string | null;
   order_id: number;
   price_at_purchase: Numeric | null;
@@ -128,13 +431,105 @@ export interface OrdersItems {
   updated_at: Timestamp | null;
 }
 
+export interface RealtimeMessages {
+  event: string | null;
+  extension: string;
+  id: Generated<string>;
+  inserted_at: Generated<Timestamp>;
+  payload: Json | null;
+  private: Generated<boolean | null>;
+  topic: string;
+  updated_at: Generated<Timestamp>;
+}
+
+export interface RealtimeSchemaMigrations {
+  inserted_at: Timestamp | null;
+  version: Int8;
+}
+
+export interface RealtimeSubscription {
+  claims: Json;
+  claims_role: Generated<string>;
+  created_at: Generated<Timestamp>;
+  entity: string;
+  filters: Generated<string[]>;
+  id: Generated<Int8>;
+  subscription_id: string;
+}
+
 export interface Reviews {
-  created_at: Timestamp | null;
+  created_at: Timestamp;
   id: Generated<number>;
   rating: number | null;
   review: string;
   updated_at: Timestamp | null;
   user_id: number | null;
+}
+
+export interface StorageBuckets {
+  allowed_mime_types: string[] | null;
+  avif_autodetection: Generated<boolean | null>;
+  created_at: Generated<Timestamp | null>;
+  file_size_limit: Int8 | null;
+  id: string;
+  name: string;
+  /**
+   * Field is deprecated, use owner_id instead
+   */
+  owner: string | null;
+  owner_id: string | null;
+  public: Generated<boolean | null>;
+  updated_at: Generated<Timestamp | null>;
+}
+
+export interface StorageMigrations {
+  executed_at: Generated<Timestamp | null>;
+  hash: string;
+  id: number;
+  name: string;
+}
+
+export interface StorageObjects {
+  bucket_id: string | null;
+  created_at: Generated<Timestamp | null>;
+  id: Generated<string>;
+  last_accessed_at: Generated<Timestamp | null>;
+  metadata: Json | null;
+  name: string | null;
+  /**
+   * Field is deprecated, use owner_id instead
+   */
+  owner: string | null;
+  owner_id: string | null;
+  path_tokens: Generated<string[] | null>;
+  updated_at: Generated<Timestamp | null>;
+  user_metadata: Json | null;
+  version: string | null;
+}
+
+export interface StorageS3MultipartUploads {
+  bucket_id: string;
+  created_at: Generated<Timestamp>;
+  id: string;
+  in_progress_size: Generated<Int8>;
+  key: string;
+  owner_id: string | null;
+  upload_signature: string;
+  user_metadata: Json | null;
+  version: string;
+}
+
+export interface StorageS3MultipartUploadsParts {
+  bucket_id: string;
+  created_at: Generated<Timestamp>;
+  etag: string;
+  id: Generated<string>;
+  key: string;
+  owner_id: string | null;
+  part_number: number;
+  size: Generated<Int8>;
+  upload_id: string;
+  version: string;
 }
 
 export interface Tags {
@@ -158,37 +553,92 @@ export interface UserAddresses {
   street: string;
   updated_at: Timestamp | null;
   user_id: number;
-  zip: string | null;
+  zip: string;
 }
 
 export interface Users {
   created_at: Generated<Timestamp>;
   email: string;
   id: Generated<number>;
-  is_active: Generated<boolean | null>;
+  is_active: Generated<boolean>;
   last_login: Timestamp | null;
-  password: string;
-  password_reset_expires: Timestamp | null;
-  password_reset_token: string | null;
+  password_hash: string;
+  password_reset_expires: Timestamp;
+  password_reset_token: string;
   updated_at: Generated<Timestamp>;
   user_role: UserRole;
   username: string;
 }
 
+export interface VaultDecryptedSecrets {
+  created_at: Timestamp | null;
+  decrypted_secret: string | null;
+  description: string | null;
+  id: string | null;
+  key_id: string | null;
+  name: string | null;
+  nonce: Buffer | null;
+  secret: string | null;
+  updated_at: Timestamp | null;
+}
+
+export interface VaultSecrets {
+  created_at: Generated<Timestamp>;
+  description: Generated<string>;
+  id: Generated<string>;
+  key_id: string | null;
+  name: string | null;
+  nonce: Generated<Buffer | null>;
+  secret: string;
+  updated_at: Generated<Timestamp>;
+}
+
 export interface DB {
   accessories: Accessories;
+  accessories_items: AccessoriesItems;
+  "auth.audit_log_entries": AuthAuditLogEntries;
+  "auth.flow_state": AuthFlowState;
+  "auth.identities": AuthIdentities;
+  "auth.instances": AuthInstances;
+  "auth.mfa_amr_claims": AuthMfaAmrClaims;
+  "auth.mfa_challenges": AuthMfaChallenges;
+  "auth.mfa_factors": AuthMfaFactors;
+  "auth.one_time_tokens": AuthOneTimeTokens;
+  "auth.refresh_tokens": AuthRefreshTokens;
+  "auth.saml_providers": AuthSamlProviders;
+  "auth.saml_relay_states": AuthSamlRelayStates;
+  "auth.schema_migrations": AuthSchemaMigrations;
+  "auth.sessions": AuthSessions;
+  "auth.sso_domains": AuthSsoDomains;
+  "auth.sso_providers": AuthSsoProviders;
+  "auth.users": AuthUsers;
   bundles: Bundles;
   bundles_items: BundlesItems;
   cart_items: CartItems;
+  carts: Carts;
+  "extensions.pg_stat_statements": ExtensionsPgStatStatements;
+  "extensions.pg_stat_statements_info": ExtensionsPgStatStatementsInfo;
+  generics: Generics;
+  generics_items: GenericsItems;
   items: Items;
   media: Media;
   modules: Modules;
   modules_items: ModulesItems;
   orders: Orders;
   orders_items: OrdersItems;
+  "realtime.messages": RealtimeMessages;
+  "realtime.schema_migrations": RealtimeSchemaMigrations;
+  "realtime.subscription": RealtimeSubscription;
   reviews: Reviews;
+  "storage.buckets": StorageBuckets;
+  "storage.migrations": StorageMigrations;
+  "storage.objects": StorageObjects;
+  "storage.s3_multipart_uploads": StorageS3MultipartUploads;
+  "storage.s3_multipart_uploads_parts": StorageS3MultipartUploadsParts;
   tags: Tags;
   tags_items: TagsItems;
   user_addresses: UserAddresses;
   users: Users;
+  "vault.decrypted_secrets": VaultDecryptedSecrets;
+  "vault.secrets": VaultSecrets;
 }

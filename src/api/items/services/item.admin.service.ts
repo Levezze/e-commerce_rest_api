@@ -1,36 +1,36 @@
-import { sql } from "kysely";
-import { db } from '../../../database/index.js';
-import { Items } from "../../../database/types.js";
-import { logger } from "../../../utils/logger.js";
-import { ConflictError } from "../../../utils/errors.js";
-import type { components } from "../../../dtos/generated/openapi.js";
+// import { sql } from "kysely";
+// import { db } from '../../../database/index.js';
+// import { Items } from "../../../database/types.js";
+// import { logger } from "../../../utils/logger.js";
+// import { ConflictError } from "../../../utils/errors.js";
+// import type { components } from "../../../dtos/generated/openapi.js";
 
-type NewItemInput = components["schemas"]["ItemInput"];
+// type NewItemInput = components["schemas"]["ItemInput"];
 
-export const createNewItem = async (newItem: NewItemInput) => {
-  logger.debug(`Service: Attempting to create new item`);
-  try {
-    const itemName = `${newItem.itemName}`;
+// export const createNewItem = async (newItem: NewItemInput) => {
+//   logger.debug(`Service: Attempting to create new item`);
+//   try {
+//     const itemName = `${newItem.itemName}`;
 
-    const itemQueryResult = await sql<Items>`
-    SELECT item_name
-    FROM items
-    WHERE item_name = ${itemName};
-    `.execute(db);
+//     const itemQueryResult = await sql<Items>`
+//     SELECT item_name
+//     FROM items
+//     WHERE item_name = ${itemName};
+//     `.execute(db);
 
-    if (itemQueryResult.rows.length > 0) {
-      throw new ConflictError(`Item with name '${itemName}' already exists.`);
-    };
+//     if (itemQueryResult.rows.length > 0) {
+//       throw new ConflictError(`Item with name '${itemName}' already exists.`);
+//     };
 
-    const newItemQueryResult = await sql<NewItemInput>`
-    INSERT INTO items (category, item_name, description, price, img_urls)
-    VALUES (${newItem.category}, ${newItem.itemName}, ${newItem.description}, ${newItem.price}, ${newItem.imgUrls})
-    RETURNING id, category, item_name, description, price, img_urls;
-    `.execute(db);
+//     const newItemQueryResult = await sql<NewItemInput>`
+//     INSERT INTO items (category, item_name, description, price, img_urls)
+//     VALUES (${newItem.category}, ${newItem.itemName}, ${newItem.description}, ${newItem.price}, ${newItem.imgUrls})
+//     RETURNING id, category, item_name, description, price, img_urls;
+//     `.execute(db);
 
-  } catch (error) {
-    throw error;
-  }
-};
+//   } catch (error) {
+//     throw error;
+//   }
+// };
 
 

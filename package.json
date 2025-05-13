@@ -17,7 +17,7 @@
     "start": "node -r dotenv/config dist/server/index.js",
     "generate:db-types": "kysely-codegen --dialect postgres --out-file ./src/database/types.ts",
     "generate:api": "pnpm dlx openapi-typescript ./docs/openapi.yaml --output ./src/dtos/temp-generated/temp-openapi.d.ts",
-    "generate:api-zod": "pnpm flx openapi-zod-client './docs/openapi.yaml' -o './src/api/zod.ts'",
+    "generate:api-zod": "pnpm dlx openapi-zod-client './docs/openapi.yaml' -o './src/dtos/generated/zod.d.ts'",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "clean": "rm -rf dist",

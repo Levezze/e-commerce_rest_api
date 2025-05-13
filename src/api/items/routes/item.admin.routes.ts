@@ -1,7 +1,7 @@
-import { Router, NextFunction, Request, Response } from 'express';
+import { Router, type Router as ExpressRouter, NextFunction, Request, Response } from 'express';
 import * as itemController from '../controllers/item.admin.controller.js';
 
-const router = Router();
+const router: ExpressRouter = Router();
 
 router.post('/', itemController.createItem);
 

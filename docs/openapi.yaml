@@ -477,28 +477,30 @@ paths:
       security:
         - bearerAuth: []
       x-roles: [admin, manager]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [url, type, order]
+              required: [url, mediaType, displayOrder]
               properties:
                 url:
                   type: string
                   format: uri
                   description: URL to the media file.
-                type:
-                  type: string
-                  schema:
-                    enum: 
-                      - image
-                      - video
-                  description: Type of media.
-                order:
+                mediaType:
+                  $ref: '#/components/schemas/MediaType'
+                  description: Type of media (image or video).
+                displayOrder:
                   type: integer
-                  description: Order of the media for this item.
+                  description: Display order of the media for this item.
       responses:
         '201':
           description: Media added
@@ -516,13 +518,74 @@ paths:
           $ref: '#/components/responses/CommonErrorResponses'
         '500':
           $ref: '#/components/responses/CommonErrorResponses'
+          
+  # --- BUNDLE MEDIA ENDPOINTS ---
+  /admin/bundles/{bundleId}/media:
+    post:
+      summary: Add media to bundle
+      tags: [Media, Admin, Bundles]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      parameters:
+        - name: bundleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url, mediaType, displayOrder]
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: URL to the media file.
+                mediaType:
+                  $ref: '#/components/schemas/MediaType'
+                  description: Type of media (image or video).
+                displayOrder:
+                  type: integer
+                  description: Display order of the media for this bundle.
+      responses:
+        '201':
+          description: Media added to bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
   /admin/items/{itemId}/media/{mediaId}:
     patch:
-      summary: Update media (url, type, or order)
+      summary: Update item media (url, type, or display order)
       tags: [Media, Admin]
       security:
         - bearerAuth: []
       x-roles: [admin, manager]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
@@ -534,16 +597,12 @@ paths:
                   type: string
                   format: uri
                   description: New URL to the media file.
-                type:
-                  type: string
-                  schema:
-                    enum: 
-                      - image
-                      - video
+                mediaType:
+                  $ref: '#/components/schemas/MediaType'
                   description: New type of media.
-                order:
+                displayOrder:
                   type: integer
-                  description: New order for the media.
+                  description: New display order for the media.
       responses:
         '200':
           description: Media updated
@@ -567,9 +626,102 @@ paths:
       security:
         - bearerAuth: []
       x-roles: [admin, manager]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         '204':
           description: Media removed
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+  /admin/bundles/{bundleId}/media/{mediaId}:
+    patch:
+      summary: Update bundle media (url, type, or display order)
+      tags: [Media, Admin, Bundles]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      parameters:
+        - name: bundleId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: New URL to the media file.
+                mediaType:
+                  $ref: '#/components/schemas/MediaType'
+                  description: New type of media.
+                displayOrder:
+                  type: integer
+                  description: New display order for the media.
+      responses:
+        '200':
+          description: Bundle media updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    delete:
+      summary: Remove media from bundle
+      tags: [Media, Admin, Bundles]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      parameters:
+        - name: bundleId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: mediaId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Media removed from bundle
         '400':
           $ref: '#/components/responses/CommonErrorResponses'
         '401':
@@ -737,11 +889,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-
   # --- CART ---
   /cart:
     get:
-      summary: Get current user's cart
+      summary: Get current user's active cart
       tags: [Cart]
       security:
         - bearerAuth: []
@@ -749,15 +900,13 @@ paths:
       description: Only authenticated users can view their own cart.
       responses:
         '200':
-          description: User's cart
+          description: User's active cart with items
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CartItem'
+                $ref: '#/components/schemas/Cart'
         '404':
-          description: Not found
+          description: User has no active cart
           content:
             application/json:
               schema:
@@ -769,12 +918,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     post:
-      summary: Add item to cart
+      summary: Add item to active cart (creates cart if none exists)
       tags: [Cart]
       security:
         - bearerAuth: []
       x-roles: [customer, admin, manager]
-      description: Only authenticated users can add items to their own cart.
+      description: Only authenticated users can add items to their own cart. Creates a new cart if the user doesn't have an active one.
       requestBody:
         required: true
         content:
@@ -784,6 +933,10 @@ paths:
       responses:
         '201':
           description: Added to cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
         '400':
           description: Bad request
           content:
@@ -797,7 +950,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         '404':
-          description: Not found
+          description: Item not found
           content:
             application/json:
               schema:
@@ -809,12 +962,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
-      summary: Clear cart
+      summary: Clear active cart (removes all items)
       tags: [Cart]
       security:
         - bearerAuth: []
       x-roles: [customer, admin, manager]
-      description: Only authenticated users can clear their own cart.
+      description: Only authenticated users can clear their own cart. This removes all items but keeps the cart with status 'active'.
       responses:
         '204':
           description: Cart cleared
@@ -828,7 +981,7 @@ paths:
           $ref: '#/components/responses/CommonErrorResponses'
         '500':
           $ref: '#/components/responses/CommonErrorResponses'
-  /cart/items/{itemId}:
+  /cart/items/{cartItemId}:
     patch:
       summary: Update quantity of item in cart
       tags: [Cart]
@@ -837,11 +990,12 @@ paths:
       x-roles: [customer, admin, manager]
       description: Only authenticated users can update items in their own cart.
       parameters:
-        - name: itemId
+        - name: cartItemId
           in: path
           required: true
           schema:
             type: integer
+          description: ID of the cart item to update (not the product ID)
       requestBody:
         required: true
         content:
@@ -878,11 +1032,12 @@ paths:
       x-roles: [customer, admin, manager]
       description: Only authenticated users can remove items from their own cart.
       parameters:
-        - name: itemId
+        - name: cartItemId
           in: path
           required: true
           schema:
             type: integer
+          description: ID of the cart item to remove (not the product ID)
       responses:
         '204':
           description: Item removed from cart
@@ -1039,6 +1194,348 @@ paths:
           $ref: '#/components/responses/CommonErrorResponses'
         '500':
           $ref: '#/components/responses/CommonErrorResponses'
+
+  # --- TAGS ---
+  /tags:
+    get:
+      summary: Get all tags
+      tags: [Tags]
+      # Public, no security/x-roles
+      responses:
+        '200':
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    post:
+      summary: Create a new tag
+      tags: [Tags]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  description: Tag name (will be automatically converted to lowercase)
+      responses:
+        '201':
+          description: Tag created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '409':
+          description: Tag already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+  /tags/{id}:
+    get:
+      summary: Get tag by ID
+      tags: [Tags]
+      # Public, no security/x-roles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tag found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    delete:
+      summary: Delete tag
+      tags: [Tags]
+      security:
+        - bearerAuth: []
+      x-roles: [admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Tag deleted
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+  /items/{itemId}/tags:
+    get:
+      summary: Get all tags for an item
+      tags: [Tags, Items]
+      # Public, no security/x-roles
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of tags for the item
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    post:
+      summary: Add a tag to an item
+      tags: [Tags, Items]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tagId]
+              properties:
+                tagId:
+                  type: integer
+                  description: ID of the tag to add
+      responses:
+        '201':
+          description: Tag added to item
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '409':
+          description: Tag already added to item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+  /items/{itemId}/tags/{tagId}:
+    delete:
+      summary: Remove a tag from an item
+      tags: [Tags, Items]
+      security:
+        - bearerAuth: []
+      x-roles: [admin, manager]
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: tagId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Tag removed from item
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+          
+  # --- REVIEWS ---
+  /reviews:
+    get:
+      summary: Get all reviews
+      tags: [Reviews]
+      # Public, no security/x-roles
+      responses:
+        '200':
+          description: List of reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    post:
+      summary: Create a new review
+      tags: [Reviews]
+      security:
+        - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rating, review]
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Rating from 1-5 stars
+                review:
+                  type: string
+                  description: Review text content
+      responses:
+        '201':
+          description: Review created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+  /reviews/{id}:
+    get:
+      summary: Get review by ID
+      tags: [Reviews]
+      # Public, no security/x-roles
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Review found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    patch:
+      summary: Update a review
+      tags: [Reviews]
+      security:
+        - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: Users can only update their own reviews. Admins can update any review.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  description: Updated rating from 1-5 stars
+                review:
+                  type: string
+                  description: Updated review text content
+      responses:
+        '200':
+          description: Review updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    delete:
+      summary: Delete a review
+      tags: [Reviews]
+      security:
+        - bearerAuth: []
+      x-roles: [customer, admin, manager]
+      description: Users can only delete their own reviews. Admins can delete any review.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Review deleted
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
 components:
   responses:
     CommonErrorResponses:
@@ -1115,8 +1612,8 @@ components:
     ModelName:
       type: string
       enum:
-        - manualV1
-        - autoV1
+        - manual_v1
+        - auto_v1
       description: Name of generic item model.
     FrameColor:
       type: string
@@ -1128,11 +1625,11 @@ components:
     BaseMaterial:
       type: string
       enum: 
-        - whitePolymer
-        - blackPolymer
-        - woodOak
-        - woodMaple
-        - woodPine
+        - white_polymer
+        - black_polymer
+        - wood_oak
+        - wood_maple
+        - wood_pine
       description: Base material for surface modules.
     ModuleSize:
       type: string
@@ -1183,19 +1680,29 @@ components:
         username:
           type: string
           description: Unique username for the user.
-        address:
+        userAddress:
           $ref: '#/components/schemas/UserAddress'
           description: User's default shipping address (nullable).
+        isActive:
+          type: boolean
+          description: Whether the user account is active.
         lastLogin:
           type: string
           format: date-time
           nullable: true
           description: Last login timestamp.
+        userRole:
+          $ref: '#/components/schemas/UserRole'
+          description: Role of the user in the system.
         createdAt:
           type: string
           format: date-time
           description: Account creation timestamp.
-      required: [id, email, username, createdAt]
+        updatedAt:
+          type: string
+          format: date-time
+          description: Account last update timestamp.
+      required: [id, email, username, isActive, userRole, createdAt]
     UserAdmin:
       type: object
       description: User information for admin queries.
@@ -1203,17 +1710,15 @@ components:
         - $ref: '#/components/schemas/UserSelf'
         - type: object
           properties:
-            userRole:
-              $ref: '#/components/schemas/UserRole'
-            isActive:
-              type: boolean
-            isVerified:
-              type: boolean
             passwordResetToken:
               type: string
               nullable: true
               description: Password reset token (for password reset flows; not returned in normal user queries).
-      required: [id, email, username, createdAt, updatedAt, userRole, isActive, isVerified]
+            passwordResetExpires:
+              type: string
+              format: date-time
+              description: When the password reset token expires.
+      required: [id, email, username, isActive, userRole, createdAt, updatedAt]
     UserInputBase:
       type: object
       description: Base fields for user.
@@ -1228,7 +1733,7 @@ components:
           minLength: 3
           maxLength: 20
           description: Unique username for the user.
-        address:
+        userAddress:
           $ref: '#/components/schemas/UserAddress'
           description: User's default shipping address.
       additionalProperties: false
@@ -1239,9 +1744,6 @@ components:
         - $ref: '#/components/schemas/UserInputBase'
         - type: object
           properties:
-            username:
-              type: string
-              description: Unique username for the user.
             password:
               type: string
               format: password
@@ -1295,7 +1797,7 @@ components:
           type: string
           format: email
           description: New email address.
-        address:
+        userAddress:
           $ref: '#/components/schemas/UserAddress'
           description: New shipping address.
     UpdateUser:
@@ -1364,8 +1866,14 @@ components:
     UserAddress:
       type: object
       description: User's shipping address.
-      required: [street, city, zip, country]
+      required: [id, userId, street, city, zip, country]
       properties:
+        id:
+          type: integer
+          description: Unique identifier for the address.
+        userId:
+          type: integer
+          description: ID of the user this address belongs to.
         street:
           type: string
           description: Street address.
@@ -1381,9 +1889,15 @@ components:
         phone:
           type: string
           format: phone
-          minLength: 10
-          maxLength: 15
           description: Contact phone number for the address.
+        createdAt:
+          type: string
+          format: date-time
+          description: When the address was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the address was last updated.
     UserWithToken:
       type: object
       description: Authenticated user with JWT token.
@@ -1423,11 +1937,21 @@ components:
           type: number
           format: float
           description: Price of the item.
+        discount:
+          type: number
+          format: float
+          nullable: true
+          description: Discount on the item price.
         itemMedia:
           type: array
           items:
             $ref: '#/components/schemas/Media'
-          description: List of media objects for the item, ordered by the 'order' field.
+          description: List of media objects for the item, ordered by the display order field.
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: List of tags associated with this item.
         itemCategory:
           $ref: '#/components/schemas/ItemCategory'
           description: Category of the item.
@@ -1437,15 +1961,6 @@ components:
         inStock:
           type: boolean
           description: Whether the item is in stock.
-        frameColor:
-          $ref: '#/components/schemas/FrameColor'
-          description: Frame color of the item.
-        baseStyle:
-          type: string
-          description: Combination of modules.
-        baseMaterial:
-          $ref: '#/components/schemas/BaseMaterial'
-          description: Surface material of the item.
         isFeatured:
           type: boolean
           description: Whether the item is featured.
@@ -1462,9 +1977,8 @@ components:
           description: Date/time the item was last updated.
       required:
         - itemName
+        - description
         - price
-        - itemCategory
-        - itemType
         - inStock
     GenericItem:
       allOf:
@@ -1475,8 +1989,16 @@ components:
               type: string
               enum: [GenericItem]
               description: Discriminator for GenericItem type.
+            frameColor:
+              $ref: '#/components/schemas/FrameColor'
+              description: Frame color of the generic item.
+            modulePackage:
+              $ref: '#/components/schemas/ModulePackage'
+              description: Module package type for the generic item.
           required:
             - kind
+            - frameColor
+            - modulePackage
     BaseItemInput:
       type: object
       description: Base fields for item creation/update requests.
@@ -1526,7 +2048,6 @@ components:
         - itemCategory
         - itemType
         - inStock
-        
     GenericItemInput:
       allOf:
         - $ref: '#/components/schemas/BaseItemInput'
@@ -1536,8 +2057,16 @@ components:
               type: string
               enum: [GenericItem]
               description: Discriminator for GenericItem type.
+            frameColor:
+              $ref: '#/components/schemas/FrameColor'
+              description: Frame color of the generic item.
+            modulePackage:
+              $ref: '#/components/schemas/ModulePackage'
+              description: Module package type for the generic item.
           required:
             - kind
+            - frameColor
+            - modulePackage
     ModuleItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
@@ -1550,14 +2079,13 @@ components:
             moduleSize:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the module item.
-            moduleColor:
-              type: string
-              description: Color of the module item.
-            moduleController:
+            controllerType:
               $ref: '#/components/schemas/ControllerType'
               description: Controller type for the module item.
           required:
             - kind
+            - moduleSize
+            - controllerType
     ModuleItemInput:
       allOf:
         - $ref: '#/components/schemas/BaseItemInput'
@@ -1570,14 +2098,13 @@ components:
             moduleSize:
               $ref: '#/components/schemas/ModuleSize'
               description: Size of the module item.
-            moduleColor:
-              type: string
-              description: Color of the module item.
-            moduleController:
+            controllerType:
               $ref: '#/components/schemas/ControllerType'
               description: Controller type for the module item.
           required:
             - kind
+            - moduleSize
+            - controllerType
     AccessoryItem:
       allOf:
         - $ref: '#/components/schemas/ItemBase'
@@ -1587,18 +2114,18 @@ components:
               type: string
               enum: [AccessoryItem]
               description: Discriminator for AccessoryItem type.
-            accessorySize:
+            moduleSize:
               $ref: '#/components/schemas/ModuleSize'
-              description: Size of the accessory item.
-            accessoryMaterial:
+              nullable: true
+              description: Size of the accessory item if applicable.
+            frameColor:
+              $ref: '#/components/schemas/FrameColor'
+              nullable: true
+              description: Frame color of the accessory item if applicable.
+            color:
               type: string
-              description: Material of the accessory item.
-            accessoryColor:
-              type: string
-              description: Color of the accessory item.
-            accessoryStyle:
-              type: string
-              description: Style of the accessory item.
+              nullable: true
+              description: Color of the accessory item if applicable.
     AccessoryItemInput:
       allOf:
         - $ref: '#/components/schemas/BaseItemInput'
@@ -1608,21 +2135,20 @@ components:
               type: string
               enum: [AccessoryItem]
               description: Discriminator for AccessoryItem type.
-            accessorySize:
+            moduleSize:
               $ref: '#/components/schemas/ModuleSize'
-              description: Size of the accessory item.
-            accessoryMaterial:
+              nullable: true
+              description: Size of the accessory item if applicable.
+            frameColor:
+              $ref: '#/components/schemas/FrameColor'
+              nullable: true
+              description: Frame color of the accessory item if applicable.
+            color:
               type: string
-              description: Material of the accessory item.
-            accessoryColor:
-              type: string
-              description: Color of the accessory item.
-            accessoryStyle:
-              type: string
-              description: Style of the accessory item.
+              nullable: true
+              description: Color of the accessory item if applicable.
           required:
             - kind
-            - accessoryColor
     ItemFetch:
       oneOf:
         - $ref: '#/components/schemas/GenericItem'
@@ -1696,6 +2222,25 @@ components:
               items:
                 type: integer
               description: List of item IDs included in the bundle.
+            discount:
+              type: number
+              format: float
+              nullable: true
+              description: Discount on the bundle price.
+            inStock:
+              type: boolean
+              description: Whether the bundle is in stock.
+            isFeatured:
+              type: boolean
+              description: Whether the bundle is featured.
+            isHidden:
+              type: boolean
+              description: Whether the bundle is hidden from public view.
+            media:
+              type: array
+              items:
+                $ref: '#/components/schemas/Media'
+              description: List of media objects for the bundle.
             createdAt:
               type: string
               format: date-time
@@ -1704,24 +2249,75 @@ components:
               type: string
               format: date-time
               description: Date/time the bundle was last updated.
-          required: [id, bundleName, itemIds, price]
+          required: [id, bundleName, description, price, inStock]
     BundleInput:
       allOf:
         - $ref: '#/components/schemas/BaseBundleFields'
         - type: object
           description: Request body for creating or updating a bundle.
-          required: [bundleName, itemIds, price]
+          required: [bundleName, description, itemIds, price, inStock]
           properties:
             itemIds:
               type: array
               items:
                 type: integer
               description: List of item IDs to include.
+            discount:
+              type: number
+              format: float
+              nullable: true
+              description: Discount on the bundle price.
+            inStock:
+              type: boolean
+              description: Whether the bundle is in stock.
+            isFeatured:
+              type: boolean
+              description: Whether the bundle is featured.
+            isHidden:
+              type: boolean
+              description: Whether the bundle is hidden from public view.
     # --- CART ---
+    Cart:
+      type: object
+      description: A user's shopping cart.
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the cart.
+        userId:
+          type: integer
+          description: ID of the user who owns the cart.
+        status:
+          type: string
+          description: Status of the cart (e.g., active, abandoned).
+        createdAt:
+          type: string
+          format: date-time
+          description: Date/time the cart was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date/time the cart was last updated.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+          description: Items in the cart.
+      required: [id, userId, status, createdAt]
+
     CartItem:
       type: object
       description: An item in the user's shopping cart.
       properties:
+        id:
+          type: integer
+          description: Unique identifier for the cart item.
+        cartId:
+          type: integer
+          description: ID of the cart containing this item.
+        userId:
+          type: integer
+          description: ID of the user who owns the cart.
         itemId:
           type: integer
           description: ID of the item in the cart.
@@ -1729,14 +2325,18 @@ components:
           type: integer
           minimum: 1
           description: Quantity of the item in the cart.
-        addedAt:
+        createdAt:
           type: string
           format: date-time
           description: Date/time the item was added to the cart.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date/time the item was last updated in the cart.
         itemDetails:
           $ref: '#/components/schemas/ItemFetch'
           description: Details of the item in the cart.
-      required: [itemId, quantity]
+      required: [id, cartId, userId, itemId, quantity]
     CartInsert:
       type: object
       description: Request body for adding an item to the cart.
@@ -1756,8 +2356,8 @@ components:
       required: [shippingAddress, items]
       properties:
         shippingAddress:
-          $ref: '#/components/schemas/UserAddress'
-          description: Shipping address for the order.
+          type: string
+          description: Shipping address for the order as text.
         items:
           type: array
           minItems: 1
@@ -1773,6 +2373,7 @@ components:
           description: Unique identifier for the order.
         userId:
           type: integer
+          nullable: true
           description: ID of the user who placed the order.
         status:
           $ref: '#/components/schemas/OrderStatus'
@@ -1782,8 +2383,8 @@ components:
           format: float
           description: Total price of the order.
         shippingAddress:
-          $ref: '#/components/schemas/UserAddress'
-          description: Shipping address for the order.
+          type: string
+          description: Shipping address for the order as text.
         createdAt:
           type: string
           format: date-time
@@ -1801,9 +2402,20 @@ components:
       type: object
       description: An item included in an order.
       properties:
+        id:
+          type: integer
+          description: Unique identifier for the order item.
+        orderId:
+          type: integer
+          description: ID of the order containing this item.
         itemId:
           type: integer
-          description: ID of the item.
+          nullable: true
+          description: ID of the item (null if bundleId is set).
+        bundleId:
+          type: integer
+          nullable: true
+          description: ID of the bundle (null if itemId is set).
         quantity:
           type: integer
           minimum: 1
@@ -1814,50 +2426,60 @@ components:
           description: Price of the item at the time of purchase.
         itemName:
           type: string
-          description: Name of the item.
-        itemSnapshot:
-          type: object
-          description: Snapshot of the item details at purchase time.
-          properties:
-            itemName: {type: string, description: Name of the item.}
-            price: {type: number, format: float, description: Price of the item.}
+          description: Name of the item or bundle at time of purchase.
+        createdAt:
+          type: string
+          format: date-time
+          description: Date/time the order item was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date/time the order item was last updated.
+      required: [id, orderId, quantity]
     OrderItemInput:
       type: object
-      description: Request body for adding an item to an order.
-      required: [itemId, quantity]
+      description: Request body for adding an item or bundle to an order.
+      required: [quantity]
       properties:
         itemId:
           type: integer
-          description: ID of the item to order.
+          description: ID of the item to order (required if bundleId is not provided).
+        bundleId:
+          type: integer
+          description: ID of the bundle to order (required if itemId is not provided).
         quantity:
           type: integer
           minimum: 1
           description: Quantity to order.
     Media:
       type: object
-      description: Media file associated with an item (image, video, etc.).
+      description: Media file associated with an item or bundle (image, video).
       properties:
         id:
           type: integer
           readOnly: true
           description: Unique identifier for the media.
+        parentType:
+          $ref: '#/components/schemas/MediaParentType'
+          description: The type of parent (item or bundle) this media belongs to.
         itemId:
           type: integer
-          description: Item ID this media belongs to.
+          nullable: true
+          description: Item ID this media belongs to (null if bundleId is set).
+        bundleId:
+          type: integer
+          nullable: true
+          description: Bundle ID this media belongs to (null if itemId is set).
         url:
           type: string
           format: uri
           description: URL to the media file.
-        type:
-          type: string
-          schema:
-            enum: 
-              - image
-              - video
-          description: Type of media.
-        order:
+        mediaType:
+          $ref: '#/components/schemas/MediaType'
+          description: Type of media (image or video).
+        displayOrder:
           type: integer
-          description: Order of the media for this item.
+          description: Display order of the media for the parent item/bundle.
         createdAt:
           type: string
           format: date-time
@@ -1866,7 +2488,55 @@ components:
           type: string
           format: date-time
           description: Date/time the media was last updated.
-      required: [id, itemId, url, type, order]
+      required: [id, parentType, url, mediaType, displayOrder]
+    Review:
+      type: object
+      description: A product review submitted by a user.
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the review.
+        userId:
+          type: integer
+          description: ID of the user who submitted the review.
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: Rating from 1-5 stars.
+        review:
+          type: string
+          description: Text content of the review.
+        createdAt:
+          type: string
+          format: date-time
+          description: When the review was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the review was last updated.
+      required: [id, rating, review, createdAt]
+
+    Tag:
+      type: object
+      description: A tag that can be applied to items.
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the tag.
+        name:
+          type: string
+          description: Name of the tag (always stored in lowercase).
+        createdAt:
+          type: string
+          format: date-time
+          description: When the tag was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the tag was last updated.
+      required: [id, name, createdAt]
+
     ErrorResponse:
       type: object
       description: Standard error response.

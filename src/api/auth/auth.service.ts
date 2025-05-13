@@ -10,22 +10,25 @@ import { Users as UsersTableInterface } from '../../database/types.js';
 // import { RegisterUser } from '../../dtos/generated/registerUser.js';
 // import { UpdatedUserResponse } from '../../dtos/generated/UpdatedUserResponse.js';
 // import { PartialUserUpdate } from '../../dtos/generated/partialUserUpdate.js';
-import { components } from '../../dtos/generated/openapi.js';
-
-import { BadRequestError, 
-  ConflictError, 
-  NotFoundError, 
-  UnauthorizedError } from '../../utils/errors.js';
+// import { components } from '../../dtos/generated/openapi.js';
+import { z } from "zod";
+import { schemas } from "../../dtos/generated/zod.d.js";
+import { transformValidate } from "../../utils/transformValidate.js";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError
+} from '../../utils/errors.js';
 import camelcaseKeys from "camelcase-keys";
 
 
 type NewUserDb = Insertable<UsersTableInterface>;
 type DbUser = Selectable<UsersTableInterface>;
-type UserSelfResponse = components["schemas"]["UserSelf"];
-type UserTokenResponse = components["schemas"]["UserWithToken"];
-type UserRegisterInput = components["schemas"]["RegisterUser"];
-type UserUpdateMe = components["schemas"]["UpdateMe"];
-type UserUpdateAdmin = components["schemas"]["UpdateUser"];
+type UserSelfResponse = z.infer<typeof schemas.UserSelf>;
+type UserTokenResponse = z.infer<typeof schemas.UserWithToken>;
+type UserRegisterInput = z.infer<typeof schemas.RegisterUser>;
+type UserUpdateMe = z.infer<typeof schemas.UpdateMe>;
 
 export const verifyCredentials = async (
   email: string,
@@ -45,11 +48,11 @@ export const verifyCredentials = async (
     if (!userFromDb.password) {
       throw new UnauthorizedError(`User ${email} found but is missing password hash`);
     };
-    const isValid = await bcrypt.compare(password, userFromDb.password);
+    const isValid = await bcrypt.compare(password, userFromDb.password_hash);
 
     if (isValid) {
       const {
-        password: _password,
+        password_hash: _password,
         password_reset_token: _token,
         password_reset_expires: _expires,
         ...userWithoutPassword
@@ -103,7 +106,7 @@ export const generateJwtToken = async (user: UserSelfResponse): Promise<UserToke
       .setExpirationTime('24h')
       .setIssuer('ErinWongJewelry')
       .sign(secretKey)
-    
+
     logger.info(`Token generated successfully for user ID: ${user.id}`);
     const userDto = {
       user: user,
@@ -124,15 +127,15 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
     FROM users
     WHERE email = ${userData.email};
     `.execute(db);
-  
+
     if (getUserQueryResult.rows.length > 0) {
       throw new ConflictError(`User with email: ${userData.email} already exists.`);
     };
 
     logger.debug('Hashing password with bcrypt');
-    
+
     const saltRounds = 10;
-    const hash = await bcrypt.hash(userData.password, saltRounds);
+    const hash = await bcrypt.hash(userData.password_hash, saltRounds);
 
     const newUserDbData: NewUserDb = {
       username: userData.username,
@@ -140,7 +143,7 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
       password: hash,
       user_role: 'customer',
     };
-    
+
     const registerUserQueryResult = await sql<DbUser>`
     INSERT INTO users (username, email, password, user_role)
     VALUES (${newUserDbData.username}, 
@@ -151,7 +154,7 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
     `.execute(db);
 
     const registerResult = registerUserQueryResult.rows[0];
-    
+
     logger.info(`User registered successfully: ${registerResult.email} (ID: ${registerResult.id})`);
 
     const userDto = {
@@ -175,9 +178,9 @@ export const updateUser = async (id: number, updatedValues: UserUpdateMe) => {
   logger.info(`Service: User update attempt on ID: ${id}`);
   try {
     const columnsToReturn = [
-      'id', 
-      'username', 
-      'email', 
+      'id',
+      'username',
+      'email',
     ] as const;
 
     const updatedUser = await db

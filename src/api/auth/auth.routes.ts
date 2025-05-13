@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { Router, type Router as ExpressRouter } from "express";
 import { loginSchema, registerSchema, updateMeSchema } from "../../validators/auth.validators.js";
 import { validateRequestBody } from "../../middlewares/validation.middleware.js";
 import * as authController from "./auth.controller.js";
 import { requireAuth } from "./auth.middleware.js";
 
-const router = Router();
+const router: ExpressRouter = Router();
 
 router.post('/register', validateRequestBody(registerSchema), authController.handleRegister);
 router.post('/login', validateRequestBody(loginSchema), authController.handleLogin);

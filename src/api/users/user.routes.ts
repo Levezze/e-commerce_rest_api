@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { Router, type Router as ExpressRouter } from "express";
 // import { userSchema } from "../../validators/user.validators.js";
 import { validateRequestBody } from "../../middlewares/validation.middleware.js";
 import * as userController from "./user.controller.js";
 import { requireAuth, requireAdmin } from "../auth/auth.middleware.js";
 
-const router = Router();
+const router: ExpressRouter = Router();
 
 router.get('/', requireAuth, requireAdmin, userController.handleGetUsers);
 router.get('/:id', requireAuth, requireAdmin, userController.handleGetUserById);
