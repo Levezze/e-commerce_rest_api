@@ -1,230 +1,174 @@
-# **E-Commerce Store API**
+# E-Commerce REST API
 
-## **Overview**
+## Overview
 
-This repository contains the source code for the REST API backend powering a modern e-commerce web application special for a future {secret} project. It provides a comprehensive set of endpoints for managing catalog items, user authentication and profiles, shopping carts, order processing, and administrative functions.
+This repository contains a robust, type-safe REST API for a modern e-commerce application. It features:
 
-Built with Node.js, Express, and TypeScript, this API prioritizes type safety, a clear and maintainable structure following domain-driven principles, and modern development practices. It utilizes PostgreSQL for data persistence and JWT for secure authentication.
+- Modular architecture with Express, TypeScript, and PostgreSQL (via Supabase).
+- Secure authentication (JWT, bcrypt), Zod-based validation, and clear OpenAPI documentation.
+- Raw SQL control using [Kysely](https://kysely.dev/) for maximum flexibility and type safety.
+- Automated type generation from your live Supabase schema.
+- Commit/push validation via Husky hooks (enabled soon).
 
-This project also serves as a capstone project for the Codecademy Backend Developer curriculum, as part of the Full Stack Engineer Career Course.
+The project is designed for maintainability, extensibility, and clarity for new contributors.
+
+## API Docs
+
+You can view the interactive Swagger UI here:
+
+👉 [View API Docs in Swagger Editor Next](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/Levezze/e-commerce_rest_api/master/docs/openapi.yaml)
 
 ## **Features**
 
-* **Authentication:** Secure user registration, login via email/password, JWT-based session management `(/auth)`.  
-* **Catalog Management:**  
-  * Public browsing of items with filtering, pagination, and sorting (`GET /items`, `GET /items/:id`).  
-  * Admin CRUD operations for items with support for type-specific properties (`/admin/items`).  
-  * Role-based response filtering (admins see more details than public users on the same endpoints).  
-* **User Management:** Self-service profile viewing and updates (`/auth/me`). (Admin user management could be added under `/admin/users`).  
-* **Shopping Cart:** Add/remove items, update quantities, view cart contents (`/cart`).  
-* **Order Processing:** Place orders from cart, view user's order history and details (`/orders`). Admin capabilities for order status updates (`/admin/orders/:id/status`).  
-* **API Specification:** Comprehensive OpenAPI 3.1.1 definition for clear contract and client generation.
+- **Authentication:** Secure user registration, login via email/password, JWT-based session management `(/auth)`.  
+- **Catalog Management:**  
+  - Public browsing of items with filtering, pagination, and sorting (`GET /items`, `GET /items/:id`).  
+  - Admin CRUD operations for items with support for type-specific properties (`/admin/items`).  
+  - Role-based response filtering (admins see more details than public users on the same endpoints).  
+- **User Management:** Self-service profile viewing and updates (`/auth/me`). (Admin user management could be added under `/admin/users`).  
+- **Shopping Cart:** Add/remove items, update quantities, view cart contents (`/cart`).  
+- **Order Processing:** Place orders from cart, view user's order history and details (`/orders`). Admin capabilities for order status updates (`/admin/orders/:id/status`).  
+- **API Specification:** Comprehensive OpenAPI 3.1.1 definition for clear contract and client generation.
 
-## **Tech Stack**
+## Tech Stack
 
-* **Backend Framework:** Node.js, Express.js  
-* **Language:** TypeScript  
-* **Database:** PostgreSQL  
-* **Query Builder/DB Interaction:** Kysely (with `kysely-codegen` for type generation)  
-* **Authentication:** JWT (JSON Web Tokens) via `jose`, password hashing via `bcrypt`.  
-* **Validation:** Zod for robust runtime request validation.  
-* **Logging:** Pino (`pino-http` for HTTP requests, `pino-pretty` for development).  
-* **API Specification:** OpenAPI 3.1.1 (`docs/openapi.yaml`)  
-* **Development Runner:** `tsx` (TypeScript execution with ESM support and watching).
+- **Backend:** Node.js, Express.js
+- **Language:** TypeScript
+- **Database:** PostgreSQL (Supabase-managed)
+- **DB Access:** Kysely (raw SQL, with codegen types)
+- **Validation:** Zod
+- **Authentication:** JWT (jose), bcrypt
+- **API Spec:** OpenAPI 3.1.1 (generated from Zod schemas)
+- **Dev Tools:** pnpm, tsx, eslint, prettier, husky, kysely-codegen
+- **Logging:** Pino, pino-http, pino-pretty
 
-## **API Documentation**
+## API Documentation
 
-The API contract is defined using the OpenAPI 3.1.1 specification located at `docs/openapi`.yaml.
+- The OpenAPI 3.1.1 spec is auto-generated from Zod schemas using a script (see `generate:api-zod` in package.json).
+- See `docs/openapi.yaml` for the latest API contract.
+- You can view/interact with the API using [Swagger Editor](https://editor.swagger.io/) or tools like Swagger UI.
 
-You can explore and interact with the API documentation by:
+## File Structure
 
-1. Pasting the contents of `openapi.yaml` into the [Swagger Editor](https://editor.swagger.io/).  
-2. Using tools like [Swagger UI](https://github.com/swagger-api/swagger-ui) if you integrate it into your development server.
-
-## **Project Structure**
-
-```bash
-.  
-├── db/  
-│   └── schema.sql                \# SQL schema definition (for manual setup/reference)  
-├── docs/  
-│   ├── \*.pdf                     \# Supporting diagrams (optional)  
-│   └── openapi.yaml              \# API specification  
-├── src/  
-│   ├── api/                      \# Feature modules (Components in C4 model)  
-│   │   ├── items/                \# Item catalog feature  
-│   │   │   ├── controllers/      \# Request handlers (public/admin split)  
-│   │   │   ├── services/         \# Business logic  
-│   │   │   └── routes/           \# Route definitions (public/admin split)  
-│   │   ├── auth/                 \# Authentication feature  
-│   │   │   ├── controllers/  
-│   │   │   ├── services/  
-│   │   │   ├── routes/  
-│   │   │   └── middlewares/      \# Auth-specific middleware (requireAuth, requireAdmin)  
-│   │   ├── users/                \# User self-service feature (/auth/me)  
-│   │   │   ├── controllers/  
-│   │   │   ├── services/  
-│   │   │   └── routes/  
-│   │   ├── orders/               \# Customer order feature  
-│   │   │   ├── controllers/  
-│   │   │   ├── services/  
-│   │   │   └── routes/  
-│   │   ├── cart/                 \# Shopping cart feature  
-│   │   │   ├── controllers/  
-│   │   │   ├── services/  
-│   │   │   └── routes/  
-│   │   └── admin/                \# Admin-specific features/endpoints  
-│   │       ├── controllers/      \# e.g., orders.admin.controller.ts  
-│   │       ├── services/         \# (if needed)  
-│   │       └── routes/           \# e.g., orders.admin.routes.ts  
-│   ├── config/                   \# Configuration loading (e.g., from .env)  
-│   ├── core/                     \# Core utilities, base classes, etc.  
-│   ├── database/                 \# Database connection, seeding, Kysely setup  
-│   │   ├── index.ts              \# Kysely instance export  
-│   │   ├── seed.ts               \# Optional seeding script  
-│   │   └── types.ts              \# Auto-generated DB interface (via kysely-codegen)  
-│   ├── dtos/                     \# Data Transfer Objects (potentially auto-generated from OpenAPI)  
-│   │   └── generated/            \# Subfolder if using generation tools  
-│   ├── middlewares/              \# Global/Reusable middleware  
-│   │   ├── error.middleware.ts   \# Global error handler  
-│   │   └── validation.middleware.ts \# Reusable request validation logic  
-│   ├── types/                    \# Custom TypeScript type definitions (e.g., extending Express Request)  
-│   │   └── express.d.ts  
-│   ├── utils/                    \# General utility functions (logger, error classes)  
-│   │   ├── errors.ts  
-│   │   ├── logger.ts  
-│   │   └── logServerStart.ts  
-│   ├── validators/               \# Zod validation schemas  
-│   │   ├── auth.validators.ts  
-│   │   ├── item.validators.ts  
-│   │   └── user.validators.ts  
-│   ├── app.ts                    \# Express app configuration (middleware, mounting routes)  
-│   └── server.ts                 \# Server entry point (starts listening)  
-├── .env                          \# Local environment variables (ignored by Git)  
-├── .env.example                  \# Example environment variables file  
-├── .gitignore  
-├── package.json  
-├── package-lock.json  
-├── README.md                     \# This file  
-└── tsconfig.json                 \# TypeScript compiler options
+```
+.
+├── .husky/                  # Git hooks for commit/push validation
+├── db/
+│   ├── generic_db_schema.dbml
+│   └── schema.pgsql         # Main schema for Supabase Postgres
+├── docs/
+│   ├── example_user.json
+│   ├── Generic Item DB.pdf
+│   └── openapi.yaml         # Generated OpenAPI spec
+├── src/
+│   ├── api/                 # Domain modules (auth, items, users, etc)
+│   ├── database/            # Kysely setup, typegen, plugins
+│   ├── dtos/                # DTOs, OpenAPI/Zod typegen
+│   ├── middlewares/
+│   ├── server/              # app entry point
+│   ├── types/               # Custom TypeScript types
+│   ├── utils/               # Utilities
+│   └── validators/          # Zod schemas
+├── .env                     # Project secrets (Supabase, JWT, etc)
+├── package.json
+├── pnpm-lock.yaml
+├── README.md
+├── reset-db.sh
+├── tsconfig.json
+└── ...
 ```
 
-## **Getting Started**
+## Getting Started
 
-### **Prerequisites**
+### Prerequisites
 
-* Node.js (v18 or later recommended)  
-* npm (usually comes with Node.js)  
-* PostgreSQL (running instance)  
-* Git
+- Node.js v18+
+- pnpm (see [pnpm installation](https://pnpm.io/installation))
+- Supabase Postgres project (or a local Postgres instance)
+- Git
 
-### **Installation**
+### Installation
 
-1. **Clone the Repository:**  
-
-    ```bash
-    git clone \<your-repository-url\> \# Replace with your actual repo URL  
-    cd \<repository-folder-name\>
-    ```
-
-2. **Install Dependencies:**  
+1. **Clone the repository:**
 
     ```bash
-    npm install
+    git clone <your-repository-url>
+    cd <repository-folder>
     ```
 
-### **Database Setup**
-
-1. **Ensure PostgreSQL is running.**  
-2. **Create a database** for the application using a tool like psql or pgAdmin (e.g., jewelry\_store\_dev).  
-
-    ```sql
-    \-- Example using psql  
-    CREATE DATABASE jewelry\_store\_dev;
-    ```
-
-3. **Run the schema definition script** against your new database:  
-
-    ```sql
-    \# Replace with your actual username and database name if different  
-    psql \-U your\_postgres\_user \-d jewelry\_store\_dev \-f db/schema.sql
-    ```
-
-### **Environment Variables**
-
-1. **Create a .env file** in the project root (copy from .env.example if it exists):  
+2. **Install dependencies:**
 
     ```bash
-    cp .env.example .env \# Or create .env manually
+    pnpm install
     ```
 
-2. **Edit the .env file** with your specific configuration:  
+### Database Setup
+
+1. **Connect your Supabase project** (or local Postgres) and ensure your `.env` is configured with the correct `DATABASE_URL`.
+2. **Apply the schema:**
+    - For Supabase: Use the [Supabase SQL editor](https://app.supabase.com/project/_/sql) to run `db/schema.pgsql`.
+    - For local Postgres:
+
+      ```bash
+      psql -U <user> -d <db> -f db/schema.pgsql
+      ```
+
+### Environment Variables
+
+1. Copy `.env.example` to `.env` and fill in your Supabase/Postgres credentials, JWT secret, etc.
+2. Example:
 
     ```env
-    \# .env Configuration  
-    NODE\_ENV=development
-
-   \# Database Connection (adjust user, password, host, port, dbname as needed)  
-   DATABASE\_URL=postgres://YOUR\_DB\_USER:YOUR\_DB\_PASSWORD@localhost:5432/jewelry\_store\_dev
-
-   \# JWT Secret (Generate a strong, random secret\!)  
-   \# Use: node \-e "console.log(require('crypto').randomBytes(32).toString('hex'))"  
-   JWT\_SECRET=your\_very\_strong\_random\_32\_byte\_hex\_secret\_here
-
-   \# Logging Level ('debug', 'info', 'warn', 'error')  
-   LOG\_LEVEL=debug \# Recommended for development
-   ```
-
-3. **IMPORTANT:** Ensure .env is listed in your .gitignore file to prevent committing secrets.
-
-### **Database Type Generation**
-
-Kysely uses `kysely-codegen` to generate TypeScript types based on your database schema, ensuring type safety in your database queries. Run this command after setting up the database and `.env` file:
-
-```bash
-npm run generate-db-types
-```
-
-Run this again anytime you make changes to the database schema defined in `db/schema.sql`.
-
-## **Running the Application**
-
-### **Development Mode**
-
-This mode uses `tsx` for fast, on-the-fly TypeScript execution with file watching and automatic server restarts. Logs are formatted for readability.
-
-```bash
-npm run dev:all
-```
-
-The server will typically start on `http://localhost:3000` (or the `PORT` specified in `.env`).
-
-### **Production Mode**
-
-1. **Build TypeScript:** Compile your TypeScript code into JavaScript in the `dist` directory.  
-
-    ```bash
-    npm run build
+    DATABASE_URL=postgres://username:password@host:port/db
+    JWT_SECRET=your_jwt_secret
+    # ...other config
     ```
 
-2. **Run Compiled Code:** Start the server using the compiled JavaScript. Ensure `NODE\_ENV` is set to `production` for optimal performance and JSON logging.  
+3. `.env` is gitignored by default.
 
-    ```env
-    NODE\_ENV=production npm start
-    ```
+### Database Type Generation
 
-   *(This assumes your `start` script in `package.json` correctly points to the compiled output, e.g., `node dist/server.js`)*
+After your database and `.env` are set up, generate TypeScript types from your Supabase schema:
 
-## **Testing with an API Client (e.g., Postman)**
+```bash
+pnpm generate:db-types
+```
 
-1. Start the application (`npm run dev:all`).  
-2. Use an API client like Postman or Insomnia to send requests to the endpoints (base URL: `http://localhost:3000/api/v1`).  
-3. Refer to the `docs/openapi.yaml` specification for available endpoints, request bodies, and expected responses.  
-4. **Authentication:**  
-   * Register a user via `POST /api/v1/auth/register`.  
-   * Log in via `POST /api/v1/auth/login` with the registered credentials.  
-   * Copy the `token` received in the login response.  
-   * For protected endpoints, set the `Authorization` header:  
-     * Key: `Authorization`  
-     * Value: `Bearer \<your\_copied\_jwt\_token\>`  
-   * **(Postman Tip):** You can automate saving the token to a Postman environment variable using a script in the "Tests" tab of the login request (see the example script in your original README).
+Run this again whenever your schema changes. Types are output to `src/database/types.ts`.
+
+## Running the Application
+
+### Development
+
+```bash
+pnpm dev
+```
+
+- Runs both the server (with hot reload) and type checking in parallel.
+- Default: <http://localhost:3000>
+
+### Production
+
+```bash
+pnpm build
+pnpm start
+```
+
+- Build outputs to `dist/`. Server runs from compiled files.
+
+## API Usage & Testing
+
+- Start the app (`pnpm dev`).
+- Use Postman/Insomnia to hit endpoints (default: `http://localhost:3000`).
+- See `docs/openapi.yaml` for endpoint details and schemas.
+- Auth endpoints: Register (`POST /auth/register`), Login (`POST /auth/login`), use returned JWT as `Authorization: Bearer <token>`.
+
+## Scripts
+
+The following scripts are available in `package.json`:
+
+- `generate:api-zod`: Generate OpenAPI spec from Zod schemas.
+- `generate:db-types`: Generate TypeScript types from Supabase schema.
+- `dev`: Run the application in development mode.
+- `build`: Build the application for production.
+- `start`: Start the application in production mode.
