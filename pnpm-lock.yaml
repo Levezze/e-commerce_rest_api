@@ -17,6 +17,9 @@ importers:
       '@types/passport':
         specifier: ^1.0.17
         version: 1.0.17
+      '@zodios/core':
+        specifier: ^10.9.6
+        version: 10.9.6(axios@1.9.0)(zod@3.24.4)
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1
@@ -53,6 +56,9 @@ importers:
       zod:
         specifier: ^3.24.4
         version: 3.24.4
+      zodios:
+        specifier: ^5.1.0
+        version: 5.1.0(axios@1.9.0)(zod@3.24.4)
     devDependencies:
       '@types/cors':
         specifier: ^2.8.18
@@ -1814,6 +1820,13 @@ packages:
   zod@3.24.4:
     resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
 
+  zodios@5.1.0:
+    resolution: {integrity: sha512-Am7tlwjVxtxSef7c3lGsGG3YCnafXxj0GYQ7iUmgvQ6xXhGZTPeEZK/MlC0ssBMk1H102GsgoOdWG1Ip0faGow==}
+    deprecated: zodios is deprecated, please use the new @zodios/core instead
+    peerDependencies:
+      axios: ^0.x
+      zod: ^3.x
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -3514,3 +3527,8 @@ snapshots:
       yargs-parser: 21.1.1
 
   zod@3.24.4: {}
+
+  zodios@5.1.0(axios@1.9.0)(zod@3.24.4):
+    dependencies:
+      axios: 1.9.0
+      zod: 3.24.4

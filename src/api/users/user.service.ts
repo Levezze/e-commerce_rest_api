@@ -2,13 +2,13 @@ import { db } from '../../database/index.js';
 import { logger } from '../../utils/logger.js';
 // import { User } from '../../dtos/generated/user.js';
 import { z } from 'zod';
-import { schemas } from '../../dtos/generated/zod.js';
+import { schemas } from '../../dtos/custom/zod.js';
 import { NotFoundError, ForbiddenError } from '../../utils/errors.js';
 import { sql, Selectable } from 'kysely';
 import { Users as UsersTableInterface } from '../../database/types.js';
 
 type SelectableDbUser = Selectable<UsersTableInterface>;
-type User = z.infer<typeof schemas.User>;
+type UserResponse = z.infer<typeof schemas.UserSelf>;
 
 export const findUserById = async (id: number) => {
   logger.debug(`Service: Fetching to get user by ID: ${id}`);
@@ -31,14 +31,14 @@ export const findUserById = async (id: number) => {
 
     const userFromDb = queryResult.rows[0];
 
-    const userDto: User = {
+    const userDto: UserResponse = {
       id: userFromDb.id,
       username: userFromDb.username,
       email: userFromDb.email,
-      role: userFromDb.user_role,
-      created_at: userFromDb.created_at?.toISOString(),
-      updated_at: userFromDb.updated_at?.toISOString(),
-      last_login: userFromDb.last_login?.toISOString(),
+      userRole: userFromDb.user_role,
+      createdAt: userFromDb.created_at?.toISOString(),
+      updatedAt: userFromDb.updated_at?.toISOString(),
+      lastLogin: userFromDb.last_login?.toISOString(),
     };
 
     logger.debug({ userDtoFromService: userDto }, "Mapped user DTO in service");
@@ -68,15 +68,15 @@ export const getAllDbUsers = async () => {
 
     const AllDbUsers = queryResult.rows;
 
-    const usersDto: User[] = queryResult.rows.map(dbUser => {
+    const usersDto: UserResponse[] = queryResult.rows.map(dbUser => {
       return {
         id: dbUser.id,
         username: dbUser.username,
         email: dbUser.email,
         role: dbUser.user_role,
-        created_at: dbUser.created_at?.toISOString(),
-        updated_at: dbUser.updated_at?.toISOString(),
-        last_login: dbUser.last_login?.toISOString(),
+        createdAt: dbUser.created_at?.toISOString(),
+        updatedAt: dbUser.updated_at?.toISOString(),
+        lastLogin: dbUser.last_login?.toISOString(),
       }
     });
 

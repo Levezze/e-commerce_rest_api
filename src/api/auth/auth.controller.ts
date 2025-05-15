@@ -3,7 +3,7 @@ import * as authService from './auth.service.js';
 import * as userService from '../users/user.service.js';
 // Dtos
 import { z } from 'zod';
-import { schemas } from '../../dtos/generated/zod.js';
+import { schemas } from '../../dtos/custom/zod.js';
 import { logger } from '../../utils/logger.js';
 import { unknown } from 'zod';
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../../utils/errors.js';

@@ -7,7 +7,7 @@
 // import { db } from '../../../database/index.js';
 // import { NotFoundError } from "../../../utils/errors.js";
 // import { z } from "zod";
-// import { schemas } from "../../../dtos/generated/zod.js";
+// import { schemas } from "../../../dtos/custom/zod.js";
 // import { transformValidate } from "../../../utils/transformValidate.js";
 // import camelcaseKeys from "camelcase-keys";
 

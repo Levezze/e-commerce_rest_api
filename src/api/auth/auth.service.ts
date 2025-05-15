@@ -7,7 +7,7 @@ import { db } from '../../database/index.js';
 import { Users as UsersTableInterface } from '../../database/types.js';
 // Dtos
 import { z } from "zod";
-import { schemas } from "../../dtos/generated/zod.d.js";
+import { schemas } from "../../dtos/custom/zod.js";
 import { transformValidate } from "../../utils/transformValidate.js";
 import {
   BadRequestError,
