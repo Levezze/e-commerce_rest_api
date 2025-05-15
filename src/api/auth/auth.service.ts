@@ -135,7 +135,7 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
     const saltRounds = 10;
     const hash = await bcrypt.hash(userData.password, saltRounds);
 
-    const newUserDbData: NewUserDb = {
+    const newUserDbData: Omit<NewUserDb, 'password_reset_expires' | 'password_reset_token'> = {
       username: userData.username,
       email: userData.email,
       password_hash: hash,
@@ -172,7 +172,7 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
   };
 };
 
-export const updateUser = async (id: number, updatedValues: UserUpdateMe) => {
+export const updateSelf = async (id: number, updatedValues: UserUpdateMe) => {
   logger.info(`Service: User update attempt on ID: ${id}`);
   try {
     const columnsToReturn = [

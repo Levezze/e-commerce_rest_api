@@ -1,2 +1,5 @@
 ignoredBuiltDependencies:
   - openapi-zod-client-monorepo
+onlyBuiltDependencies:
+  - bcrypt
+  - esbuild

@@ -15,8 +15,9 @@ DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS orders_items CASCADE;
 DROP TABLE IF EXISTS media CASCADE;
 DROP TABLE IF EXISTS tags CASCADE;
+DROP TABLE IF EXISTS carts CASCADE;
 DROP TABLE IF EXISTS cart_items CASCADE;
-DROP TABLE IF EXISTS items_tags CASCADE;
+DROP TABLE IF EXISTS tags_items CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
 
 -- Enums
@@ -296,8 +297,27 @@ CREATE TABLE tags_items (
 
 -- Functions & Triggers
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 DROP TRIGGER IF EXISTS set_updated_at ON items;
 DROP FUNCTION IF EXISTS update_timestamp;
+
+CREATE OR REPLACE FUNCTION set_password_reset_fields()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Generate a UUID token if not provided
+  IF NEW.password_reset_token IS NULL THEN
+    NEW.password_reset_token := encode(gen_random_bytes(16), 'hex');
+  END IF;
+
+  -- Set expiry to 1 hour from now if not provided
+  IF NEW.password_reset_expires IS NULL THEN
+    NEW.password_reset_expires := now() + interval '1 hour';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION update_timestamp()
 RETURNS TRIGGER AS $$
@@ -333,3 +353,10 @@ CREATE TRIGGER normalize_tag_name_insert
 BEFORE INSERT OR UPDATE ON tags
 FOR EACH ROW
 EXECUTE FUNCTION normalize_tag_name();
+
+DROP TRIGGER IF EXISTS set_reset_fields_insert ON users;
+
+CREATE TRIGGER set_reset_fields_insert
+BEFORE INSERT ON users
+FOR EACH ROW
+EXECUTE FUNCTION set_password_reset_fields();

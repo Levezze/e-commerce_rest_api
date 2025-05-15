@@ -110,7 +110,7 @@ export const handleUpdateMe = async (
   const userSub = req.user?.sub as string;
   logger.debug(`Handling /me update for user sub: ${userSub}`);
   try {
-    const updatedUser = await authService.updateUser(parseInt(userSub), updatedValues);
+    const updatedUser = await authService.updateSelf(parseInt(userSub), updatedValues);
     logger.info(`Successfully updated user ${updatedUser.email}`);
     res.status(200).json(updatedUser);
 
