@@ -352,7 +352,7 @@ paths:
           description: "Sort format: field:(asc|desc)"
           schema:
             type: string
-            example: price:asc
+            examples: [price:asc]
       responses:
         '200':
           description: List of items
@@ -1722,7 +1722,6 @@ components:
         lastLogin:
           type: string
           format: date-time
-          nullable: true
           description: Last login timestamp.
         userRole:
           $ref: '#/components/schemas/UserRole'
@@ -1746,7 +1745,6 @@ components:
           properties:
             passwordResetToken:
               type: string
-              nullable: true
               description: Password reset token (for password reset flows; not returned in normal user queries).
             passwordResetExpires:
               type: string
@@ -1984,7 +1982,6 @@ components:
         discount:
           type: number
           format: float
-          nullable: true
           description: Discount on the item price.
         itemMedia:
           type: array
@@ -2160,15 +2157,12 @@ components:
               description: Discriminator for AccessoryItem type.
             moduleSize:
               $ref: '#/components/schemas/ModuleSize'
-              nullable: true
               description: Size of the accessory item if applicable.
             frameColor:
               $ref: '#/components/schemas/FrameColor'
-              nullable: true
               description: Frame color of the accessory item if applicable.
             color:
               type: string
-              nullable: true
               description: Color of the accessory item if applicable.
     AccessoryItemInput:
       allOf:
@@ -2181,15 +2175,12 @@ components:
               description: Discriminator for AccessoryItem type.
             moduleSize:
               $ref: '#/components/schemas/ModuleSize'
-              nullable: true
               description: Size of the accessory item if applicable.
             frameColor:
               $ref: '#/components/schemas/FrameColor'
-              nullable: true
               description: Frame color of the accessory item if applicable.
             color:
               type: string
-              nullable: true
               description: Color of the accessory item if applicable.
           required:
             - kind
@@ -2269,7 +2260,6 @@ components:
             discount:
               type: number
               format: float
-              nullable: true
               description: Discount on the bundle price.
             inStock:
               type: boolean
@@ -2309,7 +2299,6 @@ components:
             discount:
               type: number
               format: float
-              nullable: true
               description: Discount on the bundle price.
             inStock:
               type: boolean
@@ -2417,7 +2406,6 @@ components:
           description: Unique identifier for the order.
         userId:
           type: integer
-          nullable: true
           description: ID of the user who placed the order.
         status:
           $ref: '#/components/schemas/OrderStatus'
@@ -2454,11 +2442,9 @@ components:
           description: ID of the order containing this item.
         itemId:
           type: integer
-          nullable: true
           description: ID of the item (null if bundleId is set).
         bundleId:
           type: integer
-          nullable: true
           description: ID of the bundle (null if itemId is set).
         quantity:
           type: integer
@@ -2508,11 +2494,9 @@ components:
           description: The type of parent (item or bundle) this media belongs to.
         itemId:
           type: integer
-          nullable: true
           description: Item ID this media belongs to (null if bundleId is set).
         bundleId:
           type: integer
-          nullable: true
           description: Bundle ID this media belongs to (null if itemId is set).
         url:
           type: string
