@@ -11,7 +11,7 @@ export const validateRequestBody = (schema: AnyZodObject) =>
     } catch (error) {
       if (error instanceof ZodError) {
         logger.warn({ errors: error.flatten().fieldErrors },
-        'Input validation failed');
+          'Input validation failed');
       } else {
         logger.error({ error }, 'Unexpected error during validation middleware');
       }

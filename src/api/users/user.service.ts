@@ -1,11 +1,14 @@
 import { db } from '../../database/index.js';
 import { logger } from '../../utils/logger.js';
-import { User } from '../../dtos/generated/user.js';
+// import { User } from '../../dtos/generated/user.js';
+import { z } from 'zod';
+import { schemas } from '../../dtos/generated/zod.js';
 import { NotFoundError, ForbiddenError } from '../../utils/errors.js';
 import { sql, Selectable } from 'kysely';
 import { Users as UsersTableInterface } from '../../database/types.js';
 
 type SelectableDbUser = Selectable<UsersTableInterface>;
+type User = z.infer<typeof schemas.User>;
 
 export const findUserById = async (id: number) => {
   logger.debug(`Service: Fetching to get user by ID: ${id}`);

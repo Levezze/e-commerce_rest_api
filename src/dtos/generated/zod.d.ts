@@ -14,33 +14,26 @@ const UserAddress = z
     updatedAt: z.string().datetime({ offset: true }).optional(),
   })
   .passthrough();
-const UserInputBase = z
-  .object({
-    email: z.string().max(100).email(),
-    username: z.string().min(3).max(20),
-    userAddress: UserAddress,
-  })
-  .partial();
+const UserInputBase = z.object({
+  email: z.string().max(100).email(),
+  username: z.string().min(3).max(20),
+  userAddress: UserAddress.optional(),
+});
 const RegisterUser = UserInputBase.and(
-  z
-    .object({ password: z.string().min(8) })
-    .partial()
-    .passthrough()
+  z.object({ password: z.string().min(8) }).passthrough()
 );
 const UserRole = z.enum(["customer", "manager", "admin"]);
-const UserSelf = z
-  .object({
-    id: z.number().int(),
-    email: z.string().email(),
-    username: z.string(),
-    userAddress: UserAddress.optional(),
-    isActive: z.boolean(),
-    lastLogin: z.string().datetime({ offset: true }).nullish(),
-    userRole: UserRole,
-    createdAt: z.string().datetime({ offset: true }),
-    updatedAt: z.string().datetime({ offset: true }).optional(),
-  })
-  .passthrough();
+const UserSelf = z.object({
+  id: z.number().int().optional(),
+  email: z.string().email(),
+  username: z.string(),
+  userAddress: UserAddress.optional(),
+  isActive: z.boolean().optional(),
+  lastLogin: z.string().datetime({ offset: true }).nullish(),
+  userRole: UserRole.optional(),
+  createdAt: z.string().datetime({ offset: true }),
+  updatedAt: z.string().datetime({ offset: true }).optional(),
+});
 const UserWithToken = z
   .object({ user: UserSelf, token: z.string() })
   .passthrough();
@@ -57,8 +50,7 @@ const UpdateMe = z
     email: z.string().email(),
     userAddress: UserAddress,
   })
-  .partial()
-  .passthrough();
+  .partial();
 const UserAdmin = UserSelf.and(
   z
     .object({
@@ -67,6 +59,9 @@ const UserAdmin = UserSelf.and(
     })
     .partial()
     .passthrough()
+);
+const CreateUser = UserInputBase.and(
+  z.object({ password: z.string().min(8), userRole: UserRole }).passthrough()
 );
 const UpdateUser = UpdateMe.and(
   z
@@ -216,10 +211,11 @@ const ItemInput = z.discriminatedUnion("kind", [
   ModuleItemInput,
   AccessoryItemInput,
 ]);
-const BaseItemFields = z
-  .object({ itemName: z.string(), description: z.string(), price: z.number() })
-  .partial()
-  .passthrough();
+const BaseItemFields = z.object({
+  itemName: z.string(),
+  description: z.string(),
+  price: z.number(),
+});
 const ItemUpdate = BaseItemFields.and(
   z
     .object({
@@ -237,14 +233,14 @@ const ItemUpdate = BaseItemFields.and(
     .partial()
     .passthrough()
 );
-const postAdminitemsItemIdmedia_Body = z
+const postItemsItemIdmedia_Body = z
   .object({
     url: z.string().url(),
     mediaType: MediaType,
     displayOrder: z.number().int(),
   })
   .passthrough();
-const patchAdminitemsItemIdmediaMediaId_Body = z
+const patchItemsItemIdmediaMediaId_Body = z
   .object({
     url: z.string().url(),
     mediaType: MediaType,
@@ -252,14 +248,11 @@ const patchAdminitemsItemIdmediaMediaId_Body = z
   })
   .partial()
   .passthrough();
-const BaseBundleFields = z
-  .object({
-    bundleName: z.string(),
-    description: z.string(),
-    price: z.number(),
-  })
-  .partial()
-  .passthrough();
+const BaseBundleFields = z.object({
+  bundleName: z.string(),
+  description: z.string(),
+  price: z.number(),
+});
 const Bundle = BaseBundleFields.and(
   z
     .object({
@@ -397,6 +390,7 @@ export const schemas = {
   LoginRequest,
   UpdateMe,
   UserAdmin,
+  CreateUser,
   UpdateUser,
   MediaParentType,
   MediaType,
@@ -421,8 +415,8 @@ export const schemas = {
   ItemInput,
   BaseItemFields,
   ItemUpdate,
-  postAdminitemsItemIdmedia_Body,
-  patchAdminitemsItemIdmediaMediaId_Body,
+  postItemsItemIdmedia_Body,
+  patchItemsItemIdmediaMediaId_Body,
   BaseBundleFields,
   Bundle,
   BundleInput,
@@ -441,292 +435,6 @@ export const schemas = {
 };
 
 const endpoints = makeApi([
-  {
-    method: "post",
-    path: "/admin/bundles/:bundleId/media",
-    alias: "postAdminbundlesBundleIdmedia",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: postAdminitemsItemIdmedia_Body,
-      },
-      {
-        name: "bundleId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-    ],
-    response: Media,
-    errors: [
-      {
-        status: 400,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 401,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 403,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 404,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 500,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-    ],
-  },
-  {
-    method: "patch",
-    path: "/admin/bundles/:bundleId/media/:mediaId",
-    alias: "patchAdminbundlesBundleIdmediaMediaId",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: patchAdminitemsItemIdmediaMediaId_Body,
-      },
-      {
-        name: "bundleId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-      {
-        name: "mediaId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-    ],
-    response: Media,
-    errors: [
-      {
-        status: 400,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 401,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 403,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 404,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 500,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-    ],
-  },
-  {
-    method: "delete",
-    path: "/admin/bundles/:bundleId/media/:mediaId",
-    alias: "deleteAdminbundlesBundleIdmediaMediaId",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "bundleId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-      {
-        name: "mediaId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-    ],
-    response: z.void(),
-    errors: [
-      {
-        status: 400,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 401,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 403,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 404,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 500,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-    ],
-  },
-  {
-    method: "post",
-    path: "/admin/items/:itemId/media",
-    alias: "postAdminitemsItemIdmedia",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: postAdminitemsItemIdmedia_Body,
-      },
-      {
-        name: "itemId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-    ],
-    response: Media,
-    errors: [
-      {
-        status: 400,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 401,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 403,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 404,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 500,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-    ],
-  },
-  {
-    method: "patch",
-    path: "/admin/items/:itemId/media/:mediaId",
-    alias: "patchAdminitemsItemIdmediaMediaId",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "body",
-        type: "Body",
-        schema: patchAdminitemsItemIdmediaMediaId_Body,
-      },
-      {
-        name: "itemId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-      {
-        name: "mediaId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-    ],
-    response: Media,
-    errors: [
-      {
-        status: 400,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 401,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 403,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 404,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 500,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-    ],
-  },
-  {
-    method: "delete",
-    path: "/admin/items/:itemId/media/:mediaId",
-    alias: "deleteAdminitemsItemIdmediaMediaId",
-    requestFormat: "json",
-    parameters: [
-      {
-        name: "itemId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-      {
-        name: "mediaId",
-        type: "Path",
-        schema: z.number().int(),
-      },
-    ],
-    response: z.void(),
-    errors: [
-      {
-        status: 400,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 401,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 403,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 404,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-      {
-        status: 500,
-        description: `Common error responses`,
-        schema: ErrorResponse,
-      },
-    ],
-  },
   {
     method: "post",
     path: "/auth/login",
@@ -966,6 +674,149 @@ const endpoints = makeApi([
       },
     ],
     response: Bundle,
+    errors: [
+      {
+        status: 400,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 401,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 403,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 404,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 500,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/bundles/:bundleId/media",
+    alias: "postBundlesBundleIdmedia",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: postItemsItemIdmedia_Body,
+      },
+      {
+        name: "bundleId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+    ],
+    response: Media,
+    errors: [
+      {
+        status: 400,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 401,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 403,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 404,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 500,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+    ],
+  },
+  {
+    method: "patch",
+    path: "/bundles/:bundleId/media/:mediaId",
+    alias: "patchBundlesBundleIdmediaMediaId",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: patchItemsItemIdmediaMediaId_Body,
+      },
+      {
+        name: "bundleId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+      {
+        name: "mediaId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+    ],
+    response: Media,
+    errors: [
+      {
+        status: 400,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 401,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 403,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 404,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 500,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+    ],
+  },
+  {
+    method: "delete",
+    path: "/bundles/:bundleId/media/:mediaId",
+    alias: "deleteBundlesBundleIdmediaMediaId",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "bundleId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+      {
+        name: "mediaId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+    ],
+    response: z.void(),
     errors: [
       {
         status: 400,
@@ -1448,6 +1299,149 @@ const endpoints = makeApi([
     parameters: [
       {
         name: "id",
+        type: "Path",
+        schema: z.number().int(),
+      },
+    ],
+    response: z.void(),
+    errors: [
+      {
+        status: 400,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 401,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 403,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 404,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 500,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/items/:itemId/media",
+    alias: "postItemsItemIdmedia",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: postItemsItemIdmedia_Body,
+      },
+      {
+        name: "itemId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+    ],
+    response: Media,
+    errors: [
+      {
+        status: 400,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 401,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 403,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 404,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 500,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+    ],
+  },
+  {
+    method: "patch",
+    path: "/items/:itemId/media/:mediaId",
+    alias: "patchItemsItemIdmediaMediaId",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: patchItemsItemIdmediaMediaId_Body,
+      },
+      {
+        name: "itemId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+      {
+        name: "mediaId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+    ],
+    response: Media,
+    errors: [
+      {
+        status: 400,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 401,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 403,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 404,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 500,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+    ],
+  },
+  {
+    method: "delete",
+    path: "/items/:itemId/media/:mediaId",
+    alias: "deleteItemsItemIdmediaMediaId",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "itemId",
+        type: "Path",
+        schema: z.number().int(),
+      },
+      {
+        name: "mediaId",
         type: "Path",
         schema: z.number().int(),
       },
@@ -2036,6 +2030,47 @@ Customers can only place orders for themselves. Admins and managers may place or
     alias: "getUsers",
     requestFormat: "json",
     response: z.array(UserAdmin),
+    errors: [
+      {
+        status: 400,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 401,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 403,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 404,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+      {
+        status: 500,
+        description: `Common error responses`,
+        schema: ErrorResponse,
+      },
+    ],
+  },
+  {
+    method: "post",
+    path: "/users",
+    alias: "postUsers",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        type: "Body",
+        schema: CreateUser,
+      },
+    ],
+    response: UserAdmin,
     errors: [
       {
         status: 400,

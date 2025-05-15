@@ -2,19 +2,21 @@ import { Request, Response, NextFunction } from 'express';
 import * as authService from './auth.service.js';
 import * as userService from '../users/user.service.js';
 // Dtos
-import { components } from '../../dtos/generated/openapi.js';
+import { z } from 'zod';
+import { schemas } from '../../dtos/generated/zod.js';
 import { logger } from '../../utils/logger.js';
 import { unknown } from 'zod';
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../../utils/errors.js';
 
-type LoginRequest = components["schemas"]["LoginRequest"];
-type RegisterRequest = components["schemas"]["RegisterUser"];
-type UserSelfResponse = components["schemas"]["UserSelf"];
-type UserTokenResponse = components["schemas"]["UserWithToken"];
+type LoginRequest = z.infer<typeof schemas.LoginRequest>;
+type RegisterRequest = z.infer<typeof schemas.RegisterUser>;
+type UserSelfResponse = z.infer<typeof schemas.UserSelf>;
+type UserTokenResponse = z.infer<typeof schemas.UserWithToken>;
 
+// Register Handler
 export const handleRegister = async (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ) => {
   try {
@@ -30,9 +32,10 @@ export const handleRegister = async (
   };
 };
 
+// Login Handler
 export const handleLogin = async (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ) => {
   try {
@@ -52,8 +55,8 @@ export const handleLogin = async (
 };
 
 export const handleLogout = async (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   _next: NextFunction
 ) => {
   const userId = req.user?.sub;
@@ -62,11 +65,13 @@ export const handleLogout = async (
   logger.info('User successfully logged out');
 };
 
+// Get Me Handler
 export const handleGetMe = async (req: Request, res: Response, next: NextFunction) => {
   const userSub = req.user?.sub as string;
-  
+  const isCustomer = req.user?.role === 'customer';
+
   logger.debug(`Handling /me fetch for user sub: ${userSub}`);
-  
+
   try {
     if (!userSub) {
       res.status(401).json({ message: 'Unauthorized: Invalid token payload (missing sub).' });
@@ -95,13 +100,14 @@ export const handleGetMe = async (req: Request, res: Response, next: NextFunctio
   };
 };
 
+// Update Me Handler
 export const handleUpdateMe = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const updatedValues = req.body;
-  const userSub = req.user?.sub  as string;
+  const userSub = req.user?.sub as string;
   logger.debug(`Handling /me update for user sub: ${userSub}`);
   try {
     const updatedUser = await authService.updateUser(parseInt(userSub), updatedValues);

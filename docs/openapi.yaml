@@ -1,5 +1,5 @@
 ---
-openapi: 3.1.1
+openapi: 3.1.0
 info:
   title: Generic Modular Store API
   version: 1.0.0
@@ -196,6 +196,35 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserAdmin'
+        '400':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '401':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '403':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '404':
+          $ref: '#/components/responses/CommonErrorResponses'
+        '500':
+          $ref: '#/components/responses/CommonErrorResponses'
+    post:
+      summary: Create user (admin only)
+      tags: [Users, Admin]
+      security:
+        - bearerAuth: []
+      x-roles: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserAdmin'
         '400':
           $ref: '#/components/responses/CommonErrorResponses'
         '401':
@@ -470,7 +499,7 @@ paths:
           $ref: '#/components/responses/CommonErrorResponses'
         '500':
           $ref: '#/components/responses/CommonErrorResponses'
-  /admin/items/{itemId}/media:
+  /items/{itemId}/media:
     post:
       summary: Add media to item
       tags: [Media, Admin]
@@ -520,7 +549,7 @@ paths:
           $ref: '#/components/responses/CommonErrorResponses'
           
   # --- BUNDLE MEDIA ENDPOINTS ---
-  /admin/bundles/{bundleId}/media:
+  /bundles/{bundleId}/media:
     post:
       summary: Add media to bundle
       tags: [Media, Admin, Bundles]
@@ -568,7 +597,7 @@ paths:
           $ref: '#/components/responses/CommonErrorResponses'
         '500':
           $ref: '#/components/responses/CommonErrorResponses'
-  /admin/items/{itemId}/media/{mediaId}:
+  /items/{itemId}/media/{mediaId}:
     patch:
       summary: Update item media (url, type, or display order)
       tags: [Media, Admin]
@@ -650,7 +679,7 @@ paths:
           $ref: '#/components/responses/CommonErrorResponses'
         '500':
           $ref: '#/components/responses/CommonErrorResponses'
-  /admin/bundles/{bundleId}/media/{mediaId}:
+  /bundles/{bundleId}/media/{mediaId}:
     patch:
       summary: Update bundle media (url, type, or display order)
       tags: [Media, Admin, Bundles]
@@ -1564,6 +1593,8 @@ components:
           type: number
           format: float
           description: Price of the item.
+      required: [itemName, description, price]
+      additionalProperties: false
     BaseBundleFields:
       type: object
       properties:
@@ -1577,6 +1608,8 @@ components:
           type: number
           format: float
           description: Total price of the bundle.
+      required: [bundleName, description, price]
+      additionalProperties: false
     # --- ENUMS ---
     UserRole:
       type: string
@@ -1702,7 +1735,8 @@ components:
           type: string
           format: date-time
           description: Account last update timestamp.
-      required: [id, email, username, isActive, userRole, createdAt]
+      required: [email, username, createdAt]
+      additionalProperties: false
     UserAdmin:
       type: object
       description: User information for admin queries.
@@ -1736,6 +1770,9 @@ components:
         userAddress:
           $ref: '#/components/schemas/UserAddress'
           description: User's default shipping address.
+      required: 
+        - email
+        - username
       additionalProperties: false
     RegisterUser:
       type: object
@@ -1750,7 +1787,7 @@ components:
               minLength: 8
               description: User's password (write-only, min 8 characters)
               writeOnly: true
-      required: [email, username, password]
+          required: [password, username, password]
       additionalProperties: false
     LoginRequest:
       type: object
@@ -1766,7 +1803,9 @@ components:
           minLength: 8
           description: User's password (write-only, min 8 characters)
           writeOnly: true
-      required: [email, password]
+      required:
+        - email
+        - password
       additionalProperties: false
     CreateUser:
       type: object
@@ -1784,7 +1823,11 @@ components:
             userRole:
               $ref: '#/components/schemas/UserRole'
               description: Role of the user in the system.
-      required: [email, username, userRole, password]
+          required:
+            - email
+            - username
+            - userRole
+            - password
       additionalProperties: false
     UpdateMe:
       type: object
@@ -1800,6 +1843,7 @@ components:
         userAddress:
           $ref: '#/components/schemas/UserAddress'
           description: New shipping address.
+      additionalProperties: false
     UpdateUser:
       type: object
       description: Request body for updating any user (admin/manager).

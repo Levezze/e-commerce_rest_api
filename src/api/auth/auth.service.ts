@@ -6,11 +6,6 @@ import { db } from '../../database/index.js';
 // Db Inferred Types
 import { Users as UsersTableInterface } from '../../database/types.js';
 // Dtos
-// import { User } from '../../dtos/generated/user.js';
-// import { RegisterUser } from '../../dtos/generated/registerUser.js';
-// import { UpdatedUserResponse } from '../../dtos/generated/UpdatedUserResponse.js';
-// import { PartialUserUpdate } from '../../dtos/generated/partialUserUpdate.js';
-// import { components } from '../../dtos/generated/openapi.js';
 import { z } from "zod";
 import { schemas } from "../../dtos/generated/zod.d.js";
 import { transformValidate } from "../../utils/transformValidate.js";
@@ -26,6 +21,7 @@ import camelcaseKeys from "camelcase-keys";
 type NewUserDb = Insertable<UsersTableInterface>;
 type DbUser = Selectable<UsersTableInterface>;
 type UserSelfResponse = z.infer<typeof schemas.UserSelf>;
+type UserAdminResponse = z.infer<typeof schemas.UserAdmin>;
 type UserTokenResponse = z.infer<typeof schemas.UserWithToken>;
 type UserRegisterInput = z.infer<typeof schemas.RegisterUser>;
 type UserUpdateMe = z.infer<typeof schemas.UpdateMe>;
@@ -45,7 +41,7 @@ export const verifyCredentials = async (
     if (queryResult.rows.length === 0) {
       throw new UnauthorizedError(`Login failed: User ${email} not found`)
     };
-    if (!userFromDb.password) {
+    if (!userFromDb.password_hash) {
       throw new UnauthorizedError(`User ${email} found but is missing password hash`);
     };
     const isValid = await bcrypt.compare(password, userFromDb.password_hash);
@@ -63,9 +59,6 @@ export const verifyCredentials = async (
         username: userWithoutPassword.username,
         email: userWithoutPassword.email,
         createdAt: userWithoutPassword.created_at.toISOString(),
-        lastLogin: userWithoutPassword.last_login
-          ? userWithoutPassword.last_login.toISOString()
-          : undefined,
       };
 
       return userDto;
@@ -93,6 +86,11 @@ export const generateJwtToken = async (user: UserSelfResponse): Promise<UserToke
     };
     const secretKey = new TextEncoder().encode(secret);
     const algorithm = 'HS256';
+
+    if (!user.id) {
+      logger.error('User ID is missing');
+      throw new Error('User ID is missing');
+    };
 
     const payload = {
       sub: user.id.toString(),
@@ -135,12 +133,12 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
     logger.debug('Hashing password with bcrypt');
 
     const saltRounds = 10;
-    const hash = await bcrypt.hash(userData.password_hash, saltRounds);
+    const hash = await bcrypt.hash(userData.password, saltRounds);
 
     const newUserDbData: NewUserDb = {
       username: userData.username,
       email: userData.email,
-      password: hash,
+      password_hash: hash,
       user_role: 'customer',
     };
 
@@ -148,7 +146,7 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
     INSERT INTO users (username, email, password, user_role)
     VALUES (${newUserDbData.username}, 
     ${newUserDbData.email}, 
-    ${newUserDbData.password}), 
+    ${newUserDbData.password_hash}, 
     ${newUserDbData.user_role})
     RETURNING id, username, email, created_at;
     `.execute(db);
@@ -157,7 +155,7 @@ export const registerUser = async (userData: UserRegisterInput): Promise<UserSel
 
     logger.info(`User registered successfully: ${registerResult.email} (ID: ${registerResult.id})`);
 
-    const userDto = {
+    const userDto: UserSelfResponse = {
       id: registerResult.id,
       username: registerResult.username,
       email: registerResult.email,
