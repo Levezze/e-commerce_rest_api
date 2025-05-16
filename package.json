@@ -1,5 +1,5 @@
 {
-  "name": "jewelry-api",
+  "name": "e-commerce-api",
   "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",

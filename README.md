@@ -5,10 +5,11 @@
 This repository contains a robust, type-safe REST API for a modern e-commerce application. It features:
 
 - Modular architecture with Express, TypeScript, and PostgreSQL (via Supabase).
+- Uses `pnpm` for fast, reliable dependency management (migrated from npm).
 - Secure authentication (JWT, bcrypt), Zod-based validation, and clear OpenAPI documentation.
 - Raw SQL control using [Kysely](https://kysely.dev/) for maximum flexibility and type safety.
 - Automated type generation from your live Supabase schema.
-- Commit/push validation via Husky hooks (enabled soon).
+- Commit/push validation via Husky hooks (`.husky` directory) for pre-commit and pre-push checks.
 
 The project is designed for maintainability, extensibility, and clarity for new contributors.
 
@@ -39,7 +40,7 @@ You can view the interactive Swagger UI here:
 - **Validation:** Zod
 - **Authentication:** JWT (jose), bcrypt
 - **API Spec:** OpenAPI 3.1.1 (generated from Zod schemas)
-- **Dev Tools:** pnpm, tsx, eslint, prettier, husky, kysely-codegen
+- **Dev Tools:** pnpm (preferred), tsx, eslint, prettier, husky, kysely-codegen
 - **Logging:** Pino, pino-http, pino-pretty
 
 ## API Documentation
@@ -63,7 +64,10 @@ You can view the interactive Swagger UI here:
 ├── src/
 │   ├── api/                 # Domain modules (auth, items, users, etc)
 │   ├── database/            # Kysely setup, typegen, plugins
-│   ├── dtos/                # DTOs, OpenAPI/Zod typegen
+│   ├── dtos/                # DTOs
+│   │   ├── generated/       # Auto-generated types from OpenAPI (via openapi-zod-client)
+│   │   └── custom/          # Custom/fixed Zod types (see below)
+│   │       └── zod.ts       # Main Zod schemas, using extendBase pattern
 │   ├── middlewares/
 │   ├── server/              # app entry point
 │   ├── types/               # Custom TypeScript types
@@ -78,12 +82,52 @@ You can view the interactive Swagger UI here:
 └── ...
 ```
 
+## DTOs & Type Generation
+
+### OpenAPI/Zod Typegen
+- DTOs are generated using [`openapi-zod-client`](https://github.com/asteasolutions/openapi-zod-client), output to `src/dtos/generated/`.
+- Due to limitations in auto-generation (especially with Zod discriminated unions), we move and adapt the generated types in `src/dtos/custom/zod.ts`.
+- We use a custom `extendBase` function to safely compose item types for discriminated unions:
+
+```ts
+function extendBase<T extends z.ZodRawShape>(fields: T) {
+  return z.object({ ...ItemBase.shape, ...fields });
+}
+```
+
+This fixes issues where auto-generated Zod types failed typechecks for discriminated unions. Example:
+
+```ts
+const GenericItem = extendBase({
+  kind: z.literal("GenericItem"),
+  frameColor: FrameColor,
+  modulePackage: ModulePackage,
+}).passthrough();
+```
+
+### Manual User Creation
+- To manually add a user (e.g., the first admin) directly in SQL, use `hashPassword.js` to hash a password:
+
+```bash
+pnpm exec tsx hashPassword.js
+```
+
+This will print a bcrypt hash for the password "adminadmin" (edit as needed). Insert the hash into the `users` table.
+
+## SQL Schema & Triggers
+- The schema (`db/schema.pgsql`) now includes triggers and functions for:
+  - Auto-generating `password_reset_token` and `password_reset_expires` fields on user creation
+  - Normalizing tag names
+  - Auto-updating `updated_at` timestamps on relevant tables
+
+---
+
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js v18+
-- pnpm (see [pnpm installation](https://pnpm.io/installation))
+- pnpm (see [pnpm installation](https://pnpm.io/installation)) — required, as the project now uses pnpm workspaces and lockfile
 - Supabase Postgres project (or a local Postgres instance)
 - Git
 
@@ -100,6 +144,7 @@ You can view the interactive Swagger UI here:
 
     ```bash
     pnpm install
+    # (npm install is no longer supported)
     ```
 
 ### Database Setup
@@ -167,8 +212,9 @@ pnpm start
 
 The following scripts are available in `package.json`:
 
-- `generate:api-zod`: Generate OpenAPI spec from Zod schemas.
+- `generate:api-zod`: Generate Zod DTOs from OpenAPI spec (output to `src/dtos/generated/`).
 - `generate:db-types`: Generate TypeScript types from Supabase schema.
 - `dev`: Run the application in development mode.
 - `build`: Build the application for production.
 - `start`: Start the application in production mode.
+- `prepare`: Installs Husky git hooks.
