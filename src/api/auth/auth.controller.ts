@@ -41,7 +41,10 @@ export const handleLogin = async (
   try {
     const { email, password } = req.body as LoginRequest;
     const user = await authService.verifyCredentials(email, password);
+    logger.debug(`Credentials verified for user sub: ${user.id}, generating token.`);
+
     const generatedToken: UserTokenResponse = await authService.generateJwtToken(user);
+    logger.debug(`Token generated for user sub: ${user.id}`);
 
     res.status(200).json(generatedToken);
 

@@ -84,6 +84,9 @@ export const generateJwtToken = async (user: UserSelfResponse): Promise<UserToke
       logger.error('JWT_SECRET env variable is not set!');
       throw new Error('JWT secret is not configured');
     };
+
+    logger.debug(`JWT_SECRET env variable is set: ${secret}`);
+
     const secretKey = new TextEncoder().encode(secret);
     const algorithm = 'HS256';
 
@@ -93,26 +96,37 @@ export const generateJwtToken = async (user: UserSelfResponse): Promise<UserToke
     };
 
     const payload = {
-      sub: user.id.toString(),
+      sub: user.id?.toString(),
       email: user.email,
     };
 
-    const token = await new jose.SignJWT(payload)
-      .setProtectedHeader({ alg: algorithm })
-      .setIssuedAt()
-      .setSubject(user.id.toString())
-      .setExpirationTime('24h')
-      .setIssuer('ErinWongJewelry')
-      .sign(secretKey)
+    logger.debug(`payload: ${JSON.stringify(payload)}`);
 
-    logger.info(`Token generated successfully for user ID: ${user.id}`);
-    const userDto = {
-      user: user,
-      token: token,
+    try {
+      const token = await new jose.SignJWT(payload)
+        .setProtectedHeader({ alg: algorithm })
+        .setIssuedAt()
+        .setSubject(user.id.toString())
+        .setExpirationTime('24h')
+        .setIssuer('http://localhost:3000')
+        .sign(secretKey)
+
+      logger.debug(`token: ${token}`);
+
+      logger.info(`Token generated successfully for user ID: ${user.id}`);
+      const userDto = {
+        user: user,
+        token: token,
+      };
+      return userDto;
+    } catch (signError: any) {
+      logger.error('Error signing JWT token:', signError.message);
+      logger.error(signError.stack);
+      throw new Error('Failed to sign JWT token.');
     };
-    return userDto;
   } catch (error: any) {
-    logger.error('Error generating JWT', error);
+    logger.error('Error generating JWT', error.message);
+    logger.error(error.stack);
     throw new Error('Failed to generate authentication token.');
   };
 };

@@ -1,6 +1,6 @@
 import * as jose from 'jose';
 import { Request, Response, NextFunction } from 'express';
-import { logger } from '../../utils/logger.js';
+import { logger } from '../utils/logger.js';
 
 export interface UserJWTPayload extends jose.JWTPayload {
   sub: string;
@@ -17,8 +17,8 @@ if (!jwtSecret) {
 const jwtSecretUint8Array = new TextEncoder().encode(jwtSecret);
 
 export const requireAuth = async (
-  req: Request, 
-  res: Response, 
+  req: Request,
+  res: Response,
   next: NextFunction
 ): Promise<void> => {
   logger.debug('Auth middleware triggered');
@@ -26,8 +26,8 @@ export const requireAuth = async (
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) { // Makes sure it's a bearer token
       logger.warn('Auth failed: No bearer token provided or incorrect format.');
-      res.status(401).json({ 
-        message: 'Unauthorized: Access token is missing or malformed' 
+      res.status(401).json({
+        message: 'Unauthorized: Access token is missing or malformed'
       });
       return;
     };
@@ -35,7 +35,7 @@ export const requireAuth = async (
     const token = authHeader.split(' ')[1];
     if (!token) {
       logger.warn('Auth failed: Token missing after "Bearer ".');
-      res.status(401).json({ 
+      res.status(401).json({
         message: 'Unauthorized: Access token is missing'
       });
       return;
@@ -72,7 +72,7 @@ export const requireAdmin = async (
 
     if (userRole !== 'admin') {
       logger.warn(`User ID ${req.user?.sub} has no admin privilages.`);
-      res.status(403).json({ message: 'User has no admin privilages. '});
+      res.status(403).json({ message: 'User has no admin privilages. ' });
     }
 
     logger.debug('User has admin privilages');

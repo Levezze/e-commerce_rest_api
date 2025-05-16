@@ -2,7 +2,7 @@ import { Router, type Router as ExpressRouter } from "express";
 // import { loginSchema, registerSchema, updateMeSchema } from "../validators/auth.validators.js";
 import { validateRequestBody } from "../../middlewares/validation.middleware.js";
 import * as authController from "./auth.controller.js";
-import { requireAuth } from "./auth.middleware.js";
+import { requireAuth } from "../../middlewares/auth.middleware.js";
 import { z } from "zod";
 import { schemas } from "../../dtos/custom/zod.js";
 
